@@ -21,63 +21,77 @@ namespace kvl
  * 
  */
 
-template< typename TInputImage > 
-class GaussianLikelihoodImageFilter:
-  public itk::ImageToImageFilter< TInputImage,  
-                                  itk::Image< itk::Array< typename TInputImage::PixelType >,       
-                                              TInputImage::ImageDimension > >
+template <typename TInputImage>
+class GaussianLikelihoodImageFilter : public itk::ImageToImageFilter<TInputImage,
+                                                                     itk::Image<itk::Array<typename TInputImage::PixelType>,
+                                                                                TInputImage::ImageDimension>>
 {
 public:
-
-  typedef GaussianLikelihoodImageFilter    Self;
-  typedef itk::SmartPointer< Self >        Pointer;
-  typedef itk::SmartPointer< const Self >  ConstPointer;
+  typedef GaussianLikelihoodImageFilter Self;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
   itkNewMacro(Self);
 
   itkTypeMacro(GaussianLikelihoodImageFilter, itk::ImageToImageFilter);
 
   itkStaticConstMacro(Dimension, unsigned int, TInputImage::ImageDimension);
 
-  typedef TInputImage                          InputImageType;
-  typedef typename InputImageType::PixelType   InputPixelType;
-  typedef itk::Image< itk::Array< InputPixelType >, TInputImage::ImageDimension >   OutputImageType;
-  typedef typename OutputImageType::PixelType  OutputPixelType;
-  typedef typename itk::NumericTraits< OutputPixelType >::ValueType  OutputPixelValueType;
-  typedef typename InputImageType::RegionType  RegionType;
-  typedef itk::ImageToImageFilter< InputImageType, OutputImageType >  Superclass;
+  typedef TInputImage InputImageType;
+  typedef typename InputImageType::PixelType InputPixelType;
+  typedef itk::Image<itk::Array<InputPixelType>, TInputImage::ImageDimension> OutputImageType;
+  typedef typename OutputImageType::PixelType OutputPixelType;
+  typedef typename itk::NumericTraits<OutputPixelType>::ValueType OutputPixelValueType;
+  typedef typename InputImageType::RegionType RegionType;
+  typedef itk::ImageToImageFilter<InputImageType, OutputImageType> Superclass;
 
   /** */
-  void SetMeans( const std::vector< vnl_vector<float> >& means )
-    { 
+  void SetClassIndex(const std::vector<int> &classIndex)
+  {
+    m_classIndex = classIndex;
+
+  }
+
+  void SetNumberOfClasses(int numberOfClasses)
+  {
+    m_numberOfClasses = numberOfClasses;
+  }
+
+  void SetMeans(const std::vector<vnl_vector<float>> &means)
+  {
     //std::cout << "Setting means" << std::endl;
-    m_Means = means; 
+    m_Means = means;
     this->Modified();
-    }
+  }
+
+  void SetWeights(const std::vector<vnl_vector<float>> &weights)
+  {
+    m_Weights = weights;
+    this->Modified();
+  }
 
   /** */
-  void SetPrecisions( const std::vector< vnl_matrix<float> >& precisions );
+  void SetPrecisions(const std::vector<vnl_matrix<float>> &precisions);
 
 protected:
   GaussianLikelihoodImageFilter();
 
   virtual void BeforeThreadedGenerateData();
 
-  virtual void ThreadedGenerateData(const RegionType & outputRegionForThread, itk::ThreadIdType);
+  virtual void ThreadedGenerateData(const RegionType &outputRegionForThread, itk::ThreadIdType);
 
 private:
   GaussianLikelihoodImageFilter(const Self &);
   void operator=(const Self &);
 
-  std::vector< vnl_vector< float > >  m_Means;
-  std::vector< std::vector< vnl_matrix< float > > >  m_Precisions;
-  std::vector< float > m_piTermMultiv;
-  std::vector< std::vector< float > >  m_OneOverSqrtDetCov;
-  
+  int m_numberOfClasses;
+  std::vector<int> m_classIndex;
+  std::vector<vnl_vector<float>> m_Means;
+  std::vector<std::vector<vnl_matrix<float>>> m_Precisions;
+  std::vector<vnl_vector<float>> m_Weights;
+  std::vector<float> m_piTermMultiv;
+  std::vector<std::vector<float>> m_OneOverSqrtDetCov;
 };
-
-  
 }
-
 
 #include "kvlGaussianLikelihoodImageFilter.hxx"
 

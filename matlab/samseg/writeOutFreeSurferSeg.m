@@ -1,4 +1,4 @@
-function samseg_writeOutFreeSurferSeg(imageFileName,transformedTemplateFileName,croppedBuffer,savePath, saveFileName)
+function writeOutFreeSurferSeg(imageFileName,transformedTemplateFileName,croppedBuffer,savePath, saveFileName)
 % This is Oula's code renamed. It basically uncrops to be the resolution of the input.
 %
 % $Id: samseg_writeOutFreeSurferSeg.m,v 1.1 2017/01/26 00:21:49 greve Exp $

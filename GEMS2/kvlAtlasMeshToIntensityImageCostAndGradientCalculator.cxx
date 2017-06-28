@@ -4,68 +4,57 @@
 #include "vnl/vnl_matrix_fixed.h"
 #include "kvlTetrahedronInteriorConstIterator.h"
 
-
-
 namespace kvl
 {
 
 //
 //
 //
-AtlasMeshToIntensityImageCostAndGradientCalculator
-::AtlasMeshToIntensityImageCostAndGradientCalculator()
+AtlasMeshToIntensityImageCostAndGradientCalculator::AtlasMeshToIntensityImageCostAndGradientCalculator()
 {
 
-  m_LikelihoodFilter = LikelihoodFilterType::New();  
-  
+  m_LikelihoodFilter = LikelihoodFilterType::New();
 }
 
-
 //
 //
 //
-AtlasMeshToIntensityImageCostAndGradientCalculator
-::~AtlasMeshToIntensityImageCostAndGradientCalculator()
+AtlasMeshToIntensityImageCostAndGradientCalculator::~AtlasMeshToIntensityImageCostAndGradientCalculator()
 {
 }
 
-
-
 //
 //
 //
-void 
-AtlasMeshToIntensityImageCostAndGradientCalculator
-::SetImages( const std::vector< ImageType::ConstPointer >& images )
+void AtlasMeshToIntensityImageCostAndGradientCalculator::SetImages(const std::vector<ImageType::ConstPointer> &images)
 {
-  // 
-  for ( int contrastNumber = 0; contrastNumber < images.size(); contrastNumber++ )
-    {
-    m_LikelihoodFilter->SetInput( contrastNumber, images[ contrastNumber ] );
-    }
-
+  //
+  for (int contrastNumber = 0; contrastNumber < images.size(); contrastNumber++)
+  {
+    m_LikelihoodFilter->SetInput(contrastNumber, images[contrastNumber]);
+  }
 }
 
-
 //
 //
 //
-void 
-AtlasMeshToIntensityImageCostAndGradientCalculator
-::SetParameters( const std::vector< vnl_vector<float> >& means,
-                 const std::vector< vnl_matrix<float> >& precisions )
+void AtlasMeshToIntensityImageCostAndGradientCalculator::SetParameters(const std::vector<vnl_vector<float>> &means,
+                                                                       const std::vector<vnl_matrix<float>> &precisions,
+                                                                       const std::vector<vnl_vector<float>> &weights,
+                                                                       const std::vector<int> &classIndex,
+                                                                       int numberOfClasses)
 {
-  m_LikelihoodFilter->SetMeans( means );
-  m_LikelihoodFilter->SetPrecisions( precisions );
+  m_LikelihoodFilter->SetMeans(means);
+  m_LikelihoodFilter->SetPrecisions(precisions);
+  m_LikelihoodFilter->SetWeights(weights);
+  m_LikelihoodFilter->SetClassIndex(classIndex);
+  m_LikelihoodFilter->SetNumberOfClasses(numberOfClasses);
 }
 
-
 //
 //
 //
-void
-AtlasMeshToIntensityImageCostAndGradientCalculator
-::Rasterize( const AtlasMesh* mesh )
+void AtlasMeshToIntensityImageCostAndGradientCalculator::Rasterize(const AtlasMesh *mesh)
 {
 
   // Make sure the likelihoods are up-to-date
@@ -73,78 +62,69 @@ AtlasMeshToIntensityImageCostAndGradientCalculator
   m_LikelihoodFilter->Update();
 
   // Now rasterize
-  Superclass::Rasterize( mesh );
-  
-}    
-  
-    
-  
- 
+  Superclass::Rasterize(mesh);
+}
 
 //
 //
 //
-void 
-AtlasMeshToIntensityImageCostAndGradientCalculator
-::AddDataContributionOfTetrahedron( const AtlasMesh::PointType& p0,
-                                    const AtlasMesh::PointType& p1,
-                                    const AtlasMesh::PointType& p2,
-                                    const AtlasMesh::PointType& p3,
-                                    const AtlasAlphasType&  alphasInVertex0,
-                                    const AtlasAlphasType&  alphasInVertex1,
-                                    const AtlasAlphasType&  alphasInVertex2,
-                                    const AtlasAlphasType&  alphasInVertex3,
-                                    double&  priorPlusDataCost,
-                                    AtlasPositionGradientType&  gradientInVertex0,
-                                    AtlasPositionGradientType&  gradientInVertex1,
-                                    AtlasPositionGradientType&  gradientInVertex2,
-                                    AtlasPositionGradientType&  gradientInVertex3 )
+void AtlasMeshToIntensityImageCostAndGradientCalculator::AddDataContributionOfTetrahedron(const AtlasMesh::PointType &p0,
+                                                                                          const AtlasMesh::PointType &p1,
+                                                                                          const AtlasMesh::PointType &p2,
+                                                                                          const AtlasMesh::PointType &p3,
+                                                                                          const AtlasAlphasType &alphasInVertex0,
+                                                                                          const AtlasAlphasType &alphasInVertex1,
+                                                                                          const AtlasAlphasType &alphasInVertex2,
+                                                                                          const AtlasAlphasType &alphasInVertex3,
+                                                                                          double &priorPlusDataCost,
+                                                                                          AtlasPositionGradientType &gradientInVertex0,
+                                                                                          AtlasPositionGradientType &gradientInVertex1,
+                                                                                          AtlasPositionGradientType &gradientInVertex2,
+                                                                                          AtlasPositionGradientType &gradientInVertex3)
 {
-  
-  // Loop over all voxels within the tetrahedron and do The Right Thing  
-  const int  numberOfClasses = alphasInVertex0.Size();
-  TetrahedronInteriorConstIterator< LikelihoodFilterType::OutputPixelType >  it( m_LikelihoodFilter->GetOutput(), p0, p1, p2, p3 );
-  for ( unsigned int classNumber = 0; classNumber < numberOfClasses; classNumber++ )
-    {
-    it.AddExtraLoading( alphasInVertex0[ classNumber ], 
-                        alphasInVertex1[ classNumber ], 
-                        alphasInVertex2[ classNumber ], 
-                        alphasInVertex3[ classNumber ] );
-    }  
-    
-  for ( ; !it.IsAtEnd(); ++it )
-    {
+
+  // Loop over all voxels within the tetrahedron and do The Right Thing
+  const int numberOfClasses = alphasInVertex0.Size();
+  TetrahedronInteriorConstIterator<LikelihoodFilterType::OutputPixelType> it(m_LikelihoodFilter->GetOutput(), p0, p1, p2, p3);
+  for (unsigned int classNumber = 0; classNumber < numberOfClasses; classNumber++)
+  {
+    it.AddExtraLoading(alphasInVertex0[classNumber],
+                       alphasInVertex1[classNumber],
+                       alphasInVertex2[classNumber],
+                       alphasInVertex3[classNumber]);
+  }
+
+  for (; !it.IsAtEnd(); ++it)
+  {
     // Skip voxels for which nothing is known
-    if ( it.Value().Size() == 0 )
-      {
+    if (it.Value().Size() == 0)
+    {
       //std::cout << "Skipping: " << it.Value().Size() << std::endl;
       continue;
-      }
-      
+    }
+
     //
     double likelihood = 0.0;
-    double  xGradientBasis = 0.0;
-    double  yGradientBasis = 0.0;
-    double  zGradientBasis = 0.0;
-    for ( unsigned int classNumber = 0; classNumber < numberOfClasses; classNumber++ )
-      {
+    double xGradientBasis = 0.0;
+    double yGradientBasis = 0.0;
+    double zGradientBasis = 0.0;
+    for (unsigned int classNumber = 0; classNumber < numberOfClasses; classNumber++)
+    {
       // Get the Gaussian likelihood of this class at the intensity of this pixel
-      const double gauss = it.Value()[ classNumber ];
-        
+      const double gauss = it.Value()[classNumber];
+
       // Add contribution of the likelihood
-      likelihood += gauss * it.GetExtraLoadingInterpolatedValue( classNumber );
-      
+      likelihood += gauss * it.GetExtraLoadingInterpolatedValue(classNumber);
+
       //
-      xGradientBasis += gauss * it.GetExtraLoadingNextRowAddition( classNumber );
-      yGradientBasis += gauss * it.GetExtraLoadingNextColumnAddition( classNumber );
-      zGradientBasis += gauss * it.GetExtraLoadingNextSliceAddition( classNumber );
-      } // End loop over all classes
-      
-      
+      xGradientBasis += gauss * it.GetExtraLoadingNextRowAddition(classNumber);
+      yGradientBasis += gauss * it.GetExtraLoadingNextColumnAddition(classNumber);
+      zGradientBasis += gauss * it.GetExtraLoadingNextSliceAddition(classNumber);
+    } // End loop over all classes
+
     //  Add contribution to log-likelihood
     likelihood = likelihood + 1e-15; //dont want to divide by zero
-    priorPlusDataCost -= log( likelihood );
-
+    priorPlusDataCost -= log(likelihood);
 
     //
     xGradientBasis /= likelihood;
@@ -152,31 +132,26 @@ AtlasMeshToIntensityImageCostAndGradientCalculator
     zGradientBasis /= likelihood;
 
     // Add contribution to gradient in vertex 0
-    gradientInVertex0[ 0 ] += xGradientBasis * it.GetPi0();
-    gradientInVertex0[ 1 ] += yGradientBasis * it.GetPi0();
-    gradientInVertex0[ 2 ] += zGradientBasis * it.GetPi0();
+    gradientInVertex0[0] += xGradientBasis * it.GetPi0();
+    gradientInVertex0[1] += yGradientBasis * it.GetPi0();
+    gradientInVertex0[2] += zGradientBasis * it.GetPi0();
 
     // Add contribution to gradient in vertex 1
-    gradientInVertex1[ 0 ] += xGradientBasis * it.GetPi1();
-    gradientInVertex1[ 1 ] += yGradientBasis * it.GetPi1();
-    gradientInVertex1[ 2 ] += zGradientBasis * it.GetPi1();
-    
+    gradientInVertex1[0] += xGradientBasis * it.GetPi1();
+    gradientInVertex1[1] += yGradientBasis * it.GetPi1();
+    gradientInVertex1[2] += zGradientBasis * it.GetPi1();
+
     // Add contribution to gradient in vertex 2
-    gradientInVertex2[ 0 ] += xGradientBasis * it.GetPi2();
-    gradientInVertex2[ 1 ] += yGradientBasis * it.GetPi2();
-    gradientInVertex2[ 2 ] += zGradientBasis * it.GetPi2();
-    
+    gradientInVertex2[0] += xGradientBasis * it.GetPi2();
+    gradientInVertex2[1] += yGradientBasis * it.GetPi2();
+    gradientInVertex2[2] += zGradientBasis * it.GetPi2();
+
     // Add contribution to gradient in vertex 3
-    gradientInVertex3[ 0 ] += xGradientBasis * it.GetPi3();
-    gradientInVertex3[ 1 ] += yGradientBasis * it.GetPi3();
-    gradientInVertex3[ 2 ] += zGradientBasis * it.GetPi3();
-    
-    
-    } // End loop over all voxels within the tetrahedron
+    gradientInVertex3[0] += xGradientBasis * it.GetPi3();
+    gradientInVertex3[1] += yGradientBasis * it.GetPi3();
+    gradientInVertex3[2] += zGradientBasis * it.GetPi3();
 
-  
+  } // End loop over all voxels within the tetrahedron
 }
-
-
 
 } // end namespace kvl
