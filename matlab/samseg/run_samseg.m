@@ -19,11 +19,11 @@ fprintf('Matlab version %s\n',version);
 imageFileNames = cell(0,0);
 imageFileNames{1} =  imageFileName1;
 
-if(~strcmp(imageFileName2,'0')), imageFileNames{2} =  imageFileName2; end
-if(~strcmp(imageFileName3,'0')), imageFileNames{3} =  imageFileName3; end
-if(~strcmp(imageFileName4,'0')), imageFileNames{4} =  imageFileName4; end
-if(~strcmp(imageFileName5,'0')), imageFileNames{5} =  imageFileName5; end
-if(~strcmp(imageFileName6,'0')), imageFileNames{6} =  imageFileName6; end
+if(~strcmp(imageFileName2,'')), imageFileNames{2} =  imageFileName2; end
+if(~strcmp(imageFileName3,'')), imageFileNames{3} =  imageFileName3; end
+if(~strcmp(imageFileName4,'')), imageFileNames{4} =  imageFileName4; end
+if(~strcmp(imageFileName5,'')), imageFileNames{5} =  imageFileName5; end
+if(~strcmp(imageFileName6,'')), imageFileNames{6} =  imageFileName6; end
 
 nThreads = sscanf(nThreadsStr,'%d');
 verbose = sscanf(verboseStr, '%d');

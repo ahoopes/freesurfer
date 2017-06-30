@@ -14,11 +14,11 @@ set tmpdir = ();
 set cleanup = 1;
 set LF = ();
 set input = ()
-set input2 = 0
-set input3 = 0
-set input4 = 0
-set input5 = 0
-set input6 = 0
+set input2 = ""
+set input3 = ""
+set input4 = ""
+set input5 = ""
+set input6 = ""
 set computedice = 0;
 set diceseg = none
 if($?SAMSEG_DATA_DIR == 0) then
@@ -103,9 +103,7 @@ endif
 
 #========================================================
 if($usebin) then
-  set cmd = (run_samseg $input $outdir $threads $usegpu $input2 $input3 $input4 $input5 $input6 1)
-  echo $cmd | tee -a $LF
-  $cmd | tee -a $LF
+  run_samseg "$input" "$outdir" "$threads" "$usegpu" "$input2" "$input3" "$input4" "$input5" "$input6" "1") | tee -a $LF
   if($status) goto error_exit;
 else
   if($#MLF == 0) set MLF = $outdir/samseg.m
