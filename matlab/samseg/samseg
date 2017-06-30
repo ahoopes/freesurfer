@@ -14,11 +14,11 @@ set tmpdir = ();
 set cleanup = 1;
 set LF = ();
 set input = ()
-set input2 = none
-set input3 = none
-set input4 = none
-set input5 = none
-set input6 = none
+set input2 = 0
+set input3 = 0
+set input4 = 0
+set input5 = 0
+set input6 = 0
 set computedice = 0;
 set diceseg = none
 if($?SAMSEG_DATA_DIR == 0) then
@@ -103,7 +103,7 @@ endif
 
 #========================================================
 if($usebin) then
-  set cmd = (run_samseg $input $outdir $threads $usegpu $input2 $input3 $input4 $input5 $input6)
+  set cmd = (run_samseg $input $outdir $threads $usegpu $input2 $input3 $input4 $input5 $input6 1)
   echo $cmd | tee -a $LF
   $cmd | tee -a $LF
   if($status) goto error_exit;
@@ -116,7 +116,7 @@ else
   echo "which run_samseg"  >> $MLF
   echo "which samsegment"  >> $MLF
   echo "which samseg_registerToAtlas"  >> $MLF
-  echo "run_samseg('$input','$outdir','$threads','$usegpu','$input2','$input3','$input4','$input5','$input6');" >> $MLF
+  echo "run_samseg('$input','$outdir','$threads','$usegpu','$input2','$input3','$input4','$input5','$input6', 1);" >> $MLF
   if($monly == 0) echo "quit;" >> $MLF
   # threads here is either 1 or not 1. not1 = all cpus
   cat $MLF | tee -a $LF
