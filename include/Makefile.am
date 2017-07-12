@@ -89,6 +89,7 @@ EXTRA_DIST=\
 	generators.hpp \
 	getdelim.h \
 	getline.h \
+	geodesicsheat.h \
 	gifti_io.h \
 	gifti_local.h \
 	gifti_xml.h \

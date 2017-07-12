@@ -3647,6 +3647,7 @@ AC_OUTPUT([Makefile
            distribution/sessions/Makefile
            distribution/subjects/Makefile
            distribution/fsl-extra/Makefile
+           devgeodesics/Makefile
            dmri_tensoreig/Makefile
            dngtester/Makefile
            dummy/Makefile
