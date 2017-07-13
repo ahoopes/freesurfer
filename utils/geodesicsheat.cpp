@@ -1,11 +1,11 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include "geodesicsheat.h"
 
 extern "C"
 {
-#include "macros.h"
 #include "mrisurf.h"
 }
 
@@ -72,14 +72,24 @@ struct DenseMatrix {
 };
 
 
-struct HeatMesh {
-  std::vector<float> vertices, vertexAreas;
-  std::vector<float> weights, edgeNormals, weightedEdges;
-  SparseMatrix laplacian;
+struct Neighbor {
+  int n;
+  float x;
+  Neighbor(int a, float b) : n(a), x(b) {}
+  bool operator < (const Neighbor &nbr) const {return (n < nbr.n);}
 };
 
 
-static void buildMatrices(MRIS* surf, HeatMesh* mesh);
+struct HeatMesh {
+  int nvertices;
+  std::vector<float> vertices, vertexAreas;
+  std::vector<float> weights, edgeNormals, weightedEdges;
+  std::vector<bool> onBoundary;
+  std::vector<std::vector<Neighbor> > uniqueNeighbors;
+};
+
+
+static void buildMatrices(HeatMesh* mesh, SparseMatrix* laplacian);
 static void computeMeshProperties(MRIS* surf, HeatMesh* mesh);
 
 
@@ -87,17 +97,20 @@ extern "C"
 void GEOprecompute(MRIS* surf)
 {
   HeatMesh mesh;
+  SparseMatrix laplacian;
   computeMeshProperties(surf, &mesh);
+  buildMatrices(&mesh, &laplacian);
 }
 
 
 void computeMeshProperties(MRIS* surf, HeatMesh* mesh)
 {
   // init mesh vertices:
+  mesh->nvertices = surf->nvertices;
   mesh->vertices.clear();
-  mesh->vertices.resize(3*surf->nvertices);
+  mesh->vertices.resize(3*mesh->nvertices);
   float *vtx = &mesh->vertices[0];
-  for (int vn = 0 ; vn < surf->nvertices ; vn++, vtx+=3)
+  for (int vn = 0 ; vn < mesh->nvertices ; vn++, vtx+=3)
   { 
     vtx[0] = surf->vertices[vn].x;
     vtx[1] = surf->vertices[vn].y;
@@ -125,13 +138,18 @@ void computeMeshProperties(MRIS* surf, HeatMesh* mesh)
 
   // init vertex areas:
   mesh->vertexAreas.clear();
-  mesh->vertexAreas.resize(surf->nvertices);
+  mesh->vertexAreas.resize(mesh->nvertices);
 
-  FACE *f;
+  // init neighbors:
+  std::vector<std::vector<Neighbor> > neighbors(mesh->nvertices);
+  mesh->uniqueNeighbors.clear();
+  mesh->uniqueNeighbors.resize(mesh->nvertices);
+
   float *p[3];
   float uvCosTheta, uvSinTheta, area;
-  Vec3 u, v, N;
   int j0, j1, j2;
+  Vec3 u, v, N;
+  FACE *f;
 
   // iterate over faces:
   for (int fn = 0 ; fn < surf->nfaces ; fn++)
@@ -194,52 +212,116 @@ void computeMeshProperties(MRIS* surf, HeatMesh* mesh)
     mesh->vertexAreas[f->v[1]] += area;
     mesh->vertexAreas[f->v[2]] += area;
 
+    // =============== find neighbors ==============
+
+    // iterate over triangle corners:
+    for (int k = 0 ; k < 3 ; k++)
+    {
+      j0 = (0+k) % 3;
+      j1 = (1+k) % 3;
+      j2 = (2+k) % 3;
+      neighbors[f->v[j0]].push_back(Neighbor(f->v[j1], w[j2]));
+      neighbors[f->v[j0]].push_back(Neighbor(f->v[j2], w[j1]));
+    }
+
     // move to next face:
     w += 3;
     t0 += 9; t1 += 9; t2 += 9;
     e0 += 9; e1 += 9; e2 += 9;
   }
+
+  // ============= get unique neighbors ============
+
+  int lastNeighborIndex, count;
+
+  // iterate over triangle corners:
+  for (int i = 0 ; i < mesh->nvertices ; i++)
+  {
+    // sort by index:
+    std::sort(neighbors[i].begin(), neighbors[i].end());
+
+    mesh->onBoundary[i] = false;
+    lastNeighborIndex = -1;
+    count = 0;
+
+    // extract unique elements from neighbor list, summing weights:
+    for (unsigned int j = 0 ; j < neighbors[i].size() ; j++)
+    {
+      // if neighbor is new, add it to unique list:
+      if (neighbors[i][j].n != lastNeighborIndex)
+      {
+        if (count == 1) mesh->onBoundary[i] = true;
+        count = 1;
+        mesh->uniqueNeighbors[i].push_back(neighbors[i][j]);
+        lastNeighborIndex = neighbors[i][j].n;
+      }
+      else
+      {
+        mesh->uniqueNeighbors[i].back().x += neighbors[i][j].x;
+        count++;
+      }
+    }
+
+    // if the neighbor was represented once, it must be a boundary vertex:
+    if (count == 1) mesh->onBoundary[i] = true;
+  }
 }
 
 
-void buildMatrices(MRIS* surf, HeatMesh* mesh)
+void buildMatrices(HeatMesh* mesh, SparseMatrix* laplacian)
 {
-  VERTEX *v;
-  SparseMatrix *laplacian = &mesh->laplacian;
-
   // count number of non-zeros (bottom triangle) in laplacian:
   int nNonZeros = 0;
+  std::vector<Neighbor> *nbrs;
   laplacian->colStart.clear();
   laplacian->colStart.push_back(nNonZeros);
-  for (int i = 0 ; i < surf->nvertices ; i++)
+  for (int i = 0 ; i < mesh->nvertices ; i++)
   {
-    v = &surf->vertices[i];
+    nbrs = &mesh->uniqueNeighbors[i];
     nNonZeros++;  // diagonal entry
-    for (int nv = 0 ; nv < v->vnum ; nv++)
-      if (v->v[nv] > i) nNonZeros++;
+    for (unsigned int j = 0 ; j < nbrs->size() ; j++)
+      if (nbrs->at(j).n > i) nNonZeros++;
     laplacian->colStart.push_back(nNonZeros);
   }
 
-  float columnSum;
+  // init laplacian:
+  laplacian->nRows = mesh->nvertices;
+  laplacian->nCols = mesh->nvertices;
+  laplacian->values.clear();
+  laplacian->values.resize(nNonZeros);
+  laplacian->rowIndices.clear();
+  laplacian->rowIndices.resize(nNonZeros);
+
+  float columnSum, area;
   bool diagonalSet;
+  float hmRegularization = 0;  // todo: change this
 
   // fill non-zero entries:
   int nz = 0;
-  for (int i = 0 ; i < surf->nvertices ; i++)
+  for (int i = 0 ; i < mesh->nvertices ; i++)
   {
-    v = &surf->vertices[i];
+    nbrs = &mesh->uniqueNeighbors[i];
 
-    // get sum of neighbor weights
+    // get sum of neighbor weights:
     columnSum = 0.0;
-    for (int nv = 0 ; nv < v->vnum ; nv++) columnSum += weight;
+    for (unsigned int j = 0 ; j < nbrs->size() ; j++)
+      columnSum += nbrs->at(j).x;
 
     diagonalSet = false;
-    for (int nv = 0 ; nv <= v->vnum ; nv++)
+    for (unsigned int j = 0 ; j <= nbrs->size() ; j++)
     {
-      if (!diagonalSet && (nv == v->vnum || v->v[nv] > i))
+      if (!diagonalSet && (j == nbrs->size() || nbrs->at(j).n > i))
       {
-        
+        laplacian->values[nz] = columnSum + hmRegularization;
+        laplacian->rowIndices[nz] = i;
+        area = mesh->vertexAreas[i];
         diagonalSet = true;
+        nz++;
+      }
+      if (i < (int)nbrs->size() && nbrs->at(j).n > i)
+      {
+        laplacian->values[nz] = -nbrs->at(j).x;
+        laplacian->rowIndices[nz] = nbrs->at(j).n;
         nz++;
       }
     }
