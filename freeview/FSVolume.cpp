@@ -562,7 +562,7 @@ bool FSVolume::Create( FSVolume* src_vol, bool bCopyVoxelData, int data_type )
     switch ( m_MRI->type )
     {
     case MRI_UCHAR:
-      m_imageData->AllocateScalars(VTK_UCHAR, 1);
+      m_imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
       break;
     case MRI_INT:
       m_imageData->AllocateScalars(VTK_INT, 1);
@@ -1907,16 +1907,6 @@ void FSVolume::UpdateRASToRASMatrix()
 
 bool FSVolume::CreateImage( MRI* rasMRI )
 {
-  // first copy mri data to image
-  vtkDataArray *scalars = NULL;
-  vtkUnsignedCharArray  *ucharScalars = NULL;
-  vtkIntArray           *intScalars = NULL;
-  vtkShortArray         *shortScalars = NULL;
-  vtkLongArray          *longScalars = NULL;
-  vtkFloatArray         *floatScalars = NULL;
-  vtkIdType cValues;
-  //  int zElement=0;
-
   if ( m_MRI == NULL )
   {
     cerr << "No MRI is present.\n";
@@ -1985,67 +1975,29 @@ bool FSVolume::CreateImage( MRI* rasMRI )
 
   imageData->SetSpacing( rasMRI->xsize, rasMRI->ysize, rasMRI->zsize );
   imageData->SetOrigin( origin[0], origin[1], origin[2] );
-  //  imageData->SetWholeExtent( 0, zX-1, 0, zY-1, 0, zZ-1 );
+  //  imageData->SetExtent( 0, zX-1, 0, zY-1, 0, zZ-1 );
   imageData->SetDimensions(zX, zY, zZ);
-  imageData->SetNumberOfScalarComponents( zFrames );
 
-  // create the scalars for all of the images. set the element size
-  // for the data we will read.
-  switch ( rasMRI->type )
-  {
-  case MRI_UCHAR:
-    imageData->SetScalarTypeToUnsignedChar();
-    ucharScalars = vtkUnsignedCharArray::New();
-    scalars = (vtkDataArray*) ucharScalars;
-    break;
-  case MRI_INT:
-    imageData->SetScalarTypeToInt();
-    intScalars = vtkIntArray::New();
-    scalars = (vtkDataArray*) intScalars;
-    break;
-  case MRI_LONG:
-    imageData->SetScalarTypeToLong();
-    longScalars = vtkLongArray::New();
-    scalars = (vtkDataArray*) longScalars;
-    break;
-  case MRI_FLOAT:
-    imageData->SetScalarTypeToFloat();
-    floatScalars = vtkFloatArray::New();
-    scalars = (vtkDataArray*) floatScalars;
-    break;
-  case MRI_SHORT:
-    imageData->SetScalarTypeToShort();
-    shortScalars = vtkShortArray::New();
-    scalars = (vtkDataArray*) shortScalars;
-    break;
-  default:
-    break ;
+  switch ( rasMRI->type ) {
+    case MRI_UCHAR:
+      imageData->AllocateScalars(VTK_UNSIGNED_CHAR, zFrames);
+      break;
+    case MRI_INT:
+      imageData->AllocateScalars(VTK_INT, zFrames);
+      break;
+    case MRI_LONG:
+      imageData->AllocateScalars(VTK_LONG, zFrames);
+      break;
+    case MRI_FLOAT:
+      imageData->AllocateScalars(VTK_FLOAT, zFrames);
+      break;
+    case MRI_SHORT:
+      imageData->AllocateScalars(VTK_SHORT, zFrames);
+      break;
+    default:
+      imageData->AllocateScalars(VTK_FLOAT, zFrames);
+      break;
   }
-
-  if ( NULL == scalars )
-  {
-    cerr << "Could not allocate scalars array.\n";
-    return false;
-  }
-
-  // change the number of components to store tuples
-  if ( zFrames > 1 )
-  {
-    scalars->SetNumberOfComponents( zFrames );
-  }
-
-  cValues = zX * zY * zZ;
-  if ( !scalars->Allocate( cValues ) )
-  {
-    cerr << "Could not allocate scalars array.\n";
-    scalars->Delete();
-    return false;
-  }
-  scalars->SetNumberOfTuples( zX*zY*zZ );
-
-  // Assign the scalars array to the image.
-  imageData->GetPointData()->SetScalars( scalars );
-  scalars->Delete();
 
   return true;
 }
@@ -2053,14 +2005,6 @@ bool FSVolume::CreateImage( MRI* rasMRI )
 bool FSVolume::ResizeRotatedImage( MRI* rasMRI, MRI* refTarget, vtkImageData* refImageData,
                                    double* rasPoint )
 {
-  // first copy mri data to image
-  vtkDataArray *scalars = NULL;
-  vtkUnsignedCharArray  *ucharScalars = NULL;
-  vtkIntArray           *intScalars = NULL;
-  vtkShortArray         *shortScalars = NULL;
-  vtkLongArray          *longScalars = NULL;
-  vtkFloatArray         *floatScalars = NULL;
-  vtkIdType cValues;
   int zElement=0;
 
   if ( m_MRI == NULL )
@@ -2135,67 +2079,28 @@ bool FSVolume::ResizeRotatedImage( MRI* rasMRI, MRI* refTarget, vtkImageData* re
 
   imageData->SetSpacing( rasMRI->xsize, rasMRI->ysize, rasMRI->zsize );
   imageData->SetOrigin( origin[0], origin[1], origin[2] );
+  imageData->SetExtent( 0, zX-1, 0, zY-1, 0, zZ-1 );
 
-  imageData->SetWholeExtent( 0, zX-1, 0, zY-1, 0, zZ-1 );
-  imageData->SetNumberOfScalarComponents( zFrames );
-
-  // create the scalars for all of the images. set the element size
-  // for the data we will read.
-  switch ( rasMRI->type )
-  {
-  case MRI_UCHAR:
-    imageData->SetScalarTypeToUnsignedChar();
-    ucharScalars = vtkUnsignedCharArray::New();
-    scalars = (vtkDataArray*) ucharScalars;
-    zElement = sizeof( unsigned char );
-    break;
-  case MRI_INT:
-    imageData->SetScalarTypeToInt();
-    intScalars = vtkIntArray::New();
-    scalars = (vtkDataArray*) intScalars;
-    zElement = sizeof( int );
-    break;
-  case MRI_LONG:
-    imageData->SetScalarTypeToLong();
-    longScalars = vtkLongArray::New();
-    scalars = (vtkDataArray*) longScalars;
-    zElement = sizeof( long );
-    break;
-  case MRI_FLOAT:
-    imageData->SetScalarTypeToFloat();
-    floatScalars = vtkFloatArray::New();
-    scalars = (vtkDataArray*) floatScalars;
-    zElement = sizeof( float );
-    break;
-  case MRI_SHORT:
-    imageData->SetScalarTypeToShort();
-    shortScalars = vtkShortArray::New();
-    scalars = (vtkDataArray*) shortScalars;
-    zElement = sizeof( short );
-    break;
-  default:
-    break ;
+  switch ( rasMRI->type ) {
+    case MRI_UCHAR:
+      imageData->AllocateScalars(VTK_UNSIGNED_CHAR, zFrames);
+      break;
+    case MRI_INT:
+      imageData->AllocateScalars(VTK_INT, zFrames);
+      break;
+    case MRI_LONG:
+      imageData->AllocateScalars(VTK_LONG, zFrames);
+      break;
+    case MRI_FLOAT:
+      imageData->AllocateScalars(VTK_FLOAT, zFrames);
+      break;
+    case MRI_SHORT:
+      imageData->AllocateScalars(VTK_SHORT, zFrames);
+      break;
+    default:
+      imageData->AllocateScalars(VTK_FLOAT, zFrames);
+      break;
   }
-
-  if ( NULL == scalars )
-  {
-    cerr << "Could not allocate scalars array.\n";
-    return false;
-  }
-
-  // change the number of components to store tuples
-  if ( zFrames > 1 )
-  {
-    scalars->SetNumberOfComponents( zFrames );
-  }
-
-  cValues = zX * zY * zZ;
-  scalars->Allocate( cValues );
-  scalars->SetNumberOfTuples( zX*zY*zZ );
-
-  // Assign the scalars array to the image.
-  imageData->GetPointData()->SetScalars( scalars );
-  scalars->Delete();
 
   return true;
 }

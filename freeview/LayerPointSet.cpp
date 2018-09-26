@@ -408,7 +408,7 @@ void LayerPointSet::RebuildActors( bool bRebuild3D )
       sphere->SetRadius( radius * scale );
       sphere->SetThetaResolution( 10 );
       sphere->SetPhiResolution( 20 );
-      append->AddInput( sphere->GetOutput() );
+      append->AddInputData( sphere->GetOutput() );
       sphere->Delete();
     }
     pts->InsertNextPoint( m_points[i].pt );
@@ -417,11 +417,11 @@ void LayerPointSet::RebuildActors( bool bRebuild3D )
   vtkPolyDataMapper* mapper = vtkPolyDataMapper::New();
   if ( m_points.size() > 0 && radius > 0 )
   {
-    mapper->SetInput( append->GetOutput() );
+    mapper->SetInputData( append->GetOutput() );
   }
   else
   {
-    mapper->SetInput( vtkSmartPointer<vtkPolyData>::New() );
+    mapper->SetInputData( vtkSmartPointer<vtkPolyData>::New() );
   }
   m_actorBalls->SetMapper( mapper );
   mapper->Delete();
@@ -440,9 +440,9 @@ void LayerPointSet::RebuildActors( bool bRebuild3D )
     }
     if ( m_points.size() > 1 )
     {
-      polydata->Update();
+      // polydata->Update();
       UpdateScalars(polydata);
-      spline->SetInput( polydata );
+      spline->SetInputData( polydata );
       vtkTubeFilter* tube = vtkTubeFilter::New();
       tube->SetNumberOfSides( NUM_OF_SIDES );
       tube->SetInputConnection( spline->GetOutputPort() );
@@ -497,10 +497,10 @@ void LayerPointSet::RebuildActors( bool bRebuild3D )
         cutpoly->SetPolys( stripper->GetOutput()->GetLines() );
 
         vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-        triangleFilter->SetInput( cutpoly );
+        triangleFilter->SetInputData( cutpoly );
 
-        // append->AddInput( triangleFilter->GetOutput() );
-        append->AddInput( sphere->GetOutput() );
+        // append->AddInputData( triangleFilter->GetOutput() );
+        append->AddInputData( sphere->GetOutput() );
         sphere->Delete();
         n++;
       }
@@ -511,7 +511,7 @@ void LayerPointSet::RebuildActors( bool bRebuild3D )
     }
     else
     {
-      mapper->SetInput( vtkSmartPointer<vtkPolyData>::New() );
+      mapper->SetInputData( vtkSmartPointer<vtkPolyData>::New() );
     }
     m_actorSlice[i]->SetMapper( mapper );
 
@@ -524,7 +524,7 @@ void LayerPointSet::RebuildActors( bool bRebuild3D )
 
       vtkSmartPointer<vtkCutter> cutter =
           vtkSmartPointer<vtkCutter>::New();
-      cutter->SetInput(polydata_tube);
+      cutter->SetInputData(polydata_tube);
       cutter->SetCutFunction( plane );
 
       vtkSmartPointer<vtkStripper> stripper = vtkSmartPointer<vtkStripper>::New();
@@ -537,10 +537,10 @@ void LayerPointSet::RebuildActors( bool bRebuild3D )
       cutpoly->GetPointData()->SetScalars(stripper->GetOutput()->GetPointData()->GetScalars());
 
       vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-      triangleFilter->SetInput( cutpoly );
+      triangleFilter->SetInputData( cutpoly );
 
       mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-      mapper->SetInput(triangleFilter->GetOutput());
+      mapper->SetInputData(triangleFilter->GetOutput());
 
       m_actorSplineSlice[i]->SetMapper(mapper);
     }

@@ -204,15 +204,13 @@ void LayerFCD::InitializeData()
     m_imageData = vtkSmartPointer<vtkImageData>::New();
     // m_imageData->DeepCopy( m_layerSource->GetRASVolume() );
 
-    m_imageData->SetNumberOfScalarComponents( 1 );
-    m_imageData->SetScalarTypeToUnsignedChar();
     m_imageData->SetOrigin( GetWorldOrigin() );
     m_imageData->SetSpacing( GetWorldVoxelSize() );
     m_imageData->SetDimensions(
           ( int )( m_dWorldSize[0] / m_dWorldVoxelSize[0] + 0.5 ),
         ( int )( m_dWorldSize[1] / m_dWorldVoxelSize[1] + 0.5 ),
         ( int )( m_dWorldSize[2] / m_dWorldVoxelSize[2] + 0.5 ) );
-    m_imageData->AllocateScalars();
+    m_imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
     void* ptr = m_imageData->GetScalarPointer();
     int* nDim = m_imageData->GetDimensions();
     // cout << nDim[0] << ", " << nDim[1] << ", " << nDim[2] << endl;
@@ -684,7 +682,7 @@ void LayerFCD::InitializeActors()
     // The reslice object just takes a slice out of the volume.
     //
     mReslice[i] = vtkSmartPointer<vtkImageReslice>::New();
-    mReslice[i]->SetInput( m_imageData );
+    mReslice[i]->SetInputData( m_imageData );
     //  mReslice[i]->SetOutputSpacing( sizeX, sizeY, sizeZ );
     mReslice[i]->BorderOff();
 
@@ -710,8 +708,8 @@ void LayerFCD::InitializeActors()
     //
     // Prop in scene with plane mesh and texture.
     //
-    m_sliceActor2D[i]->SetInput( mColorMap[i]->GetOutput() );
-    m_sliceActor3D[i]->SetInput( mColorMap[i]->GetOutput() );
+    m_sliceActor2D[i]->SetInputData( mColorMap[i]->GetOutput() );
+    m_sliceActor3D[i]->SetInputData( mColorMap[i]->GetOutput() );
 
     // Set ourselves up.
     this->OnSlicePositionChanged( i );

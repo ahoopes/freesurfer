@@ -117,12 +117,12 @@ void Region2DPolyline::Update()
   vtkSmartPointer<vtkPolyDataMapper2D> mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
   if ( !m_bSpline )
   {
-    mapper->SetInput( polydata );
+    mapper->SetInputData( polydata );
   }
   else
   {
     vtkSmartPointer<vtkSplineFilter> spline = vtkSmartPointer<vtkSplineFilter>::New();
-    spline->SetInput( polydata );
+    spline->SetInputData( polydata );
     LayerMRI* layer = m_view->GetFirstNonLabelVolume();
     if ( layer )
     {
@@ -149,11 +149,11 @@ void Region2DPolyline::Update()
   }
   polydata2->SetVerts( verts );
   mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
-  mapper->SetInput( polydata2 );
+  mapper->SetInputData( polydata2 );
   mapper->SetTransformCoordinate( coords );
   m_actorPoints->SetMapper( mapper );
 
-  //  m_actorText->SetInput( GetShortStats().c_str() );
+  //  m_actorText->SetInputData( GetShortStats().c_str() );
   //  double mid_pt[3];
   m_actorText->SetPosition( pts->GetPoint( 0 ) );
   UpdateStats();

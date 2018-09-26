@@ -57,7 +57,7 @@
 #endif
 #endif
 
-#include "vtkstd/map"
+#include <map>
 #include "vtkInteractorStyleTrackballCamera.h"
 #include "vtkRenderWindow.h"
 #if defined(QVTK_USE_CARBON)
@@ -109,7 +109,6 @@ QVTKWidget::QVTKWidget(QWidget* p, Qt::WindowFlags f)
   mPaintEngine = new QVTKPaintEngine;
 
   this->mCachedImage = vtkImageData::New();
-  this->mCachedImage->SetScalarTypeToUnsignedChar();
   this->mCachedImage->SetOrigin(0,0,0);
   this->mCachedImage->SetSpacing(1,1,1);
 
@@ -307,10 +306,9 @@ void QVTKWidget::saveImageToCache()
 
   int w = this->width();
   int h = this->height();
-  this->mCachedImage->SetWholeExtent(0, w-1, 0, h-1, 0, 0);
-  this->mCachedImage->SetNumberOfScalarComponents(3);
-  this->mCachedImage->SetExtent(this->mCachedImage->GetWholeExtent());
-  this->mCachedImage->AllocateScalars();
+  this->mCachedImage->SetExtent(0, w-1, 0, h-1, 0, 0);
+  this->mCachedImage->SetExtent(this->mCachedImage->GetExtent());
+  this->mCachedImage->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
   vtkUnsignedCharArray* array = vtkUnsignedCharArray::SafeDownCast(
         this->mCachedImage->GetPointData()->GetScalars());
   this->mRenWin->GetPixelData(0, 0, this->width()-1, this->height()-1, 1,
@@ -325,7 +323,6 @@ void QVTKWidget::setAutomaticImageCacheEnabled(bool flag)
   if (!flag)
   {
     this->mCachedImage->Initialize();
-    this->mCachedImage->SetScalarTypeToUnsignedChar();
     this->mCachedImage->SetOrigin(0,0,0);
     this->mCachedImage->SetSpacing(1,1,1);
   }
@@ -913,7 +910,7 @@ public:
   {
   }
   QSignalMapper* SignalMapper;
-  typedef vtkstd::map<int, QTimer*> TimerMap;
+  typedef std::map<int, QTimer*> TimerMap;
   TimerMap Timers;
 };
 

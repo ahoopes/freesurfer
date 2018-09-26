@@ -56,14 +56,6 @@ int
 vtkInflatePolyData::RequestInformation ( vtkInformation *vtkNotUsed(iRequest),
 			      vtkInformationVector **vtkNotUsed(ioaInputInfo),
 				       vtkInformationVector *ioaOutputInfo ) {
-
-  // Get the first info from the output. (Should only have 1.)
-  vtkInformation *outInfo = ioaOutputInfo->GetInformationObject( 0 );
-
-  // Just 1 piece.
-  outInfo->
-    Set( vtkStreamingDemandDrivenPipeline::SetMaximumNumberOfPieces(), 1 );
-  
   return 1;
 }
 

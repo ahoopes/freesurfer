@@ -1,15 +1,17 @@
 #ifndef __vtkFDTensorGlyph_h
 #define __vtkFDTensorGlyph_h
 
-#include <vtkStructuredPointsToPolyDataFilter.h>
+#include <vtkAlgorithm.h>
 #include <vtkTransform.h>
+#include <vtkImageData.h>
+
 
 class vtkLookupTable;
 
-class vtkFDTensorGlyph : public vtkStructuredPointsToPolyDataFilter {
+class vtkFDTensorGlyph : public vtkAlgorithm {
 
  public:
-  vtkTypeMacro(vtkFDTensorGlyph,vtkStructuredPointsToPolyDataFilter);
+  vtkTypeMacro(vtkFDTensorGlyph,vtkAlgorithm);
   //void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description
@@ -53,7 +55,7 @@ protected:
   vtkFDTensorGlyph();
   ~vtkFDTensorGlyph();
 
-  void Execute();
+  void RequestData(vtkInformation*, vtkInformationVector** inInfoVec, vtkInformationVector* outInfoVec);
 
   vtkTransform *VoxelToMeasurementFrameTransform;
 
@@ -75,13 +77,13 @@ protected:
     EVA = 10,
   };
 
-  static const double SMALL_EIGENVALUE = 1e-8;
+  const double SMALL_EIGENVALUE = 1e-8;
 
 private:
   vtkFDTensorGlyph(const vtkFDTensorGlyph&);  // Not implemented.
   void operator=(const vtkFDTensorGlyph&);  // Not implemented.
 
-  void ComputeScalarRangeGreaterThanZero(const int component, double range[2]);
+  void ComputeScalarRangeGreaterThanZero(vtkImageData *input, const int component, double range[2]);
   double GetScalarMean(const int component);
 };
 

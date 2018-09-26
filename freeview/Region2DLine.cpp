@@ -116,14 +116,14 @@ void Region2DLine::Update()
   polydata->SetPoints( pts );
   polydata->SetLines( lines );
   vtkSmartPointer<vtkPolyDataMapper2D> mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
-  mapper->SetInput( polydata );
+  mapper->SetInputData( polydata );
 
   vtkSmartPointer<vtkCoordinate> coords = vtkSmartPointer<vtkCoordinate>::New();
   coords->SetCoordinateSystemToViewport();
   mapper->SetTransformCoordinate( coords );
   m_actorLine->SetMapper( mapper );
 
-  //  m_actorText->SetInput( GetShortStats().c_str() );
+  //  m_actorText->SetInputData( GetShortStats().c_str() );
   m_actorText->SetPosition( pt3 );
   UpdateStats();
 }

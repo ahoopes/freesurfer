@@ -45,7 +45,7 @@ bool VolumeFilterSobel::Execute()
 {
   TriggerFakeProgress(50);
   vtkSmartPointer<vtkImageSobel3D> filter = vtkSmartPointer<vtkImageSobel3D>::New();
-  filter->SetInput( m_volumeInput->GetImageData() );
+  filter->SetInputData( m_volumeInput->GetImageData() );
   vtkSmartPointer<vtkImageMagnitude> mag = vtkSmartPointer<vtkImageMagnitude>::New();
   mag->SetInputConnection(filter->GetOutputPort());
   mag->Update();
@@ -58,7 +58,7 @@ bool VolumeFilterSobel::Execute()
     scale = -scale;
   }
   vtkSmartPointer<vtkImageShiftScale> scaler = vtkSmartPointer<vtkImageShiftScale>::New();
-  scaler->SetInput(img);
+  scaler->SetInputData(img);
   scaler->SetShift(0);
   scaler->SetScale(scale);
   scaler->SetOutputScalarType(m_volumeInput->GetImageData()->GetScalarType());

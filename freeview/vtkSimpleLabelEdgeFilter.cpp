@@ -35,7 +35,6 @@
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkSimpleLabelEdgeFilter, "$Revision: 1.6 $");
 vtkStandardNewMacro(vtkSimpleLabelEdgeFilter);
 
 // The switch statement in Execute will call this method with

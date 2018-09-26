@@ -53,14 +53,14 @@ bool VolumeFilterGradient::Execute()
   if ( m_bSmoothing )
   {
     vtkSmartPointer<vtkImageGaussianSmooth> smooth = vtkSmartPointer<vtkImageGaussianSmooth>::New();
-    smooth->SetInput( m_volumeInput->GetImageData() );
+    smooth->SetInputData( m_volumeInput->GetImageData() );
     smooth->SetStandardDeviations( m_dSD, m_dSD, m_dSD );
     smooth->SetRadiusFactors( 1, 1, 1 );
     grad->SetInputConnection( smooth->GetOutputPort() );
   }
   else
   {
-    grad->SetInput( m_volumeInput->GetImageData() );
+    grad->SetInputData( m_volumeInput->GetImageData() );
   }
 
   grad->Update();
@@ -73,7 +73,7 @@ bool VolumeFilterGradient::Execute()
     scale = -scale;
   }
   vtkSmartPointer<vtkImageShiftScale> scaler = vtkSmartPointer<vtkImageShiftScale>::New();
-  scaler->SetInput(img);
+  scaler->SetInputData(img);
   scaler->SetShift(0);
   scaler->SetScale(scale);
   scaler->SetOutputScalarType(m_volumeInput->GetImageData()->GetScalarType());

@@ -1,15 +1,15 @@
 #ifndef __vtkODFGlyph_h
 #define __vtkODFGlyph_h
 
-#include <vtkStructuredPointsToPolyDataFilter.h>
+#include <vtkAlgorithm.h>
 
 class vtkLookupTable;
 class vtkPolyData;
 
-class vtkODFGlyph : public vtkStructuredPointsToPolyDataFilter {
+class vtkODFGlyph : public vtkAlgorithm {
 
  public:
-  vtkTypeMacro(vtkODFGlyph,vtkStructuredPointsToPolyDataFilter);
+  vtkTypeMacro(vtkODFGlyph,vtkAlgorithm);
   //void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description
@@ -41,7 +41,7 @@ protected:
   vtkODFGlyph();
   ~vtkODFGlyph();
 
-  void Execute();
+  void RequestData(vtkInformation*, vtkInformationVector** inInfoVec, vtkInformationVector* outInfoVec);
 
   double GFARange[2];
 

@@ -98,7 +98,7 @@ RenderView::RenderView( QWidget* parent ) : GenericRenderView( parent),
   normCoords->SetCoordinateSystemToNormalizedDisplay();
 
   vtkSmartPointer<vtkPolyDataMapper2D> pMapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
-  pMapper->SetInput(Grid);
+  pMapper->SetInputData(Grid);
   pMapper->SetTransformCoordinate(normCoords);
 
   m_actorFocusFrame->SetMapper(pMapper);

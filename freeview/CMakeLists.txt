@@ -12,6 +12,8 @@ if(BUILD_GUIS AND Qt5_FOUND AND VTK_FOUND AND ITK_FOUND AND PETSC_FOUND AND TARG
     ${QT_INCLUDE_DIRS}
   )
 
+  include(${VTK_USE_FILE})
+
   set(CMAKE_AUTOUIC ON)
   set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTORCC ON)
@@ -44,8 +46,8 @@ if(BUILD_GUIS AND Qt5_FOUND AND VTK_FOUND AND ITK_FOUND AND PETSC_FOUND AND TARG
     FSLabel.cpp
     FSPointSet.cpp
     FSSurface.cpp
-    # FSVolume.cpp
-    # GenericRenderView.cpp
+    FSVolume.cpp
+    GenericRenderView.cpp
     InfoTreeWidget.cpp
     Interactor.cpp
     Interactor2D.cpp
@@ -64,69 +66,69 @@ if(BUILD_GUIS AND Qt5_FOUND AND VTK_FOUND AND ITK_FOUND AND PETSC_FOUND AND TARG
     Interactor3DPathEdit.cpp
     Layer.cpp
     LayerCollection.cpp
-    # LayerDTI.cpp
+    LayerDTI.cpp
     LayerEditable.cpp
-    # LayerMRI.cpp
-    # LayerPLabel.cpp
-    # LayerPointSet.cpp
+    LayerMRI.cpp
+    LayerPLabel.cpp
+    LayerPointSet.cpp
     LayerProperty.cpp
     LayerPropertyDTI.cpp
     LayerPropertyMRI.cpp
     LayerPropertyPointSet.cpp
     LayerPropertyROI.cpp
     LayerPropertySurface.cpp
-    # LayerROI.cpp
-    # LayerSurface.cpp
+    LayerROI.cpp
+    LayerSurface.cpp
     LayerTreeWidget.cpp
     LayerVolumeBase.cpp
     LabelTreeWidget.cpp
     SplineTreeWidget.cpp
-    # LivewireTool.cpp
+    LivewireTool.cpp
     LUTDataHolder.cpp
     main.cpp
     MyCmdLineParser.cpp
     MyUtils.cpp
-    # MyVTKUtils.cpp
+    MyVTKUtils.cpp
     PanelLayer.cpp
     PanelPointSet.cpp
     PanelROI.cpp
     PanelSurface.cpp
     PanelVolume.cpp
     qtcolorpicker.cpp
-    # QVTKWidget.cxx
-    # QVTKPaintEngine.cxx
+    QVTKWidget.cxx
+    QVTKPaintEngine.cxx
     Region2D.cpp
-    # Region2DLine.cpp
-    # Region2DPolyline.cpp
-    # Region2DRectangle.cpp
-    # RenderView.cpp
-    # RenderView2D.cpp
-    # RenderView3D.cpp
+    Region2DLine.cpp
+    Region2DPolyline.cpp
+    Region2DRectangle.cpp
+    RenderView.cpp
+    RenderView2D.cpp
+    RenderView3D.cpp
     SurfaceAnnotation.cpp
     SurfaceLabel.cpp
     SurfaceOverlay.cpp
     SurfaceOverlayProperty.cpp
-    # SurfaceRegion.cpp
+    SurfaceRegion.cpp
     SurfaceRegionGroups.cpp
     TermWidget.cpp
-    # ThreadBuildContour.cpp
+    ThreadBuildContour.cpp
     ThreadIOWorker.cpp
     ToolWindowEdit.cpp
     ToolWindowMeasure.cpp
     ToolWindowROIEdit.cpp
     UIUpdateHelper.cpp
-    # VolumeCropper.cpp
+    VolumeCropper.cpp
     VolumeFilter.cpp
     VolumeFilterConvolve.cpp
-    # VolumeFilterGradient.cpp
+    VolumeFilterGradient.cpp
     VolumeFilterMean.cpp
-    # VolumeFilterMedian.cpp
-    # VolumeFilterSobel.cpp
+    VolumeFilterMedian.cpp
+    VolumeFilterSobel.cpp
     VolumeFilterErode.cpp
     VolumeFilterDilate.cpp
     VolumeFilterOpen.cpp
     VolumeFilterClose.cpp
-    # vtkSimpleLabelEdgeFilter.cpp
+    vtkSimpleLabelEdgeFilter.cpp
     WidgetHistogram.cpp
     WindowConfigureOverlay.cpp
     WindowQuickReference.cpp
@@ -134,16 +136,16 @@ if(BUILD_GUIS AND Qt5_FOUND AND VTK_FOUND AND ITK_FOUND AND PETSC_FOUND AND TARG
     track_io/TrackIO.cpp
     TrackData.cpp
     Track.cpp
-    # LayerTrack.cpp
+    LayerTrack.cpp
     TrackGroup.cpp
     PanelTrack.cpp
     LayerPropertyTrack.cpp
     DialogSaveVolume.cpp
     MainWindow.cpp
     DialogReplaceLabel.cpp
-    # LayerVolumeTrack.cpp
-    # LayerLandmarks.cpp
-    # SurfaceROI.cpp
+    LayerVolumeTrack.cpp
+    LayerLandmarks.cpp
+    SurfaceROI.cpp
     SurfacePath.cpp
     MainApplication.cpp
     ProgressCallback.cpp
@@ -169,7 +171,7 @@ if(BUILD_GUIS AND Qt5_FOUND AND VTK_FOUND AND ITK_FOUND AND PETSC_FOUND AND TARG
     DialogLoadConnectome.cpp
     PanelAllLayers.cpp
     DialogLoadSurface.cpp
-    # LayerFCD.cpp
+    LayerFCD.cpp
     LayerPropertyFCD.cpp
     PanelFCD.cpp
     DialogLoadFCD.cpp
@@ -202,7 +204,7 @@ if(BUILD_GUIS AND Qt5_FOUND AND VTK_FOUND AND ITK_FOUND AND PETSC_FOUND AND TARG
     ${OPENGL_LIBRARIES}
     utils
     fsgdf
-    # vtkutils
+    vtkutils
     # vtkfsio
     lineprof
     ${VTK_LIBRARIES}
