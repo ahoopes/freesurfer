@@ -556,32 +556,30 @@ bool FSVolume::Create( FSVolume* src_vol, bool bCopyVoxelData, int data_type )
   }
   else
   {
-    m_imageData->SetNumberOfScalarComponents( 1 );
-    switch ( m_MRI->type )
-    {
-    case MRI_UCHAR:
-      m_imageData->SetScalarTypeToUnsignedChar();
-      break;
-    case MRI_INT:
-      m_imageData->SetScalarTypeToInt();
-      break;
-    case MRI_LONG:
-      m_imageData->SetScalarTypeToLong();
-      break;
-    case MRI_FLOAT:
-      m_imageData->SetScalarTypeToFloat();
-      break;
-    case MRI_SHORT:
-      m_imageData->SetScalarTypeToShort();
-      break;
-    default:
-      break;
-    }
-
     m_imageData->SetOrigin( src_vol->m_imageData->GetOrigin() );
     m_imageData->SetSpacing( src_vol->m_imageData->GetSpacing() );
     m_imageData->SetDimensions( src_vol->m_imageData->GetDimensions() );
-    m_imageData->AllocateScalars();
+    switch ( m_MRI->type )
+    {
+    case MRI_UCHAR:
+      m_imageData->AllocateScalars(VTK_UCHAR, 1);
+      break;
+    case MRI_INT:
+      m_imageData->AllocateScalars(VTK_INT, 1);
+      break;
+    case MRI_LONG:
+      m_imageData->AllocateScalars(VTK_LONG, 1);
+      break;
+    case MRI_FLOAT:
+      m_imageData->AllocateScalars(VTK_FLOAT, 1);
+      break;
+    case MRI_SHORT:
+      m_imageData->AllocateScalars(VTK_SHORT, 1);
+      break;
+    default:
+      m_imageData->AllocateScalars(VTK_FLOAT, 1);
+      break;
+    }
     char* ptr = ( char* )m_imageData->GetScalarPointer();
     int* nDim = m_imageData->GetDimensions();
     if ( !ptr )

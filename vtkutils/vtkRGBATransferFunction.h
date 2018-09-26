@@ -59,10 +59,10 @@ class vtkPiecewiseFunction;
 #define VTK_CTF_RGB           0
 #define VTK_CTF_HSV           1
 
-class VTK_FILTERING_EXPORT vtkRGBATransferFunction : public vtkScalarsToColors {
+class vtkRGBATransferFunction : public vtkScalarsToColors {
 public:
   static vtkRGBATransferFunction *New();
-  vtkTypeRevisionMacro(vtkRGBATransferFunction,vtkScalarsToColors);
+  vtkTypeMacro(vtkRGBATransferFunction,vtkScalarsToColors);
   void DeepCopy( vtkRGBATransferFunction *f );
 
   // Description:

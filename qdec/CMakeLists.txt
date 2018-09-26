@@ -29,22 +29,22 @@ if(BUILD_GUIS
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated")
 
-    # use vtkWrapTcl to create the tcl-wrapped code for these objects
-    vtk_wrap_tcl(vtkKWQdecApp.h vtkKWQdecAppTcl.cxx)
-    vtk_wrap_tcl(vtkKWQdecWindow.h vtkKWQdecWindowTcl.cxx)
-    vtk_wrap_tcl(vtkKWQdecView.h vtkKWQdecViewTcl.cxx)
-    vtk_wrap_tcl_init(QdecLibInit.data QdecLibInit.cxx)
+    # # use vtkWrapTcl to create the tcl-wrapped code for these objects
+    # vtk_wrap_tcl(vtkKWQdecApp.h vtkKWQdecAppTcl.cxx)
+    # vtk_wrap_tcl(vtkKWQdecWindow.h vtkKWQdecWindowTcl.cxx)
+    # vtk_wrap_tcl(vtkKWQdecView.h vtkKWQdecViewTcl.cxx)
+    # vtk_wrap_tcl_init(QdecLibInit.data QdecLibInit.cxx)
 
     set(SOURCES
       QdecMain.cxx
       vtkKWQdecApp.cxx
-      vtkKWQdecAppTcl.cxx
+      # vtkKWQdecAppTcl.cxx
       vtkKWQdecWindow.cxx
-      vtkKWQdecWindowTcl.cxx
+      # vtkKWQdecWindowTcl.cxx
       vtkKWQdecView.cxx
-      vtkKWQdecViewTcl.cxx
+      # vtkKWQdecViewTcl.cxx
       QdecUtilities.cxx
-      QdecLibInit.cxx
+      # QdecLibInit.cxx
     )
 
     if(APPLE)

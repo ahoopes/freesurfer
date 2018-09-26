@@ -11,23 +11,24 @@ if(VTK_FOUND AND KWWidgets_FOUND)
     ${KWWidgets_INCLUDE_DIR}
   )
 
-  set(CMAKE_CXX_STANDARD 98)
+  # set(CMAKE_CXX_STANDARD 98)
 
-  # use vtkWrapTcl to create the tcl-wrapped code for these objects
-  vtk_wrap_tcl(vtkKWRGBATransferFunctionEditor.h vtkKWRGBATransferFunctionEditorTcl.cxx)
-  vtk_wrap_tcl(vtkKWBltGraph.h vtkKWBltGraphTcl.cxx)
+  # # use vtkWrapTcl to create the tcl-wrapped code for these objects
+  # vtk_wrap_tcl(vtkKWRGBATransferFunctionEditor.h vtkKWRGBATransferFunctionEditorTcl.cxx)
+  # vtk_wrap_tcl(vtkKWBltGraph.h vtkKWBltGraphTcl.cxx)
 
   set(SOURCES
-    vtkKWProgressDialog.cxx
-    vtkKWRGBATransferFunctionEditor.cxx
-    vtkKWRGBATransferFunctionEditorTcl.cxx
-    vtkKWBltGraph.cxx vtkKWBltGraphTcl.cxx
+    # vtkKWProgressDialog.cxx
+    # vtkKWRGBATransferFunctionEditor.cxx
+    # vtkKWRGBATransferFunctionEditorTcl.cxx
+    # vtkKWBltGraphTcl.cxx
+    # vtkKWBltGraph.cxx
     vtkFreesurferLookupTable.cxx
     vtkArrowPipeline.cxx
     vtkRGBATransferFunction.cxx
     vtkRGBAColorTransferFunction.cxx
-    vtkFDTensorGlyph.cxx
-    vtkODFGlyph.cxx
+    # vtkFDTensorGlyph.cxx
+    # vtkODFGlyph.cxx
     vtkInflatePolyData.cxx
     IconLoader.cxx
   )

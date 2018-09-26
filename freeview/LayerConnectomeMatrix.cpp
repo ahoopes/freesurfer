@@ -330,7 +330,7 @@ void LayerConnectomeMatrix::RebuildSplineActors()
   polydata->SetPoints(points);
   polydata->SetLines(lines);
   vtkSmartPointer<vtkSplineFilter> spline = vtkSmartPointer<vtkSplineFilter>::New();
-  spline->SetInput(polydata);
+  spline->SetInputData(polydata);
   spline->SetSubdivideToLength();
   spline->SetLength(2*voxel_len);
   vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -338,7 +338,7 @@ void LayerConnectomeMatrix::RebuildSplineActors()
   tube->SetInputConnection(spline->GetOutputPort());
   tube->SetRadius(GetProperty()->GetSplineRadius()*voxel_len);
   tube->SetNumberOfSides(GetProperty()->GetNumberOfSides());
-  mapper->SetInput(tube->GetOutput());
+  mapper->SetInputData(tube->GetOutput());
   mapper->SetScalarVisibility(0);
   m_actorSplines->SetMapper(mapper);
 
@@ -367,7 +367,7 @@ void LayerConnectomeMatrix::RebuildSplineActors()
     tube->SetInputConnection(cutter->GetOutputPort());
     tube->SetRadius(GetProperty()->GetSplineRadius()*voxel_len);
     tube->SetNumberOfSides(GetProperty()->GetNumberOfSides());
-    mapper->SetInput(tube->GetOutput());
+    mapper->SetInputData(tube->GetOutput());
     mapper->SetScalarVisibility(0);
     m_actorSlice[i]->SetMapper(mapper);
   }

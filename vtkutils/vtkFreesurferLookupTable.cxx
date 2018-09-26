@@ -30,7 +30,6 @@
 using namespace std;
 
 vtkStandardNewMacro( vtkFreesurferLookupTable );
-vtkCxxRevisionMacro( vtkFreesurferLookupTable, "$Revision: 1.4 $" );
 
 vtkFreesurferLookupTable::vtkFreesurferLookupTable () {
 

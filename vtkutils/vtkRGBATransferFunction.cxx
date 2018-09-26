@@ -50,7 +50,6 @@
 #include "vtkObjectFactory.h"
 #include "vtkPiecewiseFunction.h"
 
-vtkCxxRevisionMacro(vtkRGBATransferFunction, "$Revision: 1.4 $");
 vtkStandardNewMacro(vtkRGBATransferFunction);
 
 //----------------------------------------------------------------------------

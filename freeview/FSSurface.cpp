@@ -1017,7 +1017,7 @@ void FSSurface::UpdateVerticesAndNormals()
   m_polydata->GetPointData()->SetNormals( newNormals );
   m_polydataVertices->SetPoints( newPoints );
   m_polydataWireframes->SetPoints( newPoints );
-  m_polydata->Update();
+  // m_polydata->Update();  // ath this might have been a bad idea
 
   // if vector data exist
   UpdateVectors();
@@ -1174,7 +1174,7 @@ void FSSurface::UpdateVector2D( int nPlane, double slice_pos, vtkPolyData* conto
       pos[nPlane] = slice_pos;
       slicer->SetOrigin( pos );
       slicer->SetNormal( (nPlane==0), (nPlane==1), (nPlane==2) );
-      cutter->SetInput( m_polydataTarget );
+      cutter->SetInputData( m_polydataTarget );
       cutter->SetCutFunction( slicer );
       cutter->Update();
       target_polydata = cutter->GetOutput();

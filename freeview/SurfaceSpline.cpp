@@ -111,10 +111,10 @@ void SurfaceSpline::BuildSphereActor(vtkActor* actor, vtkPoints* pts)
     sphere->SetRadius( 0.625 );
     sphere->SetThetaResolution( 10 );
     sphere->SetPhiResolution( 20 );
-    append->AddInput( sphere->GetOutput() );
+    append->AddInputData( sphere->GetOutput() );
   }
   vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  mapper->SetInput( append->GetOutput() );
+  mapper->SetInputData( append->GetOutput() );
   actor->SetMapper(mapper);
 }
 
@@ -172,12 +172,12 @@ void SurfaceSpline::RebuildActors()
       polydata->SetPoints(points);
       polydata->SetLines(lines);
       vtkSmartPointer<vtkSplineFilter> spline = vtkSmartPointer<vtkSplineFilter>::New();
-      spline->SetInput(polydata);
+      spline->SetInputData(polydata);
       vtkSmartPointer<vtkTubeFilter> tube = vtkSmartPointer<vtkTubeFilter>::New();
-      tube->SetInput(spline->GetOutput());
+      tube->SetInputData(spline->GetOutput());
       tube->SetNumberOfSides(8);
       tube->SetRadius(0.25);
-      mapper->SetInput(tube->GetOutput());
+      mapper->SetInputData(tube->GetOutput());
       BuildSphereActor(m_actorSpheres, points);
     }
     for (int n = 0; n < 3; n++)
@@ -186,7 +186,7 @@ void SurfaceSpline::RebuildActors()
       polydata->SetPoints(points);
       polydata->SetLines(lines);
       vtkSmartPointer<vtkSplineFilter> spline = vtkSmartPointer<vtkSplineFilter>::New();
-      spline->SetInput(polydata);
+      spline->SetInputData(polydata);
       spline->Update();
       vtkPolyData* spline_poly = spline->GetOutput();
       vtkPoints* spline_points = spline_poly->GetPoints();
@@ -211,10 +211,10 @@ void SurfaceSpline::RebuildActors()
       }
 
       vtkSmartPointer<vtkTubeFilter> tube = vtkSmartPointer<vtkTubeFilter>::New();
-      tube->SetInput(spline_poly);
+      tube->SetInputData(spline_poly);
       tube->SetNumberOfSides(8);
       tube->SetRadius(0.25);
-      mapper2d[n]->SetInput(tube->GetOutput());
+      mapper2d[n]->SetInputData(tube->GetOutput());
       BuildSphereActor(m_actor2DSpheres[n], ctrl_points);
     }
   }

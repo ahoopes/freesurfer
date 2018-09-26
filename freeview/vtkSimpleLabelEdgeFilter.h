@@ -35,11 +35,11 @@
 
 #include "vtkSimpleImageToImageFilter.h"
 
-class VTK_IMAGING_EXPORT vtkSimpleLabelEdgeFilter : public vtkSimpleImageToImageFilter
+class vtkSimpleLabelEdgeFilter : public vtkSimpleImageToImageFilter
 {
 public:
   static vtkSimpleLabelEdgeFilter *New();
-  vtkTypeRevisionMacro(vtkSimpleLabelEdgeFilter,vtkSimpleImageToImageFilter);
+  vtkTypeMacro(vtkSimpleLabelEdgeFilter,vtkSimpleImageToImageFilter);
 
 protected:
   vtkSimpleLabelEdgeFilter() {};
