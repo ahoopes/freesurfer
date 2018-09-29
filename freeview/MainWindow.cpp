@@ -5651,6 +5651,8 @@ void MainWindow::OnIOFinished( Layer* layer, int jobtype )
   LayerCollection* lc_surface = GetLayerCollection( "Surface" );
   LayerCollection* lc_track = GetLayerCollection( "Tract" );
   LayerCollection* lc_sup = GetLayerCollection( "Supplement");
+  std::cout << "ath: starting OnIOFinished\n";
+  fflush(stdout);
   if ( jobtype == ThreadIOWorker::JT_LoadVolume && layer->IsTypeOf( "MRI" ) )
   {
     LayerMRI* mri = qobject_cast<LayerMRI*>( layer );

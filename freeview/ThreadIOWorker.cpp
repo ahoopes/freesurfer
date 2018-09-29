@@ -46,6 +46,7 @@ void ThreadIOWorker::LoadVolume( Layer* layer, const QVariantMap& args )
   m_nJobType = JT_LoadVolume;
   m_args = args;
   start();
+  std::cout << "ath: after start" << std::endl;
 }
 
 void ThreadIOWorker::SaveVolume( Layer* layer, const QVariantMap& args )
@@ -176,11 +177,19 @@ void ThreadIOWorker::run()
       if ( !mri->LoadVolumeFromFile() )
       {
         emit Error( m_layer, m_nJobType );
+        std::cout << "ath: loaded badly\n";
+        fflush(stdout);
       }
       else
       {
         emit Finished( m_layer, m_nJobType );
+        std::cout << "ath: loaded cleanly\n";
+        fflush(stdout);
       }
+      std::cout << "ath: finished from thread\n";
+      std::cout << "ath: finished from thread2\n";
+      std::cout << "ath: finished from thread3\n";
+      fflush(stdout);
     }
   }
   else if (m_nJobType == JT_SaveVolume)

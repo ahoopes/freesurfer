@@ -96,7 +96,7 @@ if(BUILD_GUIS AND Qt5_FOUND AND VTK_FOUND AND ITK_FOUND AND PETSC_FOUND AND TARG
     PanelVolume.cpp
     qtcolorpicker.cpp
     # QVTKWidget.cxx
-    QVTKPaintEngine.cxx
+    # QVTKPaintEngine.cxx
     Region2D.cpp
     Region2DLine.cpp
     Region2DPolyline.cpp
