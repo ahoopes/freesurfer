@@ -25,7 +25,7 @@ target_link_libraries(sc_test utils)
 add_test_executable(sse_mathfun_test EXCLUDE_FROM_ALL sse_mathfun_test.c)
 target_link_libraries(sse_mathfun_test m)
 
-add_test_script(NAME utils_test SCRIPT test.py
+add_test_script(NAME utils_test SCRIPT test.sh
   DEPENDS
   test_TriangleFile_readWrite
   topology_test
