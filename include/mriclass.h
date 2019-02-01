@@ -28,7 +28,6 @@
 #define MRICLASS_H
 
 #include "classify.h"
-#include "backprop.h"
 #include "gclass.h"
 #include "mri.h"
 #include "rbf.h"
@@ -107,7 +106,6 @@ RBF_PARMS ;
 
 typedef union
 {
-  BACKPROP   *bp ;
   GCLASSIFY  *gc ;
   RBF        *rbf ;
 } CL_UNION ;

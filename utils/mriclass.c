@@ -31,7 +31,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "backprop.h"
 #include "diag.h"
 #include "error.h"
 #include "gclass.h"

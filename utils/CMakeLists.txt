@@ -18,7 +18,6 @@ set(SOURCES
   annotation.c
   aseg_edit_svm.c
   autoencoder.c
-  backprop.c
   bfileio.c
   box.c
   Bruker.c
