@@ -271,7 +271,6 @@ target_link_libraries(utils
   rgb
   hipsstubs
   dicom
-  log
   jpeg
   expat
   tiff
