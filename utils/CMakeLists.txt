@@ -100,7 +100,6 @@ set(SOURCES
   kernel.c
   kinput.c
   label.c
-  lpafile.c
   machine.c
   MARS_DT_Boundary.c
   matfile.c
