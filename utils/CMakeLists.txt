@@ -16,7 +16,6 @@ include_directories(
 set(SOURCES
   afni.c
   annotation.c
-  aseg_edit_svm.c
   autoencoder.c
   bfileio.c
   box.c

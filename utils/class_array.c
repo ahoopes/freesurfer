@@ -1,5 +1,5 @@
 /**
- * @file aseg_edit_svm.c
+ * @file class_array.c
  * @brief utilities for using SVMs to reclassify aseg voxels
  *
  */
