@@ -53,7 +53,6 @@ const char *MRI_C_VERSION = "$Revision: 1.575 $";
 #include "minc_volume_io.h"
 #include "mri2.h"
 #include "mriBSpline.h"
-#include "mri_transform.h"
 #include "pdf.h"
 #include "proto.h"
 #include "randomfields.h"

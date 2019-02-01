@@ -51,7 +51,6 @@ set(SOURCES
   filter.c
   fio.c
   flash.c
-  fmarchmesh.c
   fmriutils.c
   fs_cost_function.cpp
   fs_lbfgs.cpp
@@ -81,7 +80,6 @@ set(SOURCES
   gtm.c
   gw_ic2562.c
   gw_utils.c
-  heap.c
   hippo.c
   histo.c
   ic12.c
@@ -97,7 +95,6 @@ set(SOURCES
   ipmpar.c
   joint_histo.c
   kernel.c
-  kinput.c
   label.c
   machine.c
   MARS_DT_Boundary.c
@@ -105,7 +102,6 @@ set(SOURCES
   matrix.c
   mgh_filter.c
   min_heap.c
-  mincutils.c
   minmaxrc.c
   morph.c
   mosaic.c
@@ -117,7 +113,6 @@ set(SOURCES
   mri_level_set.c
   mri_tess.c
   mri_topology.c
-  mri_transform.c
   mriBSpline.c
   mriclass.c
   mricurv.c
@@ -161,12 +156,10 @@ set(SOURCES
   pgmstubs.c
   prime.c
   Progname.c
-  queue.c
   randomfields.c
   rbf.c
   rbm.c
   realm.c
-  rec.c
   region.c
   registerio.c
   resample.c
@@ -185,7 +178,6 @@ set(SOURCES
   svm.c
   tags.c
   talairachex.c
-  thread.c
   timer.c
   transform.c
   tritri.c
