@@ -36,7 +36,6 @@
 #include "utils.h"
 #include "proto.h"
 #include "classify.h"
-#include "gcarray.h"
 #include "version.h"
 #include "rforest.h"
 #include "cma.h"

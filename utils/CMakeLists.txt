@@ -69,7 +69,6 @@ set(SOURCES
   gcamcomputeLabelsLinearCPU.cpp
   gcamorph.c
   gcamorphtestutils.cpp
-  gcarray.c
   gcautils.cpp
   gclass.c
   gcsa.c
