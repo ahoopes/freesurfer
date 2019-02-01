@@ -300,12 +300,10 @@ if(NOT MINIMAL)
     tkanalyse.tcl
     tkm_common.tcl
     tkm_dialog.tcl
-    tkmedit.tcl
     tkm_functional.tcl
     tkm_graph.tcl
     tkm_wrappers.tcl
     tkregister.tcl
-    tksurfer.tcl
     tkUtils.tcl
     fsgdfPlot.tcl
     DESTINATION tktools

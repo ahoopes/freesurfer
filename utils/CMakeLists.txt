@@ -81,7 +81,6 @@ set(SOURCES
   gtm.c
   gw_ic2562.c
   gw_utils.c
-  handle.c
   heap.c
   hippo.c
   histo.c
@@ -105,7 +104,6 @@ set(SOURCES
   matfile.c
   matrix.c
   mgh_filter.c
-  mgh_matrix.c
   min_heap.c
   mincutils.c
   minmaxrc.c
@@ -125,8 +123,6 @@ set(SOURCES
   mricurv.c
   mrifilter.c
   mriflood.c
-  mriFunctionalDataAccess.c
-  mriHeadPointList.c
   mrihisto.c
   mriio.c
   mriio_nrrd.c
@@ -137,7 +133,6 @@ set(SOURCES
   mripolv.c
   mriprob.c
   mris_compVolFrac.c
-  mrisbiorthogonalwavelets.c
   mrisegment.c
   mriset.c
   mrishash.c
@@ -155,10 +150,8 @@ set(SOURCES
   mrisurf_timeStep.c
   mrisurf_topology.c
   mrisurf_vals.c
-  mriSurface.c
   mrisutils.c
   mriTransform.c
-  mriVolume.c
   mrivoxel.c
   nifti1_io.c
   numerics.cpp
@@ -187,7 +180,6 @@ set(SOURCES
   sig.c
   signa.c
   stats.c
-  stc.c
   surfcluster.c
   surfgrad.c
   svm.c
@@ -204,15 +196,8 @@ set(SOURCES
   vlabels.c
   volcluster.c
   voxlist.c
-  x3DList.c
   xDebug.c
-  xGLutWindow.c
-  xGrowableArray.c
-  xList.c
-  xSparseVolume.c
   xTypes.c
-  xUndoList.c
-  xUtilities.c
   xVoxel.c
   znzlib.c
 )

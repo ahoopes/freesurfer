@@ -882,7 +882,6 @@ MRIS_minMaxCurvature_analyze(
     aps_minMax->b_maxViolation  = 1;
     aps_minMax->f_max     = f_maxExplicit;
   }
-//  xDbg_PopStack();
   return 1;
 }
 
@@ -967,7 +966,6 @@ MRIS_curvatures_prepare(
         Gb_vertexAreaWeighFrac) {
     MRISvertexAreaPostProcess(apmris);
   }
-//  xDbg_PopStack();
   return ret;
 }
 
@@ -1061,7 +1059,6 @@ MRIS_minMaxCurve_report(
   sprintf(tmp, "%12.5f at vertex %-8d\n", s_minMax.f_max, s_minMax.vertexMax);
   strcat(apch_report,tmp);
 
-//  xDbg_PopStack();
   return 1;
 }
 
@@ -1356,7 +1353,6 @@ MRIS_surfaceIntegrals_report(
           100 * f_SInegArea / f_totalSurfaceArea, "%");
   strcat(apch_report,tmp);
 
-//  xDbg_PopStack();
   return 1;
 }
 
@@ -1444,7 +1440,6 @@ MRIS_curvatureStats_analyze(
     histogram_wrapper(apmris, aesot);
   }
 
-//  xDbg_PopStack();
   return 1;
 }
 
