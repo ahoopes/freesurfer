@@ -30,7 +30,6 @@
 #include "classify.h"
 #include "backprop.h"
 #include "gclass.h"
-#include "artmap.h"
 #include "mri.h"
 #include "rbf.h"
 
@@ -109,7 +108,6 @@ RBF_PARMS ;
 typedef union
 {
   BACKPROP   *bp ;
-  ARTMAP     *artmap ;
   GCLASSIFY  *gc ;
   RBF        *rbf ;
 } CL_UNION ;

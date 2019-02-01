@@ -16,8 +16,6 @@ include_directories(
 set(SOURCES
   afni.c
   annotation.c
-  art1.c
-  artmap.c
   aseg_edit_svm.c
   autoencoder.c
   backprop.c
@@ -39,7 +37,6 @@ set(SOURCES
   cpputils.cpp
   ctrpoints.c
   cvector.c
-  dcdflib.c
   dct.c
   density.c
   diag.c
