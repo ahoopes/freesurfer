@@ -13,185 +13,187 @@ include_directories(
   ${ITK_INCLUDE_DIRS}
 )
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -Wno-sign-compare -Wno-unused-value")
+
 set(SOURCES
-  afni.c
-  annotation.c
-  autoencoder.c
-  bfileio.c
-  box.c
-  Bruker.c
-  chklc.c
-  chronometer.c
+  afni.cpp
+  annotation.cpp
+  autoencoder.cpp
+  bfileio.cpp
+  box.cpp
+  Bruker.cpp
+  chklc.cpp
+  chronometer.cpp
   chronometerpp.cpp
-  class_array.c
-  cluster.c
-  cma.c
-  cmat.c
-  cmat.c
-  cmdargs.c
-  colortab.c
-  connectcomp.c
-  corio.c
+  class_array.cpp
+  cluster.cpp
+  cma.cpp
+  cmat.cpp
+  cmat.cpp
+  cmdargs.cpp
+  colortab.cpp
+  connectcomp.cpp
+  corio.cpp
   cpputils.cpp
-  ctrpoints.c
-  cvector.c
-  dct.c
-  density.c
-  diag.c
-  DICOMRead.c
-  diffuse.c
-  dmatrix.c
-  dti.c
-  dtk.fs.c
-  error.c
-  evschutils.c
-  fcd.c
-  fftutils.c
-  field_code.c
-  filter.c
-  fio.c
-  flash.c
-  fmriutils.c
+  ctrpoints.cpp
+  cvector.cpp
+  dct.cpp
+  density.cpp
+  diag.cpp
+  DICOMRead.cpp
+  diffuse.cpp
+  dmatrix.cpp
+  dti.cpp
+  dtk.fs.cpp
+  error.cpp
+  evschutils.cpp
+  fcd.cpp
+  fftutils.cpp
+  field_code.cpp
+  filter.cpp
+  fio.cpp
+  flash.cpp
+  fmriutils.cpp
   fs_cost_function.cpp
   fs_lbfgs.cpp
   fs_lbfgs_observer.cpp
   fs_lbfgs_subject.cpp
   fs_powell.cpp
-  fsenv.c
-  fsglm.c
-  fsinit.c
-  fsPrintHelp.c
-  gca.c
-  gcaboundary.c
+  fsenv.cpp
+  fsglm.cpp
+  fsinit.cpp
+  fsPrintHelp.cpp
+  gca.cpp
+  gcaboundary.cpp
   gcalinearnode.cpp
   gcalinearprior.cpp
   gcamcomputeLabelsLinearCPU.cpp
-  gcamorph.c
+  gcamorph.cpp
   gcamorphtestutils.cpp
   gcautils.cpp
-  gclass.c
-  gcsa.c
-  geos.c
-  getdelim.c
-  getline.c
-  gifti_io.c
-  gifti_local.c
-  gifti_xml.c
-  gtm.c
-  gw_ic2562.c
-  gw_utils.c
-  hippo.c
-  histo.c
-  ic12.c
-  ic163842.c
-  ic2562.c
-  ic42.c
-  ic642.c
-  icosahedron.c
-  image.c
-  imageio.c
-  imautils.c
-  intensity_eig.c
-  ipmpar.c
-  joint_histo.c
-  kernel.c
-  label.c
-  machine.c
-  MARS_DT_Boundary.c
-  matfile.c
-  matrix.c
-  mgh_filter.c
-  min_heap.c
-  minmaxrc.c
-  morph.c
-  mosaic.c
-  mri.c
-  mri2.c
-  mri_conform.c
+  gclass.cpp
+  gcsa.cpp
+  geos.cpp
+  getdelim.cpp
+  getline.cpp
+  gifti_io.cpp
+  gifti_local.cpp
+  gifti_xml.cpp
+  gtm.cpp
+  gw_ic2562.cpp
+  gw_utils.cpp
+  hippo.cpp
+  histo.cpp
+  ic12.cpp
+  ic163842.cpp
+  ic2562.cpp
+  ic42.cpp
+  ic642.cpp
+  icosahedron.cpp
+  image.cpp
+  imageio.cpp
+  imautils.cpp
+  intensity_eig.cpp
+  ipmpar.cpp
+  joint_histo.cpp
+  kernel.cpp
+  label.cpp
+  machine.cpp
+  MARS_DT_Boundary.cpp
+  matfile.cpp
+  matrix.cpp
+  mgh_filter.cpp
+  min_heap.cpp
+  minmaxrc.cpp
+  morph.cpp
+  mosaic.cpp
+  mri.cpp
+  mri2.cpp
+  mri_conform.cpp
   mri_fastmarching.cpp
-  mri_identify.c
-  mri_level_set.c
-  mri_tess.c
-  mri_topology.c
-  mriBSpline.c
-  mriclass.c
-  mricurv.c
-  mrifilter.c
-  mriflood.c
-  mrihisto.c
-  mriio.c
-  mriio_nrrd.c
+  mri_identify.cpp
+  mri_level_set.cpp
+  mri_tess.cpp
+  mri_topology.cpp
+  mriBSpline.cpp
+  mriclass.cpp
+  mricurv.cpp
+  mrifilter.cpp
+  mriflood.cpp
+  mrihisto.cpp
+  mriio.cpp
+  mriio_nrrd.cpp
   mriio_nrrd_itk.cpp
-  MRIio_old.c
-  mrimorph.c
-  mrinorm.c
-  mripolv.c
-  mriprob.c
-  mris_compVolFrac.c
-  mrisegment.c
-  mriset.c
-  mrishash.c
-  mrisp.c
-  MRISrigidBodyAlignGlobal.c
-  mrisurf.c
-  mrisurf_base.c
-  mrisurf_deform.c
-  mrisurf_defect.c
-  mrisurf_integrate.c
-  mrisurf_io.c
-  mrisurf_metricProperties.c
-  mrisurf_mri.c
-  mrisurf_obsolete.c
-  mrisurf_timeStep.c
-  mrisurf_topology.c
-  mrisurf_vals.c
-  mrisutils.c
-  mriTransform.c
-  mrivoxel.c
-  nifti1_io.c
+  MRIio_old.cpp
+  mrimorph.cpp
+  mrinorm.cpp
+  mripolv.cpp
+  mriprob.cpp
+  mris_compVolFrac.cpp
+  mrisegment.cpp
+  mriset.cpp
+  mrishash.cpp
+  mrisp.cpp
+  MRISrigidBodyAlignGlobal.cpp
+  mrisurf.cpp
+  mrisurf_base.cpp
+  mrisurf_deform.cpp
+  mrisurf_defect.cpp
+  mrisurf_integrate.cpp
+  mrisurf_io.cpp
+  mrisurf_metricProperties.cpp
+  mrisurf_mri.cpp
+  mrisurf_obsolete.cpp
+  mrisurf_timeStep.cpp
+  mrisurf_topology.cpp
+  mrisurf_vals.cpp
+  mrisutils.cpp
+  mriTransform.cpp
+  mrivoxel.cpp
+  nifti1_io.cpp
   numerics.cpp
-  offset.c
-  path.c
-  pdf.c
-  pgmstubs.c
-  prime.c
-  Progname.c
-  randomfields.c
-  rbf.c
-  rbm.c
-  realm.c
-  region.c
-  registerio.c
-  resample.c
-  rescale.c
-  retinotopy.c
-  rfa.c
-  rforest.c
-  rfutils.c
-  romp_support.c
-  selxavgio.c
-  sig.c
-  signa.c
-  stats.c
-  surfcluster.c
-  surfgrad.c
-  svm.c
-  tags.c
-  talairachex.c
-  timer.c
-  transform.c
-  tritri.c
-  tukey.c
-  utils.c
-  version.c
-  vertexRotator.c
-  vlabels.c
-  volcluster.c
-  voxlist.c
-  xDebug.c
-  xTypes.c
-  xVoxel.c
-  znzlib.c
+  offset.cpp
+  path.cpp
+  pdf.cpp
+  pgmstubs.cpp
+  prime.cpp
+  Progname.cpp
+  randomfields.cpp
+  rbf.cpp
+  rbm.cpp
+  realm.cpp
+  region.cpp
+  registerio.cpp
+  resample.cpp
+  rescale.cpp
+  retinotopy.cpp
+  rfa.cpp
+  rforest.cpp
+  rfutils.cpp
+  romp_support.cpp
+  selxavgio.cpp
+  sig.cpp
+  signa.cpp
+  stats.cpp
+  surfcluster.cpp
+  surfgrad.cpp
+  svm.cpp
+  tags.cpp
+  talairachex.cpp
+  timer.cpp
+  transform.cpp
+  tritri.cpp
+  tukey.cpp
+  utils.cpp
+  version.cpp
+  vertexRotator.cpp
+  vlabels.cpp
+  volcluster.cpp
+  voxlist.cpp
+  xDebug.cpp
+  xTypes.cpp
+  xVoxel.cpp
+  znzlib.cpp
 )
 
 # add cephes sources
@@ -287,27 +289,27 @@ endif()
 
 # utils binaries
 
-set(GIFTI_SOURCES gifti_io.c gifti_xml.c nifti1_io.c znzlib.c)
+# set(GIFTI_SOURCES gifti_io.c gifti_xml.c nifti1_io.c znzlib.c)
 
-# gifti_tool
-add_executable(gifti_tool gifti_tool.c ${GIFTI_SOURCES})
-target_link_libraries(gifti_tool expat ${ZLIB_LIBRARIES})
-install(TARGETS gifti_tool DESTINATION bin)
+# # gifti_tool
+# add_executable(gifti_tool gifti_tool.c ${GIFTI_SOURCES})
+# target_link_libraries(gifti_tool expat ${ZLIB_LIBRARIES})
+# install(TARGETS gifti_tool DESTINATION bin)
 
-# gifti test
-add_executable(gifti_test gifti_test.c ${GIFTI_SOURCES})
-target_link_libraries(gifti_test expat ${ZLIB_LIBRARIES})
-install(TARGETS gifti_test DESTINATION bin)
+# # gifti test
+# add_executable(gifti_test gifti_test.c ${GIFTI_SOURCES})
+# target_link_libraries(gifti_test expat ${ZLIB_LIBRARIES})
+# install(TARGETS gifti_test DESTINATION bin)
 
-# xmlToHtml
-add_executable(xmlToHtml xmlToHtml.c)
-target_link_libraries(xmlToHtml xml2 expat ${ZLIB_LIBRARIES})
-install(TARGETS xmlToHtml DESTINATION bin)
+# # xmlToHtml
+# add_executable(xmlToHtml xmlToHtml.c)
+# target_link_libraries(xmlToHtml xml2 expat ${ZLIB_LIBRARIES})
+# install(TARGETS xmlToHtml DESTINATION bin)
 
-# fsPrintHelp
-add_executable(fsPrintHelp fsPrintHelp.c)
-target_compile_definitions(fsPrintHelp PRIVATE BUILD_MAIN)
-target_link_libraries(fsPrintHelp xml2 ${ZLIB_LIBRARIES})
-install(TARGETS fsPrintHelp DESTINATION bin)
+# # fsPrintHelp
+# add_executable(fsPrintHelp fsPrintHelp.c)
+# target_compile_definitions(fsPrintHelp PRIVATE BUILD_MAIN)
+# target_link_libraries(fsPrintHelp xml2 ${ZLIB_LIBRARIES})
+# install(TARGETS fsPrintHelp DESTINATION bin)
 
-add_subdirectory(test)
+# add_subdirectory(test)
