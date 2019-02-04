@@ -14261,10 +14261,6 @@ float MRIvoxelsInLabelWithPartialVolumeEffects(
 {
   enum { maxlabels = 20000 };
   float volume;
-#if (defined(FS_CUDA) && defined(GCAMORPH_ON_GPU))
-  volume = MRIvoxelsInLabelWithPartialVolumeEffectsGPU(mri, mri_vals, label, mri_mixing_coef, mri_nbr_labels);
-
-#else
   int x, y, z;
   MRI *mri_border;
   // DNG 6/7/07 : had to use maxlabels instead of MAX_CMA_LABELS here
@@ -14440,7 +14436,6 @@ float MRIvoxelsInLabelWithPartialVolumeEffects(
   }
 
   MRIfree(&mri_border);
-#endif
 
   return (volume);
 }
@@ -14554,9 +14549,6 @@ MRI *MRImarkLabelBorderVoxels(const MRI *mri_src, MRI *mri_dst, int label, int m
     mri_dst = MRIclone(mri_src, NULL);
   }
 
-#if (defined(FS_CUDA) && defined(GCAMORPH_ON_GPU))
-  MRImarkLabelBorderVoxelsGPU(mri_src, mri_dst, label, mark, six_connected);
-#else
   int x, y, z, xk, yk, zk, xi, yi, zi;
   int this_label, that_label, border;
   for (x = 0; x < mri_src->width; x++) {
@@ -14584,7 +14576,6 @@ MRI *MRImarkLabelBorderVoxels(const MRI *mri_src, MRI *mri_dst, int label, int m
       }
     }
   }
-#endif
 
   return (mri_dst);
 }
