@@ -10,7 +10,6 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 #include <vtkTransform.h>
-#include <vtkImageData.h>
 #include <vtkLookupTable.h>
 
 vtkStandardNewMacro(vtkFDTensorGlyph);
@@ -35,9 +34,10 @@ vtkFDTensorGlyph::~vtkFDTensorGlyph() {
   this->VoxelToSliceTransform->Delete();
 }
 
-void vtkFDTensorGlyph::Execute() {
-  vtkImageData *input = static_cast<vtkImageData *>(this->GetInput());
-  vtkPolyData *output = this->GetOutput();
+void vtkFDTensorGlyph::RequestData(vtkInformation*, vtkInformationVector** inInfoVec, vtkInformationVector* outInfoVec)
+{
+  vtkImageData* input = vtkImageData::GetData(inInfoVec[0]);
+  vtkPolyData* output = vtkPolyData::GetData(outInfoVec);
 
   double inputSpacing[3];
   input->GetSpacing(inputSpacing);
@@ -102,8 +102,8 @@ void vtkFDTensorGlyph::Execute() {
 
   //would improve performance with the expense of code redundancy if
   //computed both ranges in a single iteration
-  this->ComputeScalarRangeGreaterThanZero(FA, faRange);
-  this->ComputeScalarRangeGreaterThanZero(EVA, eigenValue1Range);
+  this->ComputeScalarRangeGreaterThanZero(input, FA, faRange);
+  this->ComputeScalarRangeGreaterThanZero(input, EVA, eigenValue1Range);
 
   int count = 0, colorCount = 0;
   for (int x = 0; x < dim[0]; x++) {
@@ -236,8 +236,7 @@ void vtkFDTensorGlyph::Execute() {
   colors->Delete();
 }
 
-void vtkFDTensorGlyph::ComputeScalarRangeGreaterThanZero(const int component, double range[2]) {
-  vtkImageData *input = this->GetInput();
+void vtkFDTensorGlyph::ComputeScalarRangeGreaterThanZero(vtkImageData *input, const int component, double range[2]) {
   float *scalarPointer = static_cast<float *>(input->GetScalarPointer());
   int numberOfComponents = input->GetNumberOfScalarComponents();
   if (component >= numberOfComponents) {

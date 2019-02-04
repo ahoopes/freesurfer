@@ -793,9 +793,9 @@ vtkODFGlyph::~vtkODFGlyph() {
   this->ColorTable->Delete();
 }
 
-void vtkODFGlyph::Execute() {
-  vtkImageData *input = (vtkImageData *)(this->GetInput());
-  vtkPolyData *output = this->GetOutput();
+void vtkODFGlyph::RequestData(vtkInformation*, vtkInformationVector** inInfoVec, vtkInformationVector* outInfoVec) {
+  vtkImageData* input = vtkImageData::GetData(inInfoVec[0]);
+  vtkPolyData* output = vtkPolyData::GetData(outInfoVec);
 
   int *dim = input->GetDimensions(); //change to rely on extent only
   int *extent = input->GetExtent();

@@ -656,36 +656,36 @@ void LayerSurface::InitializeActors()
 
   // main surface actor
   vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  mapper->SetInput( m_surfaceSource->GetPolyData() );
+  mapper->SetInputData( m_surfaceSource->GetPolyData() );
   m_mainActor->SetMapper( mapper );
   mapper->Update();
 
   // vector actor
   mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   vtkSmartPointer<vtkTubeFilter> tube = vtkSmartPointer<vtkTubeFilter>::New();
-  tube->SetInput(m_surfaceSource->GetVectorPolyData());
+  tube->SetInputData(m_surfaceSource->GetVectorPolyData());
   tube->SetNumberOfSides(8);
   tube->SetRadius(0.04);
   tube->CappingOn();
-  mapper->SetInput( tube->GetOutput() );
+  mapper->SetInputData( tube->GetOutput() );
   m_vectorActor->SetMapper( mapper );
   //  mapper->Update();
 
   for ( int i = 0; i < 3; i++ )
   {
     mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    mapper->SetInput(  m_surfaceSource->GetVector2DPolyData( i ) );
+    mapper->SetInputData(  m_surfaceSource->GetVector2DPolyData( i ) );
     m_vectorActor2D[i]->SetMapper( mapper );
   }
 
   // vertex actor
   mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  mapper->SetInput(  m_surfaceSource->GetVertexPolyData() );
+  mapper->SetInputData(  m_surfaceSource->GetVertexPolyData() );
   m_vertexActor->SetMapper( mapper );
 
   // wireframe actor
   mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  mapper->SetInput(  m_surfaceSource->GetWireframePolyData() );
+  mapper->SetInputData(  m_surfaceSource->GetWireframePolyData() );
   m_wireframeActor->SetMapper( mapper );
   mapper->Update();
 
@@ -706,7 +706,7 @@ void LayerSurface::InitializeActors()
     m_box[i] = vtkSmartPointer<vtkBox>::New();
     m_box[i]->SetBounds(bounds);
     vtkSmartPointer<vtkExtractPolyDataGeometry> extract = vtkSmartPointer<vtkExtractPolyDataGeometry>::New();
-    extract->SetInput(m_surfaceSource->GetPolyData());
+    extract->SetInputData(m_surfaceSource->GetPolyData());
     extract->ExtractInsideOn();
     extract->ExtractBoundaryCellsOn();
     extract->SetImplicitFunction(m_box[i]);
@@ -1530,7 +1530,7 @@ void LayerSurface::UpdateOverlay(bool bAskRedraw, bool pre_cached)
       }
       for ( int i = 0; i < nCount; i++ )
       {
-        array->SetTupleValue( i, data + i*4 );
+        array->SetTypedTuple( i, data + i*4 );
       }
       delete[] data;
       polydata->GetPointData()->SetActiveScalars( "Overlay" );
@@ -1599,7 +1599,7 @@ void LayerSurface::UpdateOverlay(bool bAskRedraw, bool pre_cached)
         MapLabels( data, nCount );
         for ( int i = 0; i < nCount; i++ )
         {
-          array->SetTupleValue( i, data + i*4 );
+          array->SetTypedTuple( i, data + i*4 );
         }
         delete[] data;
         polydata->GetPointData()->SetActiveScalars( "Overlay" );

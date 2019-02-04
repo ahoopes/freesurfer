@@ -131,7 +131,7 @@ std::vector < std::vector < double > > LayerLineProfile::Points3DToSpline2D(std:
   polydata->SetPoints(points);
   polydata->SetLines(lines);
   vtkSmartPointer<vtkSplineFilter> spline = vtkSmartPointer<vtkSplineFilter>::New();
-  spline->SetInput(polydata);
+  spline->SetInputData(polydata);
   spline->SetSubdivideToLength();
   spline->SetLength(distance);
   spline->Update();
@@ -173,7 +173,7 @@ std::vector< std::vector<double> > LayerLineProfile::Points2DToSpline3D(std::vec
   polydata->SetPoints(points);
   polydata->SetLines(lines);
   vtkSmartPointer<vtkSplineFilter> spline = vtkSmartPointer<vtkSplineFilter>::New();
-  spline->SetInput(polydata);
+  spline->SetInputData(polydata);
   spline->SetNumberOfSubdivisions(nSample);
   spline->Update();
   polydata = spline->GetOutput();
@@ -279,7 +279,7 @@ void LayerLineProfile::MakeFlatTube(vtkPoints* points, vtkCellArray* lines, vtkA
   polydata->SetLines(lines);
   vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
   vtkSmartPointer<vtkTubeFilter> tube = vtkSmartPointer<vtkTubeFilter>::New();
-  tube->SetInput(polydata);
+  tube->SetInputData(polydata);
   tube->SetNumberOfSides(6);
   tube->SetRadius(radius);
 
@@ -291,7 +291,7 @@ void LayerLineProfile::MakeFlatTube(vtkPoints* points, vtkCellArray* lines, vtkA
 
   vtkSmartPointer<vtkCutter> cutter =
       vtkSmartPointer<vtkCutter>::New();
-  cutter->SetInput( tube->GetOutput() );
+  cutter->SetInputData( tube->GetOutput() );
   cutter->SetCutFunction( plane );
 
   vtkSmartPointer<vtkStripper> stripper = vtkSmartPointer<vtkStripper>::New();
@@ -303,8 +303,8 @@ void LayerLineProfile::MakeFlatTube(vtkPoints* points, vtkCellArray* lines, vtkA
   cutpoly->SetPolys( stripper->GetOutput()->GetLines() );
 
   vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-  triangleFilter->SetInput( cutpoly );
-  mapper->SetInput(tube->GetOutput());
+  triangleFilter->SetInputData( cutpoly );
+  mapper->SetInputData(tube->GetOutput());
   /*
   mapper->SetScalarVisibility(true);
   vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();

@@ -513,7 +513,7 @@ void Annotation2D::UpdateScaleActors( double length,
   normCoords->SetCoordinateSystemToNormalizedViewport();
 
   vtkPolyDataMapper2D* pMapper = vtkPolyDataMapper2D::New();
-  pMapper->SetInput( poly );
+  pMapper->SetInputData( poly );
   pMapper->SetTransformCoordinate(normCoords);
   poly->Delete();
   normCoords->Delete();

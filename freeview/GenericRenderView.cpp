@@ -36,6 +36,7 @@
 #include <vtkPostScriptWriter.h>
 #include <vtkRenderLargeImage.h>
 #include <vtkVRMLExporter.h>
+#include <vtkGenericOpenGLRenderWindow.h>
 #include <vtkRenderWindow.h>
 #include <vtkPropCollection.h>
 #include <vtkPropPicker.h>
@@ -64,7 +65,9 @@ GenericRenderView::GenericRenderView(QWidget* parent, Qt::WindowFlags f) :
   QVTKWidget(parent, f)
 {
   m_renderer = vtkRenderer::New();
-  vtkRenderWindow* renWin = GetRenderWindow();
+  // vtkNew<vtkGenericOpenGLRenderWindow> win;
+  // SetRenderWindow(win);
+  vtkRenderWindow *renWin = GetRenderWindow();
   renWin->AddRenderer(m_renderer);
 
   m_renderer2 = NULL;
@@ -302,7 +305,7 @@ bool GenericRenderView::SaveImage(const QString& filename, bool bAntiAliasing, i
     vtkRenderLargeImage* image = vtkRenderLargeImage::New();
     image->SetInput(m_renderer);
     image->SetMagnification(nMag);
-    writer->SetInput(image->GetOutput());
+    writer->SetInputData(image->GetOutput());
     writer->SetFileName(fn.toLatin1().data());
     writer->Write();
     image->Delete();

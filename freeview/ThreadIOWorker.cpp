@@ -176,11 +176,14 @@ void ThreadIOWorker::run()
       if ( !mri->LoadVolumeFromFile() )
       {
         emit Error( m_layer, m_nJobType );
+        fflush(stdout);
       }
       else
       {
         emit Finished( m_layer, m_nJobType );
+        fflush(stdout);
       }
+      fflush(stdout);
     }
   }
   else if (m_nJobType == JT_SaveVolume)

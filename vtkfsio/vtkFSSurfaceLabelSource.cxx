@@ -42,12 +42,11 @@
 using namespace std;
 
 vtkStandardNewMacro( vtkFSSurfaceLabelSource );
-vtkCxxRevisionMacro( vtkFSSurfaceLabelSource, "$Revision: 1.14 $" );
 
 vtkFSSurfaceLabelSource::vtkFSSurfaceLabelSource() :
   LabelFileName( NULL ), Mris( NULL ), Label( NULL ) {
 
-  this->vtkSource::SetNthOutput(0, vtkPolyData::New());
+  this->SetNthOutput(0, vtkPolyData::New());
 
   // Releasing data for pipeline parallism.  Filters will know it is
   // empty.

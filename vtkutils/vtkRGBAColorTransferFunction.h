@@ -71,11 +71,11 @@ class vtkRGBAColorTransferFunctionInternals;
 #define VTK_CTF_LINEAR        0
 #define VTK_CTF_LOG10         1
 
-class VTK_FILTERING_EXPORT vtkRGBAColorTransferFunction : public vtkScalarsToColors 
+class vtkRGBAColorTransferFunction : public vtkScalarsToColors 
 {
 public:
   static vtkRGBAColorTransferFunction *New();
-  vtkTypeRevisionMacro(vtkRGBAColorTransferFunction,vtkScalarsToColors);
+  vtkTypeMacro(vtkRGBAColorTransferFunction,vtkScalarsToColors);
   void DeepCopy( vtkRGBAColorTransferFunction *f );
   void ShallowCopy( vtkRGBAColorTransferFunction *f );
 

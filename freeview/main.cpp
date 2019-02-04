@@ -45,6 +45,9 @@ extern "C"
 #include "chklc.h"
 }
 
+#include <QSurfaceFormat> 
+#include <QVTKOpenGLWidget.h> 
+
 const char* Progname;
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
@@ -123,6 +126,8 @@ int main(int argc, char *argv[])
 #else
   qInstallMsgHandler(myMessageOutput);
 #endif
+
+
 
   LineProf::InitializePetsc(true);
   FSinit();

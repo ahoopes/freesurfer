@@ -38,7 +38,7 @@ bool VolumeFilterMedian::Execute()
   TriggerFakeProgress(100);
   vtkSmartPointer<vtkImageMedian3D> filter = vtkSmartPointer<vtkImageMedian3D>::New();
   filter->SetKernelSize( m_nKernelSize, m_nKernelSize, m_nKernelSize );
-  filter->SetInput( m_volumeInput->GetImageData() );
+  filter->SetInputData( m_volumeInput->GetImageData() );
   filter->Update();
   m_volumeOutput->GetImageData()->DeepCopy( filter->GetOutput() );
   return true;

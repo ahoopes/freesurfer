@@ -189,7 +189,7 @@ void LayerLandmarks::UpdateActors(bool bBuild3D)
       vtkSmartPointer<vtkSphereSource> ball = vtkSmartPointer<vtkSphereSource>::New();
       vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
       ball->SetRadius(m_dRadius);
-      mapper->SetInput(ball->GetOutput());
+      mapper->SetInputData(ball->GetOutput());
       m_landmarks[i].actorSphere->SetMapper(mapper);
       m_landmarks[i].actorSphere->SetPosition(m_landmarks[i].pos);
     }
@@ -226,11 +226,11 @@ void LayerLandmarks::UpdateActors(bool bBuild3D)
         cutpoly->SetPolys( stripper->GetOutput()->GetLines() );
 
         vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-        triangleFilter->SetInput( cutpoly );
+        triangleFilter->SetInputData( cutpoly );
         mapper->SetInputConnection( triangleFilter->GetOutputPort() );
       }
       else
-        mapper->SetInput( vtkSmartPointer<vtkPolyData>::New() );
+        mapper->SetInputData( vtkSmartPointer<vtkPolyData>::New() );
 
       m_landmarks[i].actorSlice[j]->SetMapper( mapper );
     }

@@ -122,8 +122,7 @@ void LayerDTI::InitializeDTIColorMap()
   m_vectorData->DeepCopy(vectors);
   vtkFloatArray* fas = vtkFloatArray::New();
   fas->DeepCopy( m_imageData->GetPointData()->GetScalars() );
-  m_imageData->SetNumberOfScalarComponents( 2 );
-  m_imageData->AllocateScalars();
+  m_imageData->AllocateScalars(VTK_FLOAT, 2);
   vtkMatrix4x4* rotation_mat = vtkMatrix4x4::New();
   rotation_mat->Identity();
   MATRIX* reg = m_vectorSource->GetRegMatrix();

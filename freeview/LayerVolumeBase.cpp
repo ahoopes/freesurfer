@@ -562,8 +562,8 @@ QVector<int> LayerVolumeBase::BorderFillByRAS(int *n, int nPlane)
   int ref_n_frames = ref->GetNumberOfScalarComponents();
   float fVoxelValue = MyVTKUtils::GetImageDataComponent(ref_ptr, ref_dim, ref_n_frames, n[0], n[1], n[2], 0, ref_scalar_type);
   vtkSmartPointer<vtkSimpleLabelEdgeFilter> filter = vtkSmartPointer<vtkSimpleLabelEdgeFilter>::New();
-  reslice->SetInput(ref);
-  filter->SetInput(reslice->GetOutput());
+  reslice->SetInputData(ref);
+  filter->SetInputData(reslice->GetOutput());
   filter->Update();
   vtkSmartPointer<vtkImageData> outline_image = filter->GetOutput();
   ref_ptr = (char*)outline_image->GetScalarPointer();

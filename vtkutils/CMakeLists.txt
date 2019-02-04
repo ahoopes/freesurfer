@@ -10,8 +10,6 @@ if(VTK_FOUND)
     ${X11_INCLUDE_DIR}
   )
 
-  set(CMAKE_CXX_STANDARD 98)
-
   set(SOURCES
     vtkFreesurferLookupTable.cxx
     vtkArrowPipeline.cxx

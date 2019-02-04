@@ -90,7 +90,7 @@ void SurfaceROI::RebuildOutline( bool bClose )
   polydata->SetPoints( m_points );
   polydata->SetLines( lines );
   vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-  mapper->SetInput( polydata );
+  mapper->SetInputData( polydata );
   m_actorOutline->SetMapper( mapper );
 }
 

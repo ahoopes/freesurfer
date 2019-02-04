@@ -65,11 +65,8 @@
 #include <vtkTriangleFilter.h>
 #include <vtkPiecewiseFunction.h>
 #include <vtkColorTransferFunction.h>
-#include <vtkVolumeRayCastMapper.h>
 #include <vtkVolumeProperty.h>
 #include <vtkVolume.h>
-#include <vtkVolumeRayCastCompositeFunction.h>
-#include <vtkVolumeTextureMapper2D.h>
 #include <vtkFixedPointVolumeRayCastMapper.h>
 #include <vtkImageCast.h>
 #include <vtkImageClip.h>
@@ -139,7 +136,7 @@ bool MyVTKUtils::VTKScreenCapture( vtkRenderWindow* renderWnd,
     vtkRenderLargeImage* image = vtkRenderLargeImage::New();
     image->SetInput( renderer );
     image->SetMagnification( nMag );
-    writer->SetInput( image->GetOutput() );
+    writer->SetInputData( image->GetOutput() );
     writer->SetFileName( fn.toUtf8().data() );
     writer->Write();
     if ( writer->GetErrorCode() != 0 )
@@ -218,7 +215,7 @@ bool MyVTKUtils::BuildLabelContourActor( vtkImageData* data_in,
   Q_UNUSED(ext);
   int i = labelIndex;
   vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
-  threshold->SetInput( data_in );
+  threshold->SetInputData( data_in );
   threshold->ThresholdBetween( i-0.5, i+0.5 );
   threshold->ReplaceOutOn();
   threshold->SetOutValue( 0 );
@@ -254,7 +251,7 @@ bool MyVTKUtils::BuildLabelContourActor( vtkImageData* data_in,
   //   smoother->SetEdgeAngle( 90 );
   vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
   normals->SetInputConnection( smoother->GetOutputPort() );
-  //    normals->SetInput( polydata );
+  //    normals->SetInputData( polydata );
   normals->SetFeatureAngle( 90 );
   vtkSmartPointer<vtkTriangleFilter> stripper = vtkSmartPointer<vtkTriangleFilter>::New();
   stripper->SetInputConnection( normals->GetOutputPort() );
@@ -281,7 +278,7 @@ bool MyVTKUtils::BuildLabelContourActor( vtkImageData* data_in,
   foreach (int i, labelIndices)
   {
     vtkSmartPointer<vtkImageThreshold> threshold = vtkSmartPointer<vtkImageThreshold>::New();
-    threshold->SetInput( data_in );
+    threshold->SetInputData( data_in );
     threshold->ThresholdBetween( i-0.5, i+0.5 );
     threshold->ReplaceOutOn();
     threshold->SetOutValue( 0 );
@@ -299,7 +296,7 @@ bool MyVTKUtils::BuildLabelContourActor( vtkImageData* data_in,
     vtkSmartPointer<vtkMarchingCubes> contour = vtkSmartPointer<vtkMarchingCubes>::New();
     contour->SetInputConnection( bUpsample? resampler->GetOutputPort() : threshold->GetOutputPort());
     contour->SetValue(0, i);
-    append->AddInput(contour->GetOutput());
+    append->AddInputData(contour->GetOutput());
   }
   /*
   contour->Update();
@@ -310,7 +307,7 @@ bool MyVTKUtils::BuildLabelContourActor( vtkImageData* data_in,
       polydata->GetNumberOfCells() < 1 )
   {
     vtkPolyDataMapper* mapper = vtkPolyDataMapper::SafeDownCast( actor_out->GetMapper() );
-    mapper->SetInput( polydata );
+    mapper->SetInputData( polydata );
     ret = false;
   }
   else*/
@@ -332,7 +329,7 @@ bool MyVTKUtils::BuildLabelContourActor( vtkImageData* data_in,
     //   smoother->SetEdgeAngle( 90 );
     vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
     normals->SetInputConnection( smoother->GetOutputPort() );
-    //    normals->SetInput( polydata );
+    //    normals->SetInputData( polydata );
     normals->SetFeatureAngle( 90 );
     vtkSmartPointer<vtkTriangleFilter> stripper = vtkSmartPointer<vtkTriangleFilter>::New();
     stripper->SetInputConnection( normals->GetOutputPort() );
@@ -368,11 +365,11 @@ bool MyVTKUtils::BuildContourActor( vtkImageData* data_in,
     vtkSmartPointer<vtkImageClip> clipper = vtkSmartPointer<vtkImageClip>::New();
     if (bUpsample)
     {
-      resampler->SetInput(data_in);
+      resampler->SetInputData(data_in);
       clipper->SetInputConnection(resampler->GetOutputPort());
     }
     else
-      clipper->SetInput( data_in );
+      clipper->SetInputData( data_in );
     clipper->SetOutputWholeExtent( ext );
     threshold->SetInputConnection( clipper->GetOutputPort() );
   }
@@ -380,11 +377,11 @@ bool MyVTKUtils::BuildContourActor( vtkImageData* data_in,
   {
     if (bUpsample)
     {
-      resampler->SetInput(data_in);
+      resampler->SetInputData(data_in);
       threshold->SetInputConnection(resampler->GetOutputPort());
     }
     else
-      threshold->SetInput( data_in );
+      threshold->SetInputData( data_in );
   }
   threshold->ThresholdByLower( dTh2 );
   threshold->ReplaceOutOn();
@@ -426,7 +423,7 @@ bool MyVTKUtils::BuildContourActor( vtkImageData* data_in,
     //   smoother->SetEdgeAngle( 90 );
     vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
     normals->SetInputConnection( smoother->GetOutputPort() );
-    //    normals->SetInput( polydata );
+    //    normals->SetInputData( polydata );
     normals->SetFeatureAngle( 90 );
     vtkSmartPointer<vtkTriangleFilter> stripper = vtkSmartPointer<vtkTriangleFilter>::New();
     stripper->SetInputConnection( normals->GetOutputPort() );
@@ -471,7 +468,7 @@ bool MyVTKUtils::BuildVolume( vtkImageData* data_in,
       vtkSmartPointer<vtkFixedPointVolumeRayCastMapper>::New();
 
   vtkSmartPointer<vtkImageCast> cast = vtkSmartPointer<vtkImageCast>::New();
-  cast->SetInput( data_in );
+  cast->SetInputData( data_in );
   cast->SetOutputScalarTypeToUnsignedShort();
 
   // qDebug() << volumeMapper->GetIntermixIntersectingGeometry();
@@ -508,7 +505,7 @@ void MyVTKUtils::GetLivewirePoints( vtkImageData* image_in,
   int m_nPlane = nPlane_in;
   int m_nSlice = nSlice_in;
 
-  m_imageClip->SetInput( image_in );
+  m_imageClip->SetInputData( image_in );
   int ext[6];
   image_in->GetExtent( ext );
   ext[m_nPlane*2] = ext[m_nPlane*2 + 1] = m_nSlice;

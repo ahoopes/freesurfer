@@ -103,7 +103,7 @@ void ThreadBuildContour::run()
   {
     vtkSmartPointer<vtkImageExtractComponents> extract = vtkSmartPointer<vtkImageExtractComponents>::New();
     extract->SetComponents(m_mri->GetActiveFrame());
-    extract->SetInput(m_mri->GetImageData());
+    extract->SetInputData(m_mri->GetImageData());
     extract->Update();
     imagedata = extract->GetOutput();
   }
@@ -203,7 +203,7 @@ void ThreadBuildContour::run_old()
   {
     vtkSmartPointer<vtkImageExtractComponents> extract = vtkSmartPointer<vtkImageExtractComponents>::New();
     extract->SetComponents(m_mri->GetActiveFrame());
-    extract->SetInput(m_mri->GetImageData());
+    extract->SetInputData(m_mri->GetImageData());
     extract->Update();
     if (bLabelContour)
     {

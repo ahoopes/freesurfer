@@ -124,7 +124,7 @@ void LayerVolumeTrack::RebuildActors()
   {
     vtkSmartPointer<vtkImageExtractComponents> extract = vtkSmartPointer<vtkImageExtractComponents>::New();
     extract->SetComponents(i);
-    extract->SetInput(m_imageData);
+    extract->SetInputData(m_imageData);
     extract->Update();
     vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
     vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
@@ -184,7 +184,7 @@ void LayerVolumeTrack::UpdateFrameActor(int n)
   vtkActor* actor = m_actors[n];
   vtkSmartPointer<vtkImageExtractComponents> extract = vtkSmartPointer<vtkImageExtractComponents>::New();
   extract->SetComponents(n);
-  extract->SetInput(m_imageData);
+  extract->SetInputData(m_imageData);
   extract->Update();
   MRI* mri = m_volumeSource->GetMRI();
   MyVTKUtils::BuildContourActor(extract->GetOutput(), mri->frames[n].thresh, 1e8, actor);

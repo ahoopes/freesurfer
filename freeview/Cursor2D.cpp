@@ -165,7 +165,7 @@ void Cursor2D::Update( bool bConnectPrevious )
   polydata->SetPoints( points );
   polydata->SetLines( lines );
   vtkSmartPointer<vtkPolyDataMapper2D> mapper = vtkSmartPointer<vtkPolyDataMapper2D>::New();
-  mapper->SetInput( polydata );
+  mapper->SetInputData( polydata );
   vtkSmartPointer<vtkCoordinate> coords = vtkSmartPointer<vtkCoordinate>::New();
   coords->SetCoordinateSystemToViewport();
   mapper->SetTransformCoordinate( coords );

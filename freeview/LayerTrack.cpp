@@ -275,20 +275,20 @@ vtkActor* LayerTrack::ConstructActor(vtkPoints *points, vtkCellArray *lines, vtk
   if (GetProperty()->GetRenderRep() == LayerPropertyTrack::Tube)
   {
     vtkSmartPointer<vtkTubeFilter> tube = vtkSmartPointer<vtkTubeFilter>::New();
-    tube->SetInput(polydata);
+    tube->SetInputData(polydata);
     tube->SetRadius(GetProperty()->GetTubeRadius());
     tube->SetNumberOfSides(GetProperty()->GetNumberOfSides());
-    mapper->SetInput(tube->GetOutput());
+    mapper->SetInputData(tube->GetOutput());
     actor->SetMapper(mapper);
     /*
     mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    mapper->SetInput(polydata);
+    mapper->SetInputData(polydata);
     actor->AddLODMapper(mapper);
     */
   }
   else
   {
-    mapper->SetInput(polydata);
+    mapper->SetInputData(polydata);
     actor->SetMapper(mapper);
   }
   return actor;

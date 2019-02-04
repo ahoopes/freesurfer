@@ -40,7 +40,7 @@ class vtkFreesurferLookupTable : public vtkLookupTable {
  public:
   
   static vtkFreesurferLookupTable* New();
-  vtkTypeRevisionMacro( vtkFreesurferLookupTable, vtkLookupTable );
+  vtkTypeMacro( vtkFreesurferLookupTable, vtkLookupTable );
 
   // Description:
   // Clears and sets its internal entries by reading a Freesurfer LUT
