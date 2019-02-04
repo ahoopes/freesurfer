@@ -927,7 +927,7 @@ void myListAddInt(MYlist list, int element)
   size = myListSize(list);
   capacity = myListCapacity(list);
   elementSize = myListElementSize(list);
-  data = myListData(list);
+  data = (int *)myListData(list);
 
   if (size >= capacity) {
     capacityIncrement = myListCapacityIncrement(list);

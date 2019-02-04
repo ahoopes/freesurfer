@@ -1949,7 +1949,7 @@ MRI *MRIvalScale(MRI *mri_src, MRI *mri_dst, float flo, float fhi)
 MRI *MRIconfThresh(
     MRI *mri_src, MRI *mri_probs, MRI *mri_classes, MRI *mri_dst, float thresh, int min_target, int max_target)
 {
-  int x, y, z, width, height, depth, class;
+  int x, y, z, width, height, depth, classnum;
   float *pprobs, prob;
   BUFTYPE *pclasses, *pdst, *psrc, src;
 
@@ -1968,10 +1968,10 @@ MRI *MRIconfThresh(
       for (x = 0; x < width; x++) {
         src = *psrc++;
         prob = *pprobs++;
-        class = (int)*pclasses++;
-        if (prob >= thresh && ((class >= min_target) && (class <= max_target)))
+        classnum = (int)*pclasses++;
+        if (prob >= thresh && ((classnum >= min_target) && (classnum <= max_target)))
           *pdst++ = src;
-        else if ((class >= min_target) && (class <= max_target))
+        else if ((classnum >= min_target) && (classnum <= max_target))
           *pdst++ = 25;
         else
           *pdst++ = 0;
@@ -5509,7 +5509,7 @@ MRI *MRIallocChunk(int width, int height, int depth, int type, int nframes)
     /* Instead of allocating each row, just point to the
        correct location in the chunk. */
     for (row = 0; row < mri->height; row++) {
-      mri->slices[slice][row] = p;
+      mri->slices[slice][row] = (unsigned char *)p;
       p += mri->bytes_per_row;
     }
   }

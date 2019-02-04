@@ -158,7 +158,7 @@ int outputHelp(const char *name)
     if (NULL == fshome) {
       return -1;
     }
-    char *fullname = malloc(strlen(name) + strlen(fshome) + strlen("/docs/xml/.help.xml") + 1);
+    char *fullname = (char *)malloc(strlen(name) + strlen(fshome) + strlen("/docs/xml/.help.xml") + 1);
     strcpy(fullname, fshome);
     strcat(fullname, "/docs/xml/");
     strcat(fullname, name);
@@ -224,7 +224,7 @@ static void replaceUnderscore(char *c)
 // Prints the name of a tag in the correct format
 static void printName(xmlNodePtr cur)
 {
-  char *n = malloc(strlen((char *)cur->name) + 1);
+  char *n = (char *)malloc(strlen((char *)cur->name) + 1);
   strcpy(n, (char *)cur->name);
   toUpperCase(n);
   replaceUnderscore(n);

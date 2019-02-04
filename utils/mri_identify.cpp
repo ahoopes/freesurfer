@@ -588,7 +588,7 @@ int is_cor(const char *fname)
 
 int is_brik(const char *fname)
 {
-  char *dot;
+  const char *dot;
 
   dot = strrchr(fname, '.');
   if (dot) {
@@ -604,7 +604,7 @@ int is_siemens(const char *fname)
 {
   FILE *fp;
   char string[4];
-  char *dot;
+  const char *dot;
 
   dot = strrchr(fname, '.');
   if (dot) {
@@ -660,7 +660,7 @@ int is_genesis(const char *fname)
 {
   FILE *fp;
   long32 magic;
-  char *dot;
+  const char *dot;
 
   if (!strncmp(fname, "I.", 2)) return (1);
 
@@ -719,7 +719,8 @@ int is_analyze(const char *fname)
 {
   FILE *fp;
   dsr hdr;
-  char hfname[STRLEN], *dot;
+  char hfname[STRLEN];
+  const char *dot;
   long hdr_length;
 
   strcpy(hfname, fname);
@@ -760,7 +761,7 @@ int is_mnc(const char *fname)
 {
   char buf[3];
   FILE *fp;
-  char *dot;
+  const char *dot;
 
   dot = strrchr(fname, '.');
   if (dot) {
@@ -830,7 +831,7 @@ int is_mgh(const char *fname)
 /*--------------------------------------*/
 int is_bshort(const char *fname)
 {
-  char *dot;
+  const char *dot;
   dot = strrchr(fname, '.');
   if (dot) {
     dot++;
@@ -842,7 +843,7 @@ int is_bshort(const char *fname)
 /*--------------------------------------*/
 int is_bfloat(const char *fname)
 {
-  char *dot;
+  const char *dot;
   dot = strrchr(fname, '.');
   if (dot) {
     dot++;
@@ -853,7 +854,7 @@ int is_bfloat(const char *fname)
 /*--------------------------------------*/
 int is_bhdr(const char *fname)
 {
-  char *dot;
+  const char *dot;
   dot = strrchr(fname, '.');
   if (dot) {
     dot++;
@@ -1011,7 +1012,7 @@ int is_sdt(const char *fname)
 
 int is_gdf(const char *fname)
 {
-  char *dot;
+  const char *dot;
 
   dot = strrchr(fname, '.');
   if (dot != NULL) {
@@ -1024,7 +1025,7 @@ int is_gdf(const char *fname)
 
 int is_otl(const char *fname)
 {
-  char *dot;
+  const char *dot;
 
   dot = strrchr(fname, '.');
   if (dot != NULL) {
@@ -1083,7 +1084,7 @@ int is_nifti1(const char *fname)
 
 int is_nii(const char *fname)
 {
-  char *dot;
+  const char *dot;
   FILE *fp;
   char magic[4];
 
@@ -1124,7 +1125,7 @@ int is_nii(const char *fname)
 
 int is_nrrd(const char *fname)
 {
-  char *dot;
+  const char *dot;
   FILE *fp;
   char magic[4];
 

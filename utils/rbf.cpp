@@ -197,7 +197,7 @@ int RBFtrain(RBF *rbf,
              void *parm,
              float momentum)
 {
-  int i, class, c, cno;
+  int i, classnum, c, cno;
   CLUSTERING_PARM cp;
   CLUSTER_SET *cs;
 
@@ -234,8 +234,8 @@ int RBFtrain(RBF *rbf,
   }
 
   /* fill in cluster pointers in rbf struct for convenience sake */
-  for (cno = class = 0; class < rbf->noutputs; class ++) {
-    cs = rbf->cs[class];
+  for (cno = classnum = 0; classnum < rbf->noutputs; classnum ++) {
+    cs = rbf->cs[classnum];
     if (cs)
       for (c = 0; c < cs->nclusters; c++, cno++) rbf->clusters[cno] = cs->clusters + c;
   }
@@ -499,7 +499,7 @@ static int rbfShowClusterCenters(RBF *rbf, FILE *fp)
   for (i = 0; i < rbf->noutputs; i++) {
     cs = rbf->cs[i];
     if (!cs) continue;
-    fprintf(fp, "class %s:\n", rbf->class_names[i]);
+    fprintf(fp, "classnum %s:\n", rbf->class_names[i]);
     for (c = 0; c < cs->nclusters; c++) {
       cluster = cs->clusters + c;
       fprintf(fp, "cluster %d has %d observations. Center:", c, cluster->nsamples);
@@ -559,13 +559,13 @@ static float rbfGaussian(MATRIX *m_sigma_inverse, VECTOR *v_means, VECTOR *v_obs
           inverse covariance matrix m_sigma_inverse given the
           input v_obs.
 ------------------------------------------------------*/
-float RBFcomputeErrors(RBF *rbf, int class, VECTOR *v_error)
+float RBFcomputeErrors(RBF *rbf, int classnum, VECTOR *v_error)
 {
   int i;
   float target, error, total_error;
 
   for (total_error = 0.0f, i = 1; i <= rbf->noutputs; i++) {
-    if (class == (i - 1))
+    if (classnum == (i - 1))
       target = 1.0f;
     else
       target = 0.0f;
@@ -617,7 +617,7 @@ static int rbfAdjustOutputWeights(RBF *rbf, VECTOR *v_error)
         Description
           Print the RBF activations to a file for debugging.
 ------------------------------------------------------*/
-int RBFprintActivations(RBF *rbf, VECTOR *v_obs, VECTOR *v_error, int class, FILE *fp)
+int RBFprintActivations(RBF *rbf, VECTOR *v_obs, VECTOR *v_error, int classnum, FILE *fp)
 {
   int i;
 
@@ -630,8 +630,8 @@ int RBFprintActivations(RBF *rbf, VECTOR *v_obs, VECTOR *v_error, int class, FIL
     fprintf(fp, "%+2.2f ", RVECTOR_ELT(rbf->v_outputs, i));
     if (v_error) fprintf(fp, "(%+2.2f) ", VECTOR_ELT(v_error, i));
   }
-  if (class >= 0)
-    fprintf(fp, " : %d \n", class);
+  if (classnum >= 0)
+    fprintf(fp, " : %d \n", classnum);
   else
     fprintf(fp, "\n");
   return (NO_ERROR);
@@ -800,21 +800,21 @@ static int rbfComputeOutputs(RBF *rbf)
 ------------------------------------------------------*/
 int RBFclassify(RBF *rbf, VECTOR *v_obs)
 {
-  int class, c;
+  int classnum, c;
   float max_val, val;
 
   rbfComputeHiddenActivations(rbf, v_obs);
   rbfComputeOutputs(rbf);
   max_val = RVECTOR_ELT(rbf->v_outputs, 1);
-  class = 0;
+  classnum = 0;
   for (c = 2; c <= rbf->noutputs; c++) {
     val = RVECTOR_ELT(rbf->v_outputs, c);
     if (val > max_val) {
       max_val = val;
-      class = c - 1;
+      classnum = c - 1;
     }
   }
-  return (class);
+  return (classnum);
 }
 /*-----------------------------------------------------
         Parameters:
@@ -837,7 +837,7 @@ static float rbfTrain(RBF *rbf,
                       int which)
 {
   VECTOR *v_obs, *v_error;
-  int obs_no, class, epoch = 0, nsmall = 0, nnegative = 0, nobs, positive = 0;
+  int obs_no, classnum, epoch = 0, nsmall = 0, nnegative = 0, nobs, positive = 0;
   float error, sse = 0.0f, delta_sse, rms, old_sse;
   RBF *rbf_save = NULL;
 
@@ -862,7 +862,7 @@ static float rbfTrain(RBF *rbf,
 #else
         obs_no = nobs;
 #endif
-        if ((*get_observation_func)(v_obs, obs_no, parm, 0, &class) != NO_ERROR)
+        if ((*get_observation_func)(v_obs, obs_no, parm, 0, &classnum) != NO_ERROR)
           ErrorExit(ERROR_BADPARM,
                     "rbfTrain: observation function failed to"
                     " obtain training sample # %d",
@@ -881,7 +881,7 @@ static float rbfTrain(RBF *rbf,
         rbfNormalizeObservation(rbf, v_obs, v_obs);
         rbfComputeHiddenActivations(rbf, v_obs);
         rbfComputeOutputs(rbf);
-        error = RBFcomputeErrors(rbf, class, v_error);
+        error = RBFcomputeErrors(rbf, classnum, v_error);
         sse += error;
         if (which & TRAIN_CENTERS) rbfAdjustHiddenCenters(rbf, v_error);
 #if 1
@@ -999,13 +999,13 @@ int RBFexamineTrainingSet(RBF *rbf,
                           int (*get_observation_func)(VECTOR *v_obs, int no, void *parm, int same_class, int *pclass),
                           void *parm)
 {
-  int obs_no = 0, class, row, c, i;
+  int obs_no = 0, classnum, row, c, i;
   VECTOR *v_obs;
   float *means, *stds, v, mean;
 
   v_obs = VectorAlloc(rbf->ninputs, MATRIX_REAL);
 
-  if ((*get_observation_func)(v_obs, obs_no++, parm, 0, &class) != NO_ERROR)
+  if ((*get_observation_func)(v_obs, obs_no++, parm, 0, &classnum) != NO_ERROR)
     ErrorExit(ERROR_BADPARM, "rbfExamineTrainingSet: no samples in set");
 
   /* not really a good idea to be messing with the CS internal parameters,
@@ -1025,7 +1025,7 @@ int RBFexamineTrainingSet(RBF *rbf,
     stds[row - 1] = v * v;
   }
 
-  while ((*get_observation_func)(v_obs, obs_no++, parm, 0, &class) == NO_ERROR) {
+  while ((*get_observation_func)(v_obs, obs_no++, parm, 0, &classnum) == NO_ERROR) {
     for (i = 0; i < rbf->ninputs; i++) {
       v = VECTOR_ELT(v_obs, i + 1);
       if (v > rbf->max_inputs[i]) rbf->max_inputs[i] = v;
@@ -1070,7 +1070,7 @@ RBF *RBFcopyWeights(RBF *rbf_src, RBF *rbf_dst)
   int i;
 
   if (!rbf_dst) {
-    int max_clusters[MAX_OUTPUTS], cno, class, c;
+    int max_clusters[MAX_OUTPUTS], cno, classnum, c;
     CLUSTER_SET *cs_src, *cs_dst;
 
     for (i = 0; i < rbf_src->noutputs; i++) max_clusters[i] = rbf_src->cs[i] ? rbf_src->cs[i]->max_clusters : 0;
@@ -1078,9 +1078,9 @@ RBF *RBFcopyWeights(RBF *rbf_src, RBF *rbf_dst)
     rbf_dst = RBFinit(rbf_src->ninputs, rbf_src->noutputs, max_clusters, rbf_src->class_names);
 
     /* fill in cluster pointers in rbf struct for convenience sake */
-    for (cno = class = 0; class < rbf_src->noutputs; class ++) {
-      cs_src = rbf_src->cs[class];
-      cs_dst = rbf_dst->cs[class];
+    for (cno = classnum = 0; classnum < rbf_src->noutputs; classnum ++) {
+      cs_src = rbf_src->cs[classnum];
+      cs_dst = rbf_dst->cs[classnum];
       if (cs_src)
         for (c = 0; c < cs_src->nclusters; c++, cno++) rbf_dst->clusters[cno] = cs_dst->clusters + c;
     }
@@ -1128,12 +1128,12 @@ static float rbfComputeCurrentError(
   float error, sse, obs_no;
   // float rms;
   VECTOR *v_obs, *v_error;
-  int class;
+  int classnum;
 
   v_obs = VectorAlloc(rbf->ninputs, MATRIX_REAL);
   v_error = VectorAlloc(rbf->noutputs, MATRIX_REAL);
   for (sse = 0.0f, obs_no = 0; obs_no < rbf->nobs; obs_no++) {
-    if ((*get_observation_func)(v_obs, obs_no, parm, 0, &class) != NO_ERROR)
+    if ((*get_observation_func)(v_obs, obs_no, parm, 0, &classnum) != NO_ERROR)
       ErrorExit(ERROR_BADPARM,
                 "rbfTrain: observation function failed to"
                 " obtain training sample # %d",
@@ -1141,7 +1141,7 @@ static float rbfComputeCurrentError(
     rbfNormalizeObservation(rbf, v_obs, v_obs);
     rbfComputeHiddenActivations(rbf, v_obs);
     rbfComputeOutputs(rbf);
-    error = RBFcomputeErrors(rbf, class, v_error);
+    error = RBFcomputeErrors(rbf, classnum, v_error);
     sse += error;
   }
   // rms = sqrt(sse / (float)rbf->nobs);
@@ -1170,7 +1170,7 @@ static int rbfCalculateOutputWeights(
     RBF *rbf, int (*get_observation_func)(VECTOR *v_obs, int no, void *parm, int same_class, int *pclass), void *parm)
 {
   VECTOR *v_obs, *v_hidden;
-  int class, obs_no, i, k;
+  int classnum, obs_no, i, k;
   MATRIX *m_Gt_G, *m_Gt_G_inv, *m_Gt_D;
 
   v_obs = VectorAlloc(rbf->ninputs, MATRIX_REAL);
@@ -1182,7 +1182,7 @@ static int rbfCalculateOutputWeights(
   /* go through the training set again to calculate (Gt G) and Gt D
    where D is the vector of desired values */
   for (obs_no = 0; obs_no < rbf->nobs; obs_no++) {
-    if ((*get_observation_func)(v_obs, obs_no, parm, 0, &class) != NO_ERROR)
+    if ((*get_observation_func)(v_obs, obs_no, parm, 0, &classnum) != NO_ERROR)
       ErrorExit(ERROR_BADPARM,
                 "rbfCalculateOutputWeights: observation "
                 " function failed to obtain training sample # %d",
@@ -1192,7 +1192,7 @@ static int rbfCalculateOutputWeights(
 
     for (i = 1; i <= rbf->nhidden + 1; i++) {
       /* only contributs to this class (all other outputs are 0) */
-      m_Gt_D->rptr[i][class + 1] += RVECTOR_ELT(v_hidden, i);
+      m_Gt_D->rptr[i][classnum + 1] += RVECTOR_ELT(v_hidden, i);
       for (k = 1; k <= rbf->nhidden + 1; k++) m_Gt_G->rptr[i][k] += RVECTOR_ELT(v_hidden, i) * RVECTOR_ELT(v_hidden, k);
     }
   }
@@ -1296,7 +1296,7 @@ int RBFwriteInto(RBF *rbf, FILE *fp)
   int i;
 
   fprintf(fp, "%d %d %d\n", rbf->noutputs, rbf->ninputs, rbf->nhidden);
-  fprintf(fp, "\n# class names and max # of clusters\n");
+  fprintf(fp, "\n# classnum names and max # of clusters\n");
   for (i = 0; i < rbf->noutputs; i++)
     fprintf(fp, "%d %s\n", rbf->cs[i] ? rbf->cs[i]->max_clusters : 0, rbf->class_names[i]);
 
@@ -1318,7 +1318,7 @@ int RBFwriteInto(RBF *rbf, FILE *fp)
 ------------------------------------------------------*/
 RBF *RBFreadFrom(FILE *fp)
 {
-  int i, c, cno, class, noutputs, ninputs, nhidden, max_clusters[MAX_OUTPUTS];
+  int i, c, cno, classnum, noutputs, ninputs, nhidden, max_clusters[MAX_OUTPUTS];
   char *names[MAX_OUTPUTS], *cp, line[100];
   RBF *rbf;
 
@@ -1343,9 +1343,9 @@ RBF *RBFreadFrom(FILE *fp)
   }
 
   /* fill in cluster pointers in rbf struct for convenience sake */
-  for (cno = class = 0; class < rbf->noutputs; class ++) {
-    if (rbf->cs[class])
-      for (c = 0; c < rbf->cs[class]->nclusters; c++, cno++) rbf->clusters[cno] = rbf->cs[class]->clusters + c;
+  for (cno = classnum = 0; classnum < rbf->noutputs; classnum ++) {
+    if (rbf->cs[classnum])
+      for (c = 0; c < rbf->cs[classnum]->nclusters; c++, cno++) rbf->clusters[cno] = rbf->cs[classnum]->clusters + c;
   }
 
   return (rbf);
@@ -1353,7 +1353,7 @@ RBF *RBFreadFrom(FILE *fp)
 
 #if 0
 int
-RBFbuildScatterPlot(RBF *rbf, int class, MATRIX *m_scatter,
+RBFbuildScatterPlot(RBF *rbf, int classnum, MATRIX *m_scatter,
                     char *training_file_name)
 {
   static int       first = 0 ;
@@ -1397,7 +1397,7 @@ RBFbuildScatterPlot(RBF *rbf, int class, MATRIX *m_scatter,
   stds = rbf->cs[0]->stds ;
 
   /* now fill in scatter plot */
-  while (mricGetClassifierInput(v_obs, obs_no++, &parms,1,&class) == NO_ERROR)
+  while (mricGetClassifierInput(v_obs, obs_no++, &parms,1,&classnum) == NO_ERROR)
   {
     for (i = 0 ; i < rbf->ninputs ; i++)
     {

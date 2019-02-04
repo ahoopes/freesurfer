@@ -1,5 +1,5 @@
 /**
- * @file class_array.c
+ * @file aseg_edit_svm.c
  * @brief utilities for using SVMs to reclassify aseg voxels
  *
  */
@@ -22,8 +22,6 @@
  *
  */
 
-extern const char *Progname;
-
 /*-----------------------------------------------------
   INCLUDE FILES
   -------------------------------------------------------*/
@@ -38,6 +36,8 @@ extern const char *Progname;
 #include "mri.h"
 #include "mrinorm.h"
 #include "voxlist.h"
+
+extern const char *Progname;
 
 static MATRIX *compute_ras_basis_vectors(
     MRI *mri_aseg_orig, MRI *mri_aseg_edit, int target_label, int width, int height, int depth, int pad);

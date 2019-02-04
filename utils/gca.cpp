@@ -1741,7 +1741,7 @@ GCA *gcaAllocMax(
   GCA_PRIOR *gcap;
   int x, y, z;
 
-  gca = calloc(1, sizeof(GCA));
+  gca = (GCA *)calloc(1, sizeof(GCA));
   if (!gca) {
     ErrorExit(ERROR_NOMEMORY, "GCAalloc: could not allocate struct");
   }
@@ -5186,7 +5186,7 @@ GCA_SAMPLE *GCAfindStableSamplesByLabel(GCA *gca, int nsamples, float min_prior)
   memset(ordered_label_counts, 0, sizeof(ordered_label_counts));
   memset(found, 0, sizeof(found));
   memset(volume, 0, sizeof(volume));
-  gcas = calloc(nsamples, sizeof(GCA_SAMPLE));
+  gcas = (GCA_SAMPLE *)calloc(nsamples, sizeof(GCA_SAMPLE));
   width = gca->prior_width;
   height = gca->prior_height;
   depth = gca->prior_depth;
@@ -5772,7 +5772,7 @@ GCA_SAMPLE *GCAfindStableSamples(GCA *gca,
   depth = gca->prior_depth;
 
   // samples size allocated is prior voxel points
-  gcas = calloc(width * height * depth, sizeof(GCA_SAMPLE));
+  gcas = (GCA_SAMPLE *)calloc(width * height * depth, sizeof(GCA_SAMPLE));
   if (!gcas)
     ErrorExit(ERROR_NOMEMORY,
               "%s: could not allocate %dK x %d samples\n",
@@ -6005,7 +6005,7 @@ GCA_SAMPLE *GCAfindExteriorSamples(
   depth = gca->prior_depth;
 
   // samples size allocated is prior voxel points
-  gcas = calloc(width * height * depth, sizeof(GCA_SAMPLE));
+  gcas = (GCA_SAMPLE *)calloc(width * height * depth, sizeof(GCA_SAMPLE));
   if (!gcas)
     ErrorExit(ERROR_NOMEMORY,
               "%s: could not allocate %dK x %d samples\n",
@@ -13137,7 +13137,7 @@ int GCAlabelMode(GCA *gca, int label, float *modes)
   }
   return (NO_ERROR);
 }
-int GCAclassMode(GCA *gca, int class, float *modes)
+int GCAclassMode(GCA *gca, int classnum, float *modes)
 {
   int xn, yn, zn, n, r;
   GCA_NODE *gcan;
@@ -13158,7 +13158,7 @@ int GCAclassMode(GCA *gca, int class, float *modes)
         gcan = &gca->nodes[xn][yn][zn];
         for (n = 0; n < gcan->nlabels; n++) {
           label = gcan->labels[n];
-          switch (class)  // check to make sure it is
+          switch (classnum)  // check to make sure it is
                           // the specified class
           {
             case WM_CLASS:
@@ -13199,7 +13199,7 @@ int GCAclassMode(GCA *gca, int class, float *modes)
   }
   if (Gdiag & DIAG_WRITE && DIAG_VERBOSE_ON) {
     char fname[STRLEN];
-    sprintf(fname, "gca_label%d.plt", class);
+    sprintf(fname, "gca_label%d.plt", classnum);
     HISTOplot(h, fname);
   }
 
@@ -13295,7 +13295,7 @@ int GCAlabelVar(GCA *gca, int label, float *vars)
   }
   return (NO_ERROR);
 }
-int GCAclassMean(GCA *gca, int class, float *means)
+int GCAclassMean(GCA *gca, int classnum, float *means)
 {
   int xn, yn, zn, n, r, label;
   GCA_NODE *gcan;
@@ -13311,7 +13311,7 @@ int GCAclassMean(GCA *gca, int class, float *means)
         gcan = &gca->nodes[xn][yn][zn];
         for (n = 0; n < gcan->nlabels; n++) {
           label = gcan->labels[n];
-          switch (class)  // check to make sure it is
+          switch (classnum)  // check to make sure it is
                           // the specified class
           {
             case WM_CLASS:
@@ -14578,7 +14578,7 @@ GCA_SAMPLE *GCAfindAllSamples(GCA *gca, int *pnsamples, int *exclude_list, int u
 
   // allocate nsamples worth GCA_SAMPLE
   // samples are non-unknowns and unknown with neighbor not unknown
-  gcas = calloc(nsamples, sizeof(GCA_SAMPLE));
+  gcas = (GCA_SAMPLE *)calloc(nsamples, sizeof(GCA_SAMPLE));
 
   badcount = 0;
   // get the values for gcas
@@ -21915,7 +21915,7 @@ GCA_NODE *GCAbuildRegionalGCAN(const GCA *gca, int xn, int yn, int zn, int wsize
   MATRIX *m_cov[MAX_CMA_LABEL + 1], *m_tmp = NULL;
   VECTOR *v_means[MAX_CMA_LABEL + 1], *v_tmp = NULL;
 
-  gcan = calloc(1, sizeof(GCA_NODE));
+  gcan = (GCA_NODE *)calloc(1, sizeof(GCA_NODE));
 
   memset(label_priors, 0, sizeof(label_priors));
   memset(total_training, 0, sizeof(total_training));
@@ -22000,7 +22000,7 @@ GCA_PRIOR *GCAbuildRegionalGCAP(const GCA *gca, int xp, int yp, int zp, int wsiz
   float label_priors[MAX_CMA_LABEL + 1], p;
   double total_p;
 
-  gcap = calloc(1, sizeof(GCA_PRIOR));
+  gcap = (GCA_PRIOR *)calloc(1, sizeof(GCA_PRIOR));
 
   memset(label_priors, 0, sizeof(label_priors));
   memset(total_training, 0, sizeof(total_training));
@@ -24701,14 +24701,14 @@ int GCAstructureBoundingBox(GCA *gca, int label, MRI_REGION *box)
   box->dz = zmax - zmin + 1;
   return (NO_ERROR);
 }
-int GCArenormalizeClass(GCA *gca, int class, float scale_to_wm)
+int GCArenormalizeClass(GCA *gca, int classnum, float scale_to_wm)
 {
   float wm_mode, class_mode, scale;
   int x, y, z, n, same_class, r;
   GCA_NODE *gcan;
 
   GCAclassMode(gca, WM_CLASS, &wm_mode);
-  GCAclassMode(gca, class, &class_mode);
+  GCAclassMode(gca, classnum, &class_mode);
 
   scale = scale_to_wm * wm_mode / class_mode;
   printf("current wm/csf ratio = %2.2f (%2.0f/%2.0f), scaling by %2.3f\n",
@@ -24721,7 +24721,7 @@ int GCArenormalizeClass(GCA *gca, int class, float scale_to_wm)
       for (z = 0; z < gca->node_depth; z++) {
         gcan = &gca->nodes[x][y][z];
         for (n = 0; n < gcan->nlabels; n++) {
-          switch (class) {
+          switch (classnum) {
 #if 0
           case LH_CLASS:
             same_class = IS_LH(gcan->labels[n]) ;

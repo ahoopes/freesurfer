@@ -1717,9 +1717,9 @@ static void growCapacity(int* p_capacity, int minCapacity) {
 
 static void growInts(int** p_old, int old_capacity, int new_capacity) {
     int* old = *p_old;
-    int* new = (int*)realloc(old, new_capacity*sizeof(int));
-    bzero(&new[old_capacity], (new_capacity - old_capacity)*sizeof(int));
-    *p_old = new;
+    int* curr = (int*)realloc(old, new_capacity*sizeof(int));
+    bzero(&curr[old_capacity], (new_capacity - old_capacity)*sizeof(int));
+    *p_old = curr;
 }
 
 static void growCapacityAndInts(int** p_old, int* p_capacity, int minCapacity) {

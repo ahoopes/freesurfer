@@ -84,7 +84,7 @@ static int mricTrainRBF(MRIC *mric, FILE *fp, int nfiles, int round);
 static int mricRetrainRBF(MRIC *mric, FILE *fp, int nfiles, int round);
 static int mricGetClassifierInput(VECTOR *v_inputs, int no, void *parm, int same_class, int *pclass);
 
-static int mricGetClassObservation(GET_INPUT_PARMS *parms, VECTOR *v_obs, int obs_no, int class);
+static int mricGetClassObservation(GET_INPUT_PARMS *parms, VECTOR *v_obs, int obs_no, int classnum);
 static int mricFillInputParms(MRIC *mric, FILE *fp, int round, GET_INPUT_PARMS *parms);
 
 /*-----------------------------------------------------
@@ -930,7 +930,7 @@ MRI *MRICbuildTargetImage(MRI *mri_src, MRI *mri_target, MRI *mri_wm, int lo_lim
 
 MRI *MRICupdatePriors(MRI *mri_target, MRI *mri_priors, int scale)
 {
-  int width, height, depth, x, y, z, class, w, h, d, xt, yt, zt;
+  int width, height, depth, x, y, z, classnum, w, h, d, xt, yt, zt;
   BUFTYPE *ptarget;
   double xrt, yrt, zrt;
 
@@ -962,8 +962,8 @@ MRI *MRICupdatePriors(MRI *mri_target, MRI *mri_priors, int scale)
         xt = mri_priors->xi[nint(xrt / scale)];
         yt = mri_priors->yi[nint(yrt / scale)];
         zt = mri_priors->zi[nint(zrt / scale)];
-        class = *ptarget++;
-        MRIFseq_vox(mri_priors, xt, yt, zt, class) = MRIFseq_vox(mri_priors, xt, yt, zt, class) + 1.0f;
+        classnum = *ptarget++;
+        MRIFseq_vox(mri_priors, xt, yt, zt, classnum) = MRIFseq_vox(mri_priors, xt, yt, zt, classnum) + 1.0f;
         MRIFseq_vox(mri_priors, xt, yt, zt, COUNT_IMAGE) = MRIFseq_vox(mri_priors, xt, yt, zt, COUNT_IMAGE) + 1.0f;
       }
     }
@@ -981,7 +981,7 @@ MRI *MRICupdatePriors(MRI *mri_target, MRI *mri_priors, int scale)
 ------------------------------------------------------*/
 int MRInormalizePriors(MRI *mri_priors)
 {
-  int width, height, depth, x, y, z, class;
+  int width, height, depth, x, y, z, classnum;
   float *pnorm, norm;
 
   width = mri_priors->width;
@@ -998,8 +998,8 @@ int MRInormalizePriors(MRI *mri_priors)
       for (x = 0; x < width; x++) {
         norm = *pnorm++;
         if (!FZERO(norm))
-          for (class = 0; class < GAUSSIAN_NCLASSES; class ++) {
-            MRIFseq_vox(mri_priors, x, y, z, class) /= norm;
+          for (classnum = 0; classnum < GAUSSIAN_NCLASSES; classnum ++) {
+            MRIFseq_vox(mri_priors, x, y, z, classnum) /= norm;
           }
       }
     }
@@ -1605,7 +1605,7 @@ int MRICexamineTrainingSet(MRIC *mric, char *file_name, int round)
 ------------------------------------------------------*/
 #define SCATTER_ROUND 0
 
-int MRICbuildScatterPlot(MRIC *mric, int class, MATRIX *m_scatter, char *training_file_name)
+int MRICbuildScatterPlot(MRIC *mric, int classnum, MATRIX *m_scatter, char *training_file_name)
 {
   int obs_no = 0, i, x, y, nbins;
   // int half_bins, bin_offset;
@@ -1652,7 +1652,7 @@ int MRICbuildScatterPlot(MRIC *mric, int class, MATRIX *m_scatter, char *trainin
   /* now fill in scatter plot */
   mins = rbf->min_inputs;
   maxs = rbf->max_inputs;
-  while (mricGetClassObservation(&parms, v_obs, obs_no++, class) == NO_ERROR) {
+  while (mricGetClassObservation(&parms, v_obs, obs_no++, classnum) == NO_ERROR) {
     for (i = 0; i < rbf->ninputs; i++) {
       mn = mins[i];
       mx = maxs[i];
@@ -1678,7 +1678,7 @@ int MRICbuildScatterPlot(MRIC *mric, int class, MATRIX *m_scatter, char *trainin
           Find the next observation for a given class. Stolen
           from rbf.c, but both really need it so....
 ------------------------------------------------------*/
-static int mricGetClassObservation(GET_INPUT_PARMS *parms, VECTOR *v_obs, int desired_class_obs_no, int class)
+static int mricGetClassObservation(GET_INPUT_PARMS *parms, VECTOR *v_obs, int desired_class_obs_no, int classnum)
 {
   int ret, classno, obs_no, class_obs_no;
   static int last_class = -1;
@@ -1686,7 +1686,7 @@ static int mricGetClassObservation(GET_INPUT_PARMS *parms, VECTOR *v_obs, int de
   static int last_obs = -1;
 
   desired_class_obs_no++; /* it is a count - not an index */
-  classno = class;
+  classno = classnum;
   if (classno == last_class && desired_class_obs_no > last_class_obs) {
     /* start at one past previous observation, not at start */
     class_obs_no = last_class_obs;
@@ -1697,7 +1697,7 @@ static int mricGetClassObservation(GET_INPUT_PARMS *parms, VECTOR *v_obs, int de
 
   do {
     ret = mricGetClassifierInput(v_obs, obs_no++, parms, 1, &classno);
-    if ((ret == NO_ERROR) && (classno == class)) class_obs_no++;
+    if ((ret == NO_ERROR) && (classno == classnum)) class_obs_no++;
   } while ((ret == NO_ERROR) && (class_obs_no < desired_class_obs_no));
 
   if (ret == NO_ERROR) {

@@ -49,7 +49,7 @@ RANDOM_FOREST *RFalloc(int ntrees, int nfeatures, int nclasses, int max_depth, c
   TREE *tree;
   int n, c = 0;
 
-  rf = calloc(1, sizeof(RANDOM_FOREST));
+  rf = (RANDOM_FOREST *)calloc(1, sizeof(RANDOM_FOREST));
   if (rf == NULL)
     ErrorExit(ERROR_NOMEMORY, "RFalloc(%d, %d, %d, %d): could not allocate RF", ntrees, nfeatures, nclasses, max_depth);
 
@@ -102,7 +102,7 @@ RANDOM_FOREST *RFalloc(int ntrees, int nfeatures, int nclasses, int max_depth, c
         ERROR_NOMEMORY, "RFalloc(%d, %d, %d, %d): could not allocate fmax", ntrees, nfeatures, nclasses, max_depth);
   for (n = 0; n < rf->ntrees; n++) {
     tree = &rf->trees[n];
-    tree->root.class_counts = calloc(rf->nclasses, sizeof(tree->root.class_counts[0]));
+    tree->root.class_counts = (int *)calloc(rf->nclasses, sizeof(tree->root.class_counts[0]));
     if (tree->root.class_counts == NULL)
       ErrorExit(ERROR_NOMEMORY,
                 "RFalloc(%d, %d, %d, %d): could not allocate root %d",
@@ -1079,7 +1079,7 @@ int RFsetNumberOfClasses(RANDOM_FOREST *rf, int nclasses)
     for (n = 0; n < rf->ntrees; n++) {
       tree = &rf->trees[n];
       old_class_counts = tree->root.class_counts;
-      tree->root.class_counts = calloc(nclasses, sizeof(tree->root.class_counts[0]));
+      tree->root.class_counts = (int *)calloc(nclasses, sizeof(tree->root.class_counts[0]));
       if (tree->root.class_counts == NULL)
         ErrorExit(ERROR_NOMEMORY, "RFsetNumberOfClasses(%d): could not allocate class names", nclasses);
       memmove(tree->root.class_counts, old_class_counts, rf->nclasses * sizeof(tree->root.class_counts[0]));

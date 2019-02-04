@@ -37,10 +37,6 @@
 #ifndef DIAG_H
 #define DIAG_H
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 #include <stdarg.h>
 #include "image.h"
 
@@ -156,13 +152,4 @@ extern FILE *Gstderr ;
 extern FILE *Gstdin ;
 extern FILE *Gdiag_fp ;
 
-#if defined(__cplusplus)
-};
 #endif
-
-#endif
-
-
-
-
-

@@ -27,12 +27,6 @@
 #if !defined(__MCONF_H)
 #define __MCONF_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-
 
   /*                                                      mconf.h
    *
@@ -211,9 +205,5 @@ extern "C"
   /* Variable for error reporting.  See mtherr.c.  */
   extern int merror;
 
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

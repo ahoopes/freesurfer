@@ -31,12 +31,6 @@
 
 #include <sys/timeb.h>
 
-
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 struct timeb *TimerStart(struct timeb *then) ;
 int TimerStop(struct timeb *then) ;
 
@@ -73,9 +67,5 @@ const char* current_date_time_noOverride();
 // can be overridden with a string that can the same across runs.
 //
 const char* current_date_time();
-
-#if defined(__cplusplus)
-};
-#endif
 
 #endif

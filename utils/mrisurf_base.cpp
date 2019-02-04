@@ -100,7 +100,7 @@ int MRISsetInflatedFileName(char *inflated_name)
 
   mrisurf_surface_names[0] = inflated_name;
   sprintf(fname, "%s.H", inflated_name);
-  char * copy = calloc(strlen(fname) + 1, sizeof(char));
+  char * copy = (char *)calloc(strlen(fname) + 1, sizeof(char));
   strcpy(copy, fname);
   curvature_names[0] = copy;
   return (NO_ERROR);
@@ -259,7 +259,7 @@ static void changeDistOrDistOrig(bool doOrig, MRIS *mris, int vno, int oldSize, 
       mris->dist_alloced_flags |= flag;
     }
     
-    *(float**)pc    = *p_storage;
+    *(float**)pc    = (float *)*p_storage;
     *(int   *)pcCap = neededCapacity;
   }
   
@@ -276,7 +276,7 @@ float* mrisStealDistStore(MRIS* mris, int vno, int capacity) {
   VERTEX const * const v = &mris->vertices[vno];
   
   float* p = NULL;
-  if (v->dist == NULL) { p = mris->dist_storage[vno]; mris->dist_storage[vno] = NULL; }
+  if (v->dist == NULL) { p = (float *)mris->dist_storage[vno]; mris->dist_storage[vno] = NULL; }
   
   return (float*)realloc(p, capacity*sizeof(float));
 }
@@ -298,7 +298,8 @@ void mrisSetDist(MRIS* mris, int vno, float* dist, int newCapacity) {
   float *       * p  = (float**)pc;
   
   if (mris->dist_storage[vno]) free(mris->dist_storage[vno]);   // very frequently avoid the lock
-  *p = mris->dist_storage[vno] = dist;
+  mris->dist_storage[vno] = dist;
+  *p = dist;
   
   const int * pcCap = &v->dist_capacity; *(int*)pcCap = newCapacity;
 }

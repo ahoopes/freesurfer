@@ -25,10 +25,6 @@
 #ifndef mriTransform_h
 #define mriTransform_h
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 #include "matrix.h"
 #include "mri.h"    /* transform.h requires mri.h */
 #include "transform.h"
@@ -184,13 +180,4 @@ void      Trns_Signal         ( char*           inMsg,
                                 Trns_tErr       ieCode );
 char*     Trns_GetErrorString ( Trns_tErr       ieCode );
 
-#if defined(__cplusplus)
-};
 #endif
-
-#endif
-
-
-
-
-

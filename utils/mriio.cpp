@@ -44,8 +44,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "machine.h"
 #include "mri.h"
-
 #include "AFNI.h"
 #include "Bruker.h"
 #include "DICOMRead.h"
@@ -61,7 +61,6 @@
 #include "gcamorph.h"
 #include "gifti_local.h"
 #include "imautils.h"
-#include "machine.h"
 #include "macros.h"
 #include "matfile.h"
 #include "math.h"
@@ -4327,7 +4326,7 @@ static MRI *bvolumeRead(const char *fname_passed, int read_volume, int type)
 
         if (swap_bytes_flag) {
           if (type == MRI_SHORT)
-            swab(mri->slices[k][row], mri->slices[k][row], mri->width * size);
+            swab(mri->slices[k][row], mri->slices[k][row], (size_t)(mri->width * size));
           else
             byteswapbuffloat((void *)mri->slices[k][row], size * mri->width);
         }
@@ -5579,7 +5578,7 @@ static MRI *gelxRead(const char *fname, int read_volume)
           ErrorReturn(NULL, (ERROR_BADFILE, "genesisRead(): error reading from file file %s", fname_use));
         }
 #if (BYTE_ORDER == LITTLE_ENDIAN)
-        swab(mri->slices[i - im_low][y], mri->slices[i - im_low][y], 2 * mri->width);
+        swab(mri->slices[i - im_low][y], mri->slices[i - im_low][y], (size_t)(2 * mri->width));
 #endif
       }
 
@@ -8622,7 +8621,7 @@ static MRI *ximgRead(const char *fname, int read_volume)
           ErrorReturn(NULL, (ERROR_BADFILE, "genesisRead(): error reading from file file %s", fname_use));
         }
 #if (BYTE_ORDER == LITTLE_ENDIAN)
-        swab(mri->slices[i - im_low][y], mri->slices[i - im_low][y], 2 * mri->width);
+        swab(mri->slices[i - im_low][y], mri->slices[i - im_low][y], (size_t)(2 * mri->width));
 #endif
       }
 
@@ -10605,7 +10604,7 @@ MRI *MRIreadGeRoi(const char *fname, int n_slices)
           ErrorReturn(NULL, (ERROR_BADFILE, "MRIreadGeRoi(): error reading from file file %s", fname_use));
         }
 #if (BYTE_ORDER == LITTLE_ENDIAN)
-        swab(mri->slices[i][y], mri->slices[i][y], 2 * mri->width);
+        swab(mri->slices[i][y], mri->slices[i][y], (size_t)(2 * mri->width));
 #endif
       }
 
@@ -11745,7 +11744,7 @@ static int mghWrite(MRI *mri, const char *fname, int frame)
 */
 MRI *MRIreorder4(MRI *mri, int order[4])
 {
-  MRI *new;
+  MRI *result;
   int n, olddims[4], newdims[4];
   int dold[4], dnew[4];
   int c0, r0, s0, f0;
@@ -11760,9 +11759,9 @@ MRI *MRIreorder4(MRI *mri, int order[4])
   for (n = 0; n < 4; n++) newdims[n] = olddims[order[n] - 1];
   // for(n=0; n<4; n++)
   //  printf("%d %d  %d  %d\n",n,order[n],olddims[n],newdims[n]);
-  new = MRIallocSequence(newdims[0], newdims[1], newdims[2], mri->type, newdims[3]);
-  if (new == NULL) return (NULL);
-  MRIcopyHeader(mri, new);
+  result = MRIallocSequence(newdims[0], newdims[1], newdims[2], mri->type, newdims[3]);
+  if (result == NULL) return (NULL);
+  MRIcopyHeader(mri, result);
 
   for (c0 = 0; c0 < mri->width; c0++) {
     for (r0 = 0; r0 < mri->height; r0++) {
@@ -11778,14 +11777,14 @@ MRI *MRIreorder4(MRI *mri, int order[4])
           s1 = dnew[2];
           f1 = dnew[3];
           v = MRIgetVoxVal(mri, c0, r0, s0, f0);
-          MRIsetVoxVal(new, c1, r1, s1, f1, v);
+          MRIsetVoxVal(result, c1, r1, s1, f1, v);
         }
       }
     }
     exec_progress_callback(c0, mri->width, 0, 1);
   }
 
-  return (new);
+  return (result);
 }
 
 /*!

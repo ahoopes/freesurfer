@@ -441,8 +441,8 @@ IMAFILEINFO *imaLoadFileInfo(const char *imafile)
 
   ifi->NFilesInSeries = imaCountFilesInSeries(imafile, &FirstImageNo);
 
-  ifi->PatientName = imaLoadValFromKey(fp, "G10_Pat_PatientName", NULL);
-  ifi->PulseSequence = imaLoadValFromKey(fp, "G19_Acq4_CM_SequenceFileName", NULL);
+  ifi->PatientName = (char *)imaLoadValFromKey(fp, "G10_Pat_PatientName", NULL);
+  ifi->PulseSequence = (char *)imaLoadValFromKey(fp, "G19_Acq4_CM_SequenceFileName", NULL);
 
   imaLoadValFromKey(fp, "G10_Pat_PatientBirthdate_Year", &Year);
   imaLoadValFromKey(fp, "G10_Pat_PatientBirthdate_Month", &Month);

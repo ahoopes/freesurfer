@@ -5119,7 +5119,7 @@ void TransformInvertReplace(TRANSFORM *transform, const MRI *mri)
       GCAMfree(&gcam);
       break;
     default:
-      lta = transform->xform;
+      lta = (LTA *)transform->xform;
       transform->xform = (void *)LTAinvert(lta, NULL);
       LTAfree(&lta);
       break;

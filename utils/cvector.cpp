@@ -409,8 +409,8 @@ int compare_sort_elts(const void *vse1, const void *vse2)
 {
   const SORT_ELT *se1, *se2;
 
-  se1 = vse1;
-  se2 = vse2;
+  se1 = (const SORT_ELT *)vse1;
+  se2 = (const SORT_ELT *)vse2;
   return (se2->snr > se1->snr);
 }
 

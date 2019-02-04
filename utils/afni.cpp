@@ -835,7 +835,7 @@ MRI *afniRead(const char *fname, int read_volume)
               if (swap_flag) {
                 if (bytes_per_voxel == 2)  // short
                 {
-                  swab(pmem, pmem, mri->width * 2);
+                  swab(pmem, pmem, (size_t)(mri->width * 2));
                 }
                 else if (bytes_per_voxel == 4)  // float
                 {

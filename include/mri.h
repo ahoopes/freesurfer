@@ -28,10 +28,6 @@
 
 #include "faster_variants.h"
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 #include "minc_volume_io.h"
 #include "const.h"
 #include "matrix.h"
@@ -1616,10 +1612,5 @@ MRI *MRIsolveLaplaceEquation(MRI *mri_interior, MRI *mri_seg, int source_label, 
 			       float source_val,float target_val, float outside_val);
 
   int MRIsampleVolumeFrameMasked(const MRI *mri, const MRI *mri_mask, double x, double y, double z, const int frame, double *pval);
-
-#if defined(__cplusplus)
-};
-#endif
-
 
 #endif

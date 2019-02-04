@@ -9014,7 +9014,7 @@ int remove_label_outliers(GCA_MORPH *gcam, MRI *mri_dist, const int whalf, const
   MRI *mri_std, *mri_ctrl, *mri_tmp, *mri_ctrl_tmp;
   VOXEL_LIST *vl;
   float diff, val0, oval;
-  int delete, xv, yv, zv, xo, yo, zo, x, y, z;
+  int del, xv, yv, zv, xo, yo, zo, x, y, z;
   GCA_MORPH_NODE *gcamn, *gcamn_sup, *gcamn_inf;
   double max_change;
 
@@ -9071,12 +9071,12 @@ int remove_label_outliers(GCA_MORPH *gcam, MRI *mri_dist, const int whalf, const
       }
 
       val0 = MRIgetVoxVal(mri_dist, x, y, z, 0);
-      delete = 0;
-      for (xo = -whalf; xo <= whalf && !delete; xo++) {
+      del = 0;
+      for (xo = -whalf; xo <= whalf && !del; xo++) {
         xv = mri_dist->xi[x + xo];
-        for (yo = -whalf; yo <= whalf && !delete; yo++) {
+        for (yo = -whalf; yo <= whalf && !del; yo++) {
           yv = mri_dist->yi[y + yo];
-          for (zo = -whalf; zo <= whalf && !delete; zo++) {
+          for (zo = -whalf; zo <= whalf && !del; zo++) {
             zv = mri_dist->zi[z + zo];
             oval = MRIgetVoxVal(mri_dist, xv, yv, zv, 0);
             if (!FZERO(oval)) {
@@ -9086,14 +9086,14 @@ int remove_label_outliers(GCA_MORPH *gcam, MRI *mri_dist, const int whalf, const
                 if (fabs(val0) > fabs(oval) && (val0 * oval < 0))
                 /*if their signs are different and difference is big */
                 {
-                  delete = 1;
+                  del = 1;
                 }
               }
             }
           }
         }
       }
-      if (delete) {
+      if (del) {
         nremoved++;
         MRIFvox(mri_dist, x, y, z) = 0;
         MRIsetVoxVal(mri_ctrl, x, y, z, 0, CONTROL_NONE);

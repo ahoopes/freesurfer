@@ -157,11 +157,11 @@ GCLASSIFY *GCalloc(int nclasses, int nvars, char *class_names[])
              is the # of observations, and the # of cols is the #
              of variables.
 ------------------------------------------------------*/
-int GCtrain(GCLASSIFY *gc, int class, MATRIX *m_inputs)
+int GCtrain(GCLASSIFY *gc, int classnum, MATRIX *m_inputs)
 {
   GCLASS *gcl;
 
-  gcl = &gc->classes[class];
+  gcl = &gc->classes[classnum];
   gcl->nobs = m_inputs->rows;
   if (gcl->nobs == 0) /* no training data */
   {
@@ -174,7 +174,7 @@ int GCtrain(GCLASSIFY *gc, int class, MATRIX *m_inputs)
 #endif
   else
     MatrixCovariance(m_inputs, gcl->m_covariance, gcl->m_u);
-  return (GCinit(gc, class));
+  return (GCinit(gc, classnum));
 }
 /*-----------------------------------------------------
         Parameters:
@@ -217,7 +217,7 @@ int GCfree(GCLASSIFY **pgc)
 ------------------------------------------------------*/
 int GCclassify(GCLASSIFY *gc, MATRIX *m_x, MATRIX *m_priors, float *prisk)
 {
-  int cno, class = -1;
+  int cno, classnum = -1;
   GCLASS *gcl;
   static MATRIX *m_xT = NULL, *m_tmp, *m_tmp2, *m_tmp3;
   float log_p, max_p, sum_p, prior;
@@ -235,7 +235,7 @@ int GCclassify(GCLASSIFY *gc, MATRIX *m_x, MATRIX *m_priors, float *prisk)
   }
   m_xT = MatrixTranspose(m_x, m_xT);
   max_p = -100000.0f;
-  class = -1;
+  classnum = -1;
   sum_p = 0.0f;
   for (cno = 0; cno < gc->nclasses; cno++) {
     gcl = &gc->classes[cno];
@@ -265,13 +265,13 @@ int GCclassify(GCLASSIFY *gc, MATRIX *m_x, MATRIX *m_priors, float *prisk)
     if (log_p > max_p) /* tentatively set this as the most probable class */
     {
       max_p = log_p;
-      class = cno;
+      classnum = cno;
     }
   }
 
-  if (prisk && class >= 0 && !FZERO(sum_p)) *prisk = exp(max_p) / sum_p;
+  if (prisk && classnum >= 0 && !FZERO(sum_p)) *prisk = exp(max_p) / sum_p;
 
-  return (class);
+  return (classnum);
 }
 /*-----------------------------------------------------
         Parameters:
@@ -371,13 +371,13 @@ GCLASS *GCasciiReadClassFrom(FILE *fp, GCLASS *gcl)
            static components. After this call, the classifier
            should be ready for use.
 ------------------------------------------------------*/
-int GCinit(GCLASSIFY *gc, int class)
+int GCinit(GCLASSIFY *gc, int classnum)
 {
   GCLASS *gcl;
   MATRIX *m_sigma_inverse, *m_uT, *m_tmp, *m_tmp2;
   float det;
 
-  gcl = &gc->classes[class];
+  gcl = &gc->classes[classnum];
   if (gcl->nobs <= gc->nvars) /* not enough training data */
     MatrixMakeDiagonal(gcl->m_covariance, gcl->m_covariance);
 

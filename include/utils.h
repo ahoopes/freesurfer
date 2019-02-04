@@ -26,12 +26,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
 #include "base.h"
-
 
 #define MATLAB_FILE   0
 #define HIPS_FILE     1
@@ -139,15 +135,10 @@ extern int global_progress_range[2];
 void SetProgressCallback(void (*callback)(int), int start, int end);
 void exec_progress_callback(int slice, int total_slices, int frame, int total_frames);
 
-
 int  *compute_permutation(int num, int *vec)  ;
 int *GetMemUsage(int *u);
 int PrintMemUsage(FILE *fp);
 int PrintRUsage(int who, const char *pre, FILE *fp);
 int WriteRUsage(int who, const char *pre, char *fname);
-
-#if defined(__cplusplus)
-};
-#endif
 
 #endif

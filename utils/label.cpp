@@ -2259,7 +2259,7 @@ int LabelDilate(LABEL *area, MRI_SURFACE *mris, int num_times, int coords)
         if (area->vertex_label_ind) area->vertex_label_ind[vno] = n;
         if (area->mris && area->mri_template) {
           double xv, yv, zv;
-          MRISsurfaceRASToVoxel(area->mris, area->mri_template, lv->x, lv->y, lv->z, &xv, &yv, &zv);
+          MRISsurfaceRASToVoxel((MRIS *)area->mris, area->mri_template, lv->x, lv->y, lv->z, &xv, &yv, &zv);
           lv->xv = nint(xv);
           lv->yv = nint(yv);
           lv->zv = nint(zv);
@@ -2508,7 +2508,7 @@ LABEL *LabelRealloc(LABEL *lb, int max_points)
     return (lb);
   }
 
-  lvtmp = realloc(lb->lv, sizeof(LV) * max_points);
+  lvtmp = (LV *)realloc(lb->lv, sizeof(LV) * max_points);
   if (lvtmp == NULL) {
     return (lb);
   }
@@ -3237,7 +3237,7 @@ LABEL *LabelVoxelToSurfaceRAS(LABEL *lsrc, MRI *mri, LABEL *ldst)
 
   for (i = 0; i < lsrc->n_points; i++) {
     if (lsrc->mris)
-      MRISsurfaceRASToVoxel(lsrc->mris, mri, lsrc->lv[i].x, lsrc->lv[i].y, lsrc->lv[i].z, &xs, &ys, &zs);
+      MRISsurfaceRASToVoxel((MRIS *)lsrc->mris, mri, lsrc->lv[i].x, lsrc->lv[i].y, lsrc->lv[i].z, &xs, &ys, &zs);
     else
       MRIvoxelToSurfaceRAS(mri, lsrc->lv[i].x, lsrc->lv[i].y, lsrc->lv[i].z, &xs, &ys, &zs);
     ldst->lv[i].x = xs;
@@ -3540,7 +3540,7 @@ int LabelInit(LABEL *area, MRI *mri_template, MRI_SURFACE *mris, int coords)
 
   double vxl_spacing = (mri_template->xsize < mri_template->ysize ? mri_template->xsize : mri_template->ysize);
   vxl_spacing = (vxl_spacing < mri_template->zsize ? vxl_spacing : mri_template->zsize);
-  area->mht = (void *)MHTcreateVertexTable_Resolution(mris, coords, vxl_spacing);
+  area->mht = MHTcreateVertexTable_Resolution(mris, coords, vxl_spacing);
 
   // map unassigned vertices to surface locations
   for (n = 0; n < area->n_points; n++) {
@@ -3581,13 +3581,13 @@ int LabelInit(LABEL *area, MRI *mri_template, MRI_SURFACE *mris, int coords)
     lv->zv = nint(zv);
 
     if (area->mris)
-      MRISsurfaceRASFromVoxel(area->mris, area->mri_template, xv, yv, zv, &vx, &vy, &vz);  // surfaceRASToVoxel BRF!!
+      MRISsurfaceRASFromVoxel((MRIS *)area->mris, area->mri_template, xv, yv, zv, &vx, &vy, &vz);  // surfaceRASToVoxel BRF!!
     else
       MRIvoxelToSurfaceRAS(area->mri_template, xv, yv, zv, &vx, &vy, &vz);
 
     // must use surface coords for finding vertex
     if (area->mris)
-      MRISsurfaceRASFromVoxel(area->mris, area->mri_template, xv, yv, zv, &vx, &vy, &vz);  // surfaceRASToVoxel BRF!!
+      MRISsurfaceRASFromVoxel((MRIS *)area->mris, area->mri_template, xv, yv, zv, &vx, &vy, &vz);  // surfaceRASToVoxel BRF!!
     else
       MRIvoxelToSurfaceRAS(area->mri_template, xv, yv, zv, &vx, &vy, &vz);
     x = y = z = -1;
@@ -3598,7 +3598,7 @@ int LabelInit(LABEL *area, MRI *mri_template, MRI_SURFACE *mris, int coords)
     min_vno = -1;
 
     float distance;
-    min_vno = MHTfindClosestVertexNoXYZ( area->mht, area->mris, vx,vy,vz, &distance );
+    min_vno = MHTfindClosestVertexNoXYZ( (MHT *)area->mht, (MRIS *)area->mris, vx,vy,vz, &distance );
 
     lv->vno = min_vno;
     if (min_vno >= 0 && area->vertex_label_ind[min_vno] < 0)  // found one that isn't in label
@@ -3607,16 +3607,16 @@ int LabelInit(LABEL *area, MRI *mri_template, MRI_SURFACE *mris, int coords)
       //      printf("LabelAddVoxel(%d, %d, %d): added min_dist vno %d at %d\n", xv, yv, zv, min_vno, n) ;
 
       // now add other vertices that also map to this voxel
-      VERTEX_TOPOLOGY const * const min_vt = &((MRI_SURFACE *)(area->mris))->vertices_topology[min_vno];
+      VERTEX_TOPOLOGY const * const min_vt = &((MRI_SURFACE *)((MRIS *)area->mris))->vertices_topology[min_vno];
       for (i = 0; i < min_vt->vnum; i++)  // find min dist vertex
       {
         vno = min_vt->v[i];
         if (area->vertex_label_ind[vno] >= 0) continue;  // already in the label
-        v = &((MRI_SURFACE *)(area->mris))->vertices[vno];
+        v = &((MRI_SURFACE *)((MRIS *)area->mris))->vertices[vno];
         if (vno == Gdiag_no) DiagBreak();
 
         MRISgetCoords(v, coords, &x, &y, &z);
-        MRISsurfaceRASToVoxel(area->mris, area->mri_template, x, y, z, &vx, &vy, &vz);
+        MRISsurfaceRASToVoxel((MRIS *)area->mris, area->mri_template, x, y, z, &vx, &vy, &vz);
         if ((xv == nint(vx)) && (yv == nint(vy)) && (zv == nint(vz))) {
           LabelAddVertex(area, vno, coords);
         }
@@ -3648,8 +3648,7 @@ int LabelAddVoxel(LABEL *area, int xv, int yv, int zv, int coords, int *vertices
     switch (area->coords) {
     case LABEL_COORDS_TKREG_RAS:
       if (area->mris)
-        MRISsurfaceRASFromVoxel(
-              area->mris, area->mri_template, xv, yv, zv, &vx, &vy, &vz);  // surfaceRASToVoxel BRF!!
+        MRISsurfaceRASFromVoxel((MRIS *)area->mris, area->mri_template, xv, yv, zv, &vx, &vy, &vz);  // surfaceRASToVoxel BRF!!
       else
         MRIvoxelToSurfaceRAS(area->mri_template, xv, yv, zv, &vx, &vy, &vz);
       break;
@@ -3668,7 +3667,7 @@ int LabelAddVoxel(LABEL *area, int xv, int yv, int zv, int coords, int *vertices
 
   // must use surface coords for finding vertex
   if (area->mris)
-    MRISsurfaceRASFromVoxel(area->mris, area->mri_template, xv, yv, zv, &vx, &vy, &vz);  // surfaceRASToVoxel BRF!!
+    MRISsurfaceRASFromVoxel((MRIS *)area->mris, area->mri_template, xv, yv, zv, &vx, &vy, &vz);  // surfaceRASToVoxel BRF!!
   else
     MRIvoxelToSurfaceRAS(area->mri_template, xv, yv, zv, &vx, &vy, &vz);
   x = y = z = -1;
@@ -3679,7 +3678,7 @@ int LabelAddVoxel(LABEL *area, int xv, int yv, int zv, int coords, int *vertices
   min_vno = -1;
 
   float distance;
-  min_vno = MHTfindClosestVertexNoXYZ( area->mht, area->mris, vx,vy,vz, &distance );
+  min_vno = MHTfindClosestVertexNoXYZ( (MHT *)area->mht, (MRIS *)area->mris, vx,vy,vz, &distance );
 
   lv->vno = min_vno;
   if (min_vno >= 0)
@@ -3749,7 +3748,7 @@ int LabelAddVoxel(LABEL *area, int xv, int yv, int zv, int coords, int *vertices
     if (vno == Gdiag_no) DiagBreak();
 
     MRISgetCoords(v, coords, &x, &y, &z);
-    MRISsurfaceRASToVoxel(area->mris, area->mri_template, x, y, z, &vx, &vy, &vz);
+    MRISsurfaceRASToVoxel((MRIS *)area->mris, area->mri_template, x, y, z, &vx, &vy, &vz);
     if ((xv == nint(vx)) && (yv == nint(vy)) && (zv == nint(vz))) {
       if (pnvertices) {
         int n = *pnvertices;
@@ -3855,7 +3854,7 @@ int LabelAddVertex(LABEL *area, int vno, int coords)
   lv = &area->lv[n];
   v = &((MRI_SURFACE *)(area->mris))->vertices[vno];
   MRISgetCoords(v, coords, &x, &y, &z);
-  MRISsurfaceRASToVoxel(area->mris, area->mri_template, v->x, v->y, v->z, &xv, &yv, &zv);
+  MRISsurfaceRASToVoxel((MRIS *)area->mris, area->mri_template, v->x, v->y, v->z, &xv, &yv, &zv);
   if (area->mri_template && area->coords == LABEL_COORDS_SCANNER_RAS)
     MRIvoxelToWorld(area->mri_template, xv, yv, zv, &x, &y, &z);
 
@@ -3933,7 +3932,7 @@ static int labelGetSurfaceRasCoords(LABEL *area, LABEL_VERTEX *lv, float *px, fl
     break;
   case LABEL_COORDS_SCANNER_RAS:
     MRIworldToVoxel(area->mri_template, lv->x, lv->y, lv->z, &xv, &yv, &zv);
-    MRISsurfaceRASFromVoxel(area->mris, area->mri_template, xv, yv, zv, &xw, &yw, &zw);
+    MRISsurfaceRASFromVoxel((MRIS *)area->mris, area->mri_template, xv, yv, zv, &xw, &yw, &zw);
     *px = (float)xw;
     *py = (float)yw;
     *pz = (float)zw;  // double->float (uggh)
@@ -3952,7 +3951,7 @@ static int labelGetVoxelCoords(LABEL *area, LABEL_VERTEX *lv, float *px, float *
   switch (area->coords) {
   case LABEL_COORDS_TKREG_RAS:
     if (area->mris)
-      MRISsurfaceRASToVoxel(area->mris, area->mri_template, lv->x, lv->y, lv->z, &xv, &yv, &zv);
+      MRISsurfaceRASToVoxel((MRIS *)area->mris, area->mri_template, lv->x, lv->y, lv->z, &xv, &yv, &zv);
     else
       MRIvoxelToSurfaceRAS(area->mri_template, lv->x, lv->y, lv->z, &xv, &yv, &zv);
     break;

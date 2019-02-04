@@ -26,6 +26,7 @@
 
 #ifndef __GL_RGB_IMAGE_H__
 #define __GL_RGB_IMAGE_H__
+
 #ifdef __cplusplus
 extern "C"
 {

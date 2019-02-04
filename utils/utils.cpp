@@ -393,7 +393,8 @@ char *StrReplace(const char *src, char *dst, char csrc, int cdst)
   ------------------------------------------------------------------------*/
 char *FileNameOnly(const char *full_name, char *fname)
 {
-  char *slash, *number, *at;
+  const char *slash;
+  char *number, *at;
 
   slash = strrchr(full_name, '/');
 
@@ -977,7 +978,7 @@ char *FileNameExtension(const char *fname, char *ext)
 
 char *FileNameFromWildcard(const char *inStr, char *outStr)
 {
-  char *cp;
+  const char *cp;
   glob_t gbuf;
 
   if (inStr != outStr) strcpy(outStr, inStr);

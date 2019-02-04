@@ -3184,7 +3184,7 @@ int MRIlabeledVoxels(MRI *mri_src, int label)
          the values outside to be OutVal. template is a
          geometry template.
 */
-MRI *MRIsetBoundingBox(MRI *template, MRI_REGION *region, double InVal, double OutVal)
+MRI *MRIsetBoundingBox(MRI *mri_template, MRI_REGION *region, double InVal, double OutVal)
 {
   MRI *mri;
   int x2, y2, z2;
@@ -3194,19 +3194,19 @@ MRI *MRIsetBoundingBox(MRI *template, MRI_REGION *region, double InVal, double O
   if (region->y < 0) region->y = 0;
   if (region->z < 0) region->z = 0;
 
-  if (region->dx < 0) region->dx = template->width;
-  if (region->dy < 0) region->dy = template->height;
-  if (region->dz < 0) region->dz = template->depth;
+  if (region->dx < 0) region->dx = mri_template->width;
+  if (region->dy < 0) region->dy = mri_template->height;
+  if (region->dz < 0) region->dz = mri_template->depth;
 
-  if (region->x >= template->width) {
+  if (region->x >= mri_template->width) {
     printf("ERROR: MRIsegBoundingBox: region x >= width\n");
     return (NULL);
   }
-  if (region->y >= template->height) {
+  if (region->y >= mri_template->height) {
     printf("ERROR: MRIsegBoundingBox: region y >= height\n");
     return (NULL);
   }
-  if (region->z >= template->depth) {
+  if (region->z >= mri_template->depth) {
     printf("ERROR: MRIsegBoundingBox: region z >= depth\n");
     return (NULL);
   }
@@ -3214,20 +3214,20 @@ MRI *MRIsetBoundingBox(MRI *template, MRI_REGION *region, double InVal, double O
   y2 = region->y + region->dy;
   z2 = region->z + region->dz;
 
-  if (x2 >= template->width) {
+  if (x2 >= mri_template->width) {
     printf("ERROR: MRIsegBoundingBox: region x2 >= width\n");
     return (NULL);
   }
-  if (y2 >= template->height) {
+  if (y2 >= mri_template->height) {
     printf("ERROR: MRIsegBoundingBox: region y2 >= height\n");
     return (NULL);
   }
-  if (z2 >= template->depth) {
+  if (z2 >= mri_template->depth) {
     printf("ERROR: MRIsegBoundingBox: region z2 >= depth\n");
     return (NULL);
   }
 
-  mri = MRIcloneBySpace(template, MRI_FLOAT, 1);
+  mri = MRIcloneBySpace(mri_template, MRI_FLOAT, 1);
   if (mri == NULL) return (NULL);
 
   for (c = 0; c < mri->width; c++) {

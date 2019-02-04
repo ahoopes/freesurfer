@@ -47,7 +47,7 @@ char *lmalloc(unsigned long size)
 {
   char *p;
 
-  p = malloc(size);
+  p = (char *)malloc(size);
   if (p == NULL) MGHprint_error("Cannot malloc()\n");
   return p;
 }
@@ -56,7 +56,7 @@ char *lcalloc(size_t nmemb, size_t size)
 {
   char *p;
 
-  p = calloc(nmemb, size);
+  p = (char *)calloc(nmemb, size);
   if (p == NULL) MGHprint_error("Cannot calloc()\n");
   return p;
 }

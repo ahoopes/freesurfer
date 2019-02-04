@@ -200,7 +200,7 @@ int make_cmd_version_string(
   // TODO: build_timestamp really ought to be passed-in as a parameter
   // from the calling binary, to get a more accurate build time, but for
   // now, the build time of this version.c (libutils) is better than nothing
-  char build_timestamp[] = __DATE__ " "__TIME__;
+  char build_timestamp[] = __DATE__ " " __TIME__;
   char argstr[CMD_LINE_LEN];
 
   if (strlen(arguments) > CMD_LINE_LEN / 2)
@@ -298,7 +298,7 @@ int handle_version_option(int argc, char **argv, const char *id_string, const ch
 
       /* Copy later args one step back. */
       for (nnarg = narg; nnarg < argc - num_processed_args; nnarg++) {
-        myarg = malloc(strlen(argv[nnarg + 1]) + 1);
+        myarg = (char *)malloc(strlen(argv[nnarg + 1]) + 1);
         strcpy(myarg, argv[nnarg + 1]);
         argv[nnarg] = myarg;
       }
@@ -368,7 +368,7 @@ int handle_version_option(int argc, char **argv, const char *id_string, const ch
       // TODO: build_timestamp really ought to be passed-in as a parameter
       // from the calling binary, to get a more accurate build time, but for
       // now, the build time of version.c (libutils) is better than nothing
-      char build_timestamp[] = __DATE__ " "__TIME__;
+      char build_timestamp[] = __DATE__ " " __TIME__;
 
       /* Build the info string. */
       fprintf(stdout,
@@ -394,7 +394,7 @@ int handle_version_option(int argc, char **argv, const char *id_string, const ch
 
       /* Copy later args one step back. */
       for (nnarg = narg; nnarg < argc - num_processed_args; nnarg++) {
-        myarg = malloc(strlen(argv[nnarg + 1]) + 1);
+        myarg = (char *)malloc(strlen(argv[nnarg + 1]) + 1);
         strcpy(myarg, argv[nnarg + 1]);
         argv[nnarg] = myarg;
       }

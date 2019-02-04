@@ -25,10 +25,6 @@
 #ifndef xxVoxl_H
 #define xxVoxl_H
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
 #include "xTypes.h"
 
 /* Enable this to turn on macros, see details below. */
@@ -146,16 +142,4 @@ void xVoxl_PrintDebug ( xVoxelRef  ThisKRT );
 #define xVoxl_ExpandInt(v)   xVoxl_GetX(v),      xVoxl_GetY(v),      xVoxl_GetZ(v)
 #define xVoxl_ExpandRint(v)   (int)rint(xVoxl_GetX(v)), (int)rint(xVoxl_GetY(v)), (int)rint(xVoxl_GetZ(v))
 
-#if defined(__cplusplus)
-};
 #endif
-
-
-#endif
-
-
-
-
-
-
-

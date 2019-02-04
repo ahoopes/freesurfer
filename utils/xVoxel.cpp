@@ -28,21 +28,21 @@
 
 void xVoxl_New(xVoxelRef *oppVoxel)
 {
-  xVoxelRef this = (xVoxelRef)calloc(1, sizeof(xVoxel));
-  *oppVoxel = this;
+  xVoxelRef ref = (xVoxelRef)calloc(1, sizeof(xVoxel));
+  *oppVoxel = ref;
 }
 
 void xVoxl_Delete(xVoxelRef *ioppVoxel)
 {
-  xVoxelRef this = NULL;
+  xVoxelRef ref = NULL;
 
   if (NULL == ioppVoxel) {
     return;
   }
 
-  this = *ioppVoxel;
+  ref = *ioppVoxel;
 
-  free(this);
+  free(ref);
   *ioppVoxel = NULL;
 }
 
@@ -74,70 +74,70 @@ char xVoxl_IsEqualFloat(xVoxelRef ipVox1, xVoxelRef ipVox2)
   }
 }
 
-/* declare non-macro versions of this stuff. */
+/* declare non-macro versions of ref stuff. */
 #ifndef XVOXL_USE_MACROS
 
-void xVoxl_Set(xVoxelRef this, int x, int y, int z)
+void xVoxl_Set(xVoxelRef ref, int x, int y, int z)
 {
-  this->mfX = x;
-  this->mfY = y;
-  this->mfZ = z;
+  ref->mfX = x;
+  ref->mfY = y;
+  ref->mfZ = z;
 }
 
-int xVoxl_GetX(xVoxelRef this) { return (int)(floor(this->mfX + 0.5)); }
+int xVoxl_GetX(xVoxelRef ref) { return (int)(floor(ref->mfX + 0.5)); }
 
-int xVoxl_GetY(xVoxelRef this) { return (int)(floor(this->mfY + 0.5)); }
+int xVoxl_GetY(xVoxelRef ref) { return (int)(floor(ref->mfY + 0.5)); }
 
-int xVoxl_GetZ(xVoxelRef this) { return (int)(floor(this->mfZ + 0.5)); }
+int xVoxl_GetZ(xVoxelRef ref) { return (int)(floor(ref->mfZ + 0.5)); }
 
-int xVoxl_GetRoundX(xVoxelRef this) { return rint(this->mfX); }
+int xVoxl_GetRoundX(xVoxelRef ref) { return rint(ref->mfX); }
 
-int xVoxl_GetRoundY(xVoxelRef this) { return rint(this->mfY); }
+int xVoxl_GetRoundY(xVoxelRef ref) { return rint(ref->mfY); }
 
-int xVoxl_GetRoundZ(xVoxelRef this) { return rint(this->mfZ); }
+int xVoxl_GetRoundZ(xVoxelRef ref) { return rint(ref->mfZ); }
 
-void xVoxl_SetFloat(xVoxelRef this, float x, float y, float z)
+void xVoxl_SetFloat(xVoxelRef ref, float x, float y, float z)
 {
-  this->mfX = x;
-  this->mfY = y;
-  this->mfZ = z;
+  ref->mfX = x;
+  ref->mfY = y;
+  ref->mfZ = z;
 }
 
-void xVoxl_SetX(xVoxelRef this, int x) { this->mfX = (float)x; }
+void xVoxl_SetX(xVoxelRef ref, int x) { ref->mfX = (float)x; }
 
-void xVoxl_SetY(xVoxelRef this, int y) { this->mfY = (float)y; }
+void xVoxl_SetY(xVoxelRef ref, int y) { ref->mfY = (float)y; }
 
-void xVoxl_SetZ(xVoxelRef this, int z) { this->mfZ = (float)z; }
+void xVoxl_SetZ(xVoxelRef ref, int z) { ref->mfZ = (float)z; }
 
-void xVoxl_SetFloatX(xVoxelRef this, float x) { this->mfX = x; }
+void xVoxl_SetFloatX(xVoxelRef ref, float x) { ref->mfX = x; }
 
-void xVoxl_SetFloatY(xVoxelRef this, float y) { this->mfY = y; }
+void xVoxl_SetFloatY(xVoxelRef ref, float y) { ref->mfY = y; }
 
-void xVoxl_SetFloatZ(xVoxelRef this, float z) { this->mfZ = z; }
+void xVoxl_SetFloatZ(xVoxelRef ref, float z) { ref->mfZ = z; }
 
-float xVoxl_GetFloatX(xVoxelRef this) { return this->mfX; }
+float xVoxl_GetFloatX(xVoxelRef ref) { return ref->mfX; }
 
-float xVoxl_GetFloatY(xVoxelRef this) { return this->mfY; }
+float xVoxl_GetFloatY(xVoxelRef ref) { return ref->mfY; }
 
-float xVoxl_GetFloatZ(xVoxelRef this) { return this->mfZ; }
+float xVoxl_GetFloatZ(xVoxelRef ref) { return ref->mfZ; }
 
 #endif /* XVOXL_USE_MACROS */
 
-tBoolean xVoxl_IncrementWithMinUntilLimit(xVoxelRef this, float inMin, float inLimit)
+tBoolean xVoxl_IncrementWithMinUntilLimit(xVoxelRef ref, float inMin, float inLimit)
 {
-  if (this->mfX < inLimit) {
-    this->mfX += 1.0;
+  if (ref->mfX < inLimit) {
+    ref->mfX += 1.0;
     return TRUE;
   }
-  else if (this->mfY < inLimit) {
-    this->mfX = inMin;
-    this->mfY += 1.0;
+  else if (ref->mfY < inLimit) {
+    ref->mfX = inMin;
+    ref->mfY += 1.0;
     return TRUE;
   }
-  else if (this->mfZ < inLimit) {
-    this->mfX = inMin;
-    this->mfY = inMin;
-    this->mfZ += 1.0;
+  else if (ref->mfZ < inLimit) {
+    ref->mfX = inMin;
+    ref->mfY = inMin;
+    ref->mfZ += 1.0;
     return TRUE;
   }
   else {
@@ -145,26 +145,26 @@ tBoolean xVoxl_IncrementWithMinUntilLimit(xVoxelRef this, float inMin, float inL
   }
 }
 
-tBoolean xVoxl_IncrementUntilLimit(xVoxelRef this, float inLimit)
+tBoolean xVoxl_IncrementUntilLimit(xVoxelRef ref, float inLimit)
 {
-  return xVoxl_IncrementWithMinUntilLimit(this, 0, inLimit);
+  return xVoxl_IncrementWithMinUntilLimit(ref, 0, inLimit);
 }
 
-tBoolean xVoxl_IncrementUntilLimits(xVoxelRef this, float inXLimit, float inYLimit, float inZLimit)
+tBoolean xVoxl_IncrementUntilLimits(xVoxelRef ref, float inXLimit, float inYLimit, float inZLimit)
 {
-  if (this->mfX < inXLimit) {
-    this->mfX += 1.0;
+  if (ref->mfX < inXLimit) {
+    ref->mfX += 1.0;
     return TRUE;
   }
-  else if (this->mfY < inYLimit) {
-    this->mfX = 0;
-    this->mfY += 1.0;
+  else if (ref->mfY < inYLimit) {
+    ref->mfX = 0;
+    ref->mfY += 1.0;
     return TRUE;
   }
-  else if (this->mfZ < inZLimit) {
-    this->mfX = 0;
-    this->mfY = 0;
-    this->mfZ += 1.0;
+  else if (ref->mfZ < inZLimit) {
+    ref->mfX = 0;
+    ref->mfY = 0;
+    ref->mfZ += 1.0;
     return TRUE;
   }
   else {
@@ -173,21 +173,21 @@ tBoolean xVoxl_IncrementUntilLimits(xVoxelRef this, float inXLimit, float inYLim
 }
 
 tBoolean xVoxl_IncrementWithMinsUntilLimits(
-    xVoxelRef this, float inXMin, float inYMin, float inXLimit, float inYLimit, float inZLimit)
+    xVoxelRef ref, float inXMin, float inYMin, float inXLimit, float inYLimit, float inZLimit)
 {
-  if (this->mfX < inXLimit) {
-    this->mfX += 1.0;
+  if (ref->mfX < inXLimit) {
+    ref->mfX += 1.0;
     return TRUE;
   }
-  else if (this->mfY < inYLimit) {
-    this->mfX = inXMin;
-    this->mfY += 1.0;
+  else if (ref->mfY < inYLimit) {
+    ref->mfX = inXMin;
+    ref->mfY += 1.0;
     return TRUE;
   }
-  else if (this->mfZ < inZLimit) {
-    this->mfX = inXMin;
-    this->mfY = inYMin;
-    this->mfZ += 1.0;
+  else if (ref->mfZ < inZLimit) {
+    ref->mfX = inXMin;
+    ref->mfY = inYMin;
+    ref->mfZ += 1.0;
     return TRUE;
   }
   else {
@@ -195,12 +195,12 @@ tBoolean xVoxl_IncrementWithMinsUntilLimits(
   }
 }
 
-int xVoxl_ExpandToIndex(xVoxelRef this, int inDimensionX, int inDimensionY)
+int xVoxl_ExpandToIndex(xVoxelRef ref, int inDimensionX, int inDimensionY)
 {
-  return (this->mfZ * inDimensionX * inDimensionY) + (this->mfY * inDimensionX) + this->mfX;
+  return (ref->mfZ * inDimensionX * inDimensionY) + (ref->mfY * inDimensionX) + ref->mfX;
 }
 
-void xVoxl_PrintDebug(xVoxelRef this)
+void xVoxl_PrintDebug(xVoxelRef ref)
 {
-  DebugPrint(("Voxel: %d, %d, %d\n", xVoxl_GetX(this), xVoxl_GetY(this), xVoxl_GetZ(this)));
+  DebugPrint(("Voxel: %d, %d, %d\n", xVoxl_GetX(ref), xVoxl_GetY(ref), xVoxl_GetZ(ref)));
 }

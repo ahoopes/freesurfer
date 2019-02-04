@@ -6507,7 +6507,8 @@ int DICOMInfo2MRI(DICOMInfo *dcm, void *data, MRI *mri)
 int DICOMRead(const char *FileName, MRI **mri, int ReadImage)
 {
   MRI *pmri = NULL;
-  char **CleanedFileNames, **FileNames, *c, PathName[256];
+  const char *c;
+  char **CleanedFileNames, **FileNames, PathName[256];
   int i, NumberOfFiles, NumberOfDICOMFiles, nStudies, error;
   int length;
   DICOMInfo **aDicomInfo;

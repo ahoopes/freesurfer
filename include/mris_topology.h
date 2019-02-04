@@ -28,12 +28,6 @@
 #ifndef MRIS_TOPOLOGY_INCLUDED_H
 #define MRIS_TOPOLOGY_INCLUDED_H
 
-// The following is usable from C
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 #include "mrisurf.h"
 
   //functions
@@ -47,15 +41,6 @@ extern "C"
   bool MRISaddMRIP(MRIS *mris_dst, MRIP *mrip);
   MRIS *MRISduplicateOver(MRIS *mris,int mode = 0);
   void MRIScopyHeader(MRIS *mris_src,MRIS *mris_dst);
-
-#ifdef __cplusplus
-}
-#endif
-
-
-
-// C++ portion starts here
-#ifdef __cplusplus
 
 extern "C"
 {
@@ -72,7 +57,5 @@ MRIP *MRIPclone(MRIP *src);
 Surface *MRIStoSurface(MRIS *mris);
 MRIS * SurfaceToMRIS(Surface *surface);
 
-
-#endif
 
 #endif

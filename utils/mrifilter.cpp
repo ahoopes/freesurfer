@@ -7222,32 +7222,32 @@ MB2D *MB2Dcopy(MB2D *src, int CopyMRI, MB2D *copy)
 }
 
 /*
-  \fn MRI *MB2Dgrid(MRI *template, int skip, MRI *outvol)
+  \fn MRI *MB2Dgrid(MRI *mri_template, int skip, MRI *outvol)
   \brief Creates a grid of ones separated by skip. All the
   slices are the same. Good for testing MRImotionBlur2D().
 */
-MRI *MB2Dgrid(MRI *template, int skip, MRI *outvol)
+MRI *MB2Dgrid(MRI *mri_template, int skip, MRI *outvol)
 {
   int c, r, s, c0, r0, dc, dr, f;
   double radmax;
 
   if (outvol == NULL) {
-    outvol = MRIcloneBySpace(template, MRI_FLOAT, 1);
+    outvol = MRIcloneBySpace(mri_template, MRI_FLOAT, 1);
     if (outvol == NULL) return (NULL);
   }
   // Make sure it is 0
   MRIconst(outvol->width, outvol->height, outvol->depth, 1, 0, outvol);
-  c0 = nint(template->width / 2.0);
-  r0 = nint(template->height / 2.0);
-  radmax = sqrt(2) * template->width / 2;
+  c0 = nint(mri_template->width / 2.0);
+  r0 = nint(mri_template->height / 2.0);
+  radmax = sqrt(2) * mri_template->width / 2;
   for (dc = -radmax; dc < radmax; dc += skip) {
     c = nint(c0 + dc);
     if (c < 0) continue;
-    if (c >= template->width) continue;
+    if (c >= mri_template->width) continue;
     for (dr = -radmax; dr < radmax; dr += skip) {
       r = r0 + dr;
       if (r < 0) continue;
-      if (r >= template->width) continue;
+      if (r >= mri_template->width) continue;
       for (s = 0; s < outvol->depth; s++)
         for (f = 0; f < outvol->nframes; f++) MRIsetVoxVal(outvol, c, r, s, f, 1);
     }  // r

@@ -2806,9 +2806,9 @@ double *MRIsegDice(MRI *seg1, MRI *seg2, int *nsegs, int **segidlist)
 
 /* ----------------------------------------------------------*/
 /*!
-  \fn MRI *MRIsegDiff(MRI *old, MRI *new, int *DiffFlag)
-  \brief Determines differences between old and new segmentation.
-  Voxels that are different will take the value of the new
+  \fn MRI *MRIsegDiff(MRI *old, MRI *curr, int *DiffFlag)
+  \brief Determines differences between old and curr segmentation.
+  Voxels that are different will take the value of the curr
   segmentation. Voxels that are NOT different will take the
   value of VOXEL_UNCHANGED (defined as 256 in cma.h and LUT.txt).
   This allows the diff to be loaded as a segmentation in tkmedit.
@@ -2816,21 +2816,21 @@ double *MRIsegDice(MRI *seg1, MRI *seg2, int *nsegs, int **segidlist)
   Note that if there is no difference, all voxels will have the
   value of VOXEL_UNCHANGED. See also MRIsegMergeDiff().
 */
-MRI *MRIsegDiff(MRI *old, MRI *new, int *DiffFlag)
+MRI *MRIsegDiff(MRI *old, MRI *curr, int *DiffFlag)
 {
   MRI *diff;
   int c, r, s;
   int vold, vnew, vdiff;
 
-  diff = MRIallocSequence(new->width, new->height, new->depth, MRI_INT, 1);
-  MRIcopyHeader(new, diff);
+  diff = MRIallocSequence(curr->width, curr->height, curr->depth, MRI_INT, 1);
+  MRIcopyHeader(curr, diff);
 
   *DiffFlag = 0;
-  for (c = 0; c < new->width; c++) {
-    for (r = 0; r < new->height; r++) {
-      for (s = 0; s < new->depth; s++) {
+  for (c = 0; c < curr->width; c++) {
+    for (r = 0; r < curr->height; r++) {
+      for (s = 0; s < curr->depth; s++) {
         vold = MRIgetVoxVal(old, c, r, s, 0);
-        vnew = MRIgetVoxVal(new, c, r, s, 0);
+        vnew = MRIgetVoxVal(curr, c, r, s, 0);
         if (vold == vnew)
           vdiff = VOXEL_UNCHANGED;
         else {
@@ -2856,28 +2856,28 @@ MRI *MRIsegDiff(MRI *old, MRI *new, int *DiffFlag)
 */
 MRI *MRIsegMergeDiff(MRI *old, MRI *diff)
 {
-  MRI *new;
+  MRI *curr;
   int c, r, s;
   int vold, vdiff, vnew;
 
-  new = MRIallocSequence(old->width, old->height, old->depth, MRI_INT, 1);
-  MRIcopyHeader(old, new);
+  curr = MRIallocSequence(old->width, old->height, old->depth, MRI_INT, 1);
+  MRIcopyHeader(old, curr);
 
-  for (c = 0; c < new->width; c++) {
-    for (r = 0; r < new->height; r++) {
-      for (s = 0; s < new->depth; s++) {
+  for (c = 0; c < curr->width; c++) {
+    for (r = 0; r < curr->height; r++) {
+      for (s = 0; s < curr->depth; s++) {
         vold = MRIgetVoxVal(old, c, r, s, 0);
         vdiff = MRIgetVoxVal(diff, c, r, s, 0);
         if (vdiff == VOXEL_UNCHANGED)
           vnew = vold;
         else
           vnew = MRIgetVoxVal(diff, c, r, s, 0);
-        MRIsetVoxVal(new, c, r, s, 0, vnew);
+        MRIsetVoxVal(curr, c, r, s, 0, vnew);
       }
     }
   }
 
-  return (new);
+  return (curr);
 }
 
 /* ----------------------------------------------------------*/

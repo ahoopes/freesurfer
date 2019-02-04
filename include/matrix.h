@@ -26,11 +26,6 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
-
 #ifdef X
 #undef X
 #endif
@@ -357,11 +352,5 @@ double MatrixMaxAbsDiff(MATRIX *m1, MATRIX *m2, double dthresh);
 MATRIX *MatrixColNullSpace(MATRIX *M, int *err);
 MATRIX *MatrixResidualForming(MATRIX *X, MATRIX *R);
 MATRIX *MatrixGlmFit(MATRIX *y, MATRIX *X, double *pRVar, MATRIX *beta);
-
-
-#if defined(__cplusplus)
-};
-#endif
-
 
 #endif

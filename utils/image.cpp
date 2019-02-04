@@ -123,7 +123,7 @@ int ImageAllocBuffer(IMAGE *I)
   if (I->image)
     free(I->image);  // init_header might have calloc'd already,
                      // so this free prevents memory leakage
-  if ((I->image = hcalloc(npix, sizeof(byte))) == (byte *)NULL) return (ERROR_NO_MEMORY);
+  if ((I->image = (byte *)hcalloc(npix, sizeof(byte))) == (byte *)NULL) return (ERROR_NO_MEMORY);
   if (I->pixel_format == PFMSBF || I->pixel_format == PFLSBF) {
     fcb = I->fcol / 8;
     cb = (I->ocols + 7) / 8;

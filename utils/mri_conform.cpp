@@ -144,22 +144,22 @@ MRI *MRIconform(MRI *mri)
 
 MRI *MRIconformedTemplate(MRI *mri, int conform_width, double conform_size, int KeepDC)
 {
-  MRI *template;
+  MRI *mri_template;
   char ostr[4];
   int iLR, iIS, iAP, Nvox[3], FoV[3], conform_FoV, c;
   double delta[3], pad, step;
   MATRIX *K, *invK, *Smri, *Stemp;
 
-  template = MRIallocHeader(conform_width, conform_width, conform_width, MRI_UCHAR, mri->nframes);
-  MRIcopyHeader(mri, template);
-  MRIcopyPulseParameters(mri, template);
-  template->imnr0 = 1;
-  template->imnr1 = conform_width;
-  template->thick = conform_size;
-  template->ps = conform_size;
-  template->xsize = template->ysize = template->zsize = conform_size;
-  template->xstart = template->ystart = template->zstart = -conform_width / 2;
-  template->xend = template->yend = template->zend = conform_width / 2;
+  mri_template = MRIallocHeader(conform_width, conform_width, conform_width, MRI_UCHAR, mri->nframes);
+  MRIcopyHeader(mri, mri_template);
+  MRIcopyPulseParameters(mri, mri_template);
+  mri_template->imnr0 = 1;
+  mri_template->imnr1 = conform_width;
+  mri_template->thick = conform_size;
+  mri_template->ps = conform_size;
+  mri_template->xsize = mri_template->ysize = mri_template->zsize = conform_size;
+  mri_template->xstart = mri_template->ystart = mri_template->zstart = -conform_width / 2;
+  mri_template->xend = mri_template->yend = mri_template->zend = conform_width / 2;
 
   if (KeepDC) {
     conform_FoV = conform_width * conform_size;
@@ -181,7 +181,7 @@ MRI *MRIconformedTemplate(MRI *mri, int conform_width, double conform_size, int 
     delta[2] = mri->zsize;
     for (c = 0; c < 3; c++) FoV[c] = Nvox[c] * delta[c];
 
-    // K maps voxels in mri to voxels in template
+    // K maps voxels in mri to voxels in mri_template
     K = MatrixAlloc(4, 4, MATRIX_REAL);
     K->rptr[4][4] = 1;
 
@@ -227,7 +227,7 @@ MRI *MRIconformedTemplate(MRI *mri, int conform_width, double conform_size, int 
     invK = MatrixInverse(K, NULL);
     Smri = MRIxfmCRS2XYZ(mri, 0);
     Stemp = MatrixMultiplyD(Smri, invK, NULL);
-    MRIsetVox2RASFromMatrix(template, Stemp);
+    MRIsetVox2RASFromMatrix(mri_template, Stemp);
 
     printf("K ---------------\n");
     MatrixPrint(stdout, K);
@@ -246,16 +246,16 @@ MRI *MRIconformedTemplate(MRI *mri, int conform_width, double conform_size, int 
   }
   else {
     // replicates old method exactly
-    template->x_r = -1.0;
-    template->x_a = 0.0;
-    template->x_s = 0.0;
-    template->y_r = 0.0;
-    template->y_a = 0.0;
-    template->y_s = -1.0;
-    template->z_r = 0.0;
-    template->z_a = 1.0;
-    template->z_s = 0.0;
+    mri_template->x_r = -1.0;
+    mri_template->x_a = 0.0;
+    mri_template->x_s = 0.0;
+    mri_template->y_r = 0.0;
+    mri_template->y_a = 0.0;
+    mri_template->y_s = -1.0;
+    mri_template->z_r = 0.0;
+    mri_template->z_a = 1.0;
+    mri_template->z_s = 0.0;
   }
 
-  return (template);
+  return (mri_template);
 }

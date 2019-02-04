@@ -99,7 +99,7 @@ int ErrorInit(char *fname,
               int (*vprint)(const char *fmt, va_list args))
 {
   FSinit();
-  error_exit = (void *)exit;
+  error_exit = exit;
   i_seterror(rgb_error);
   if (fname) strcpy(error_fname, fname);
   if (vfprint) error_vfprintf = vfprint;

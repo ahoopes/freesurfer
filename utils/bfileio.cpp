@@ -155,7 +155,7 @@ char *bf_getstemfromname(char *bfname)
   }
 
   stemlen = len - 7;
-  stem = calloc(stemlen + 1, sizeof(char));
+  stem = (char *)calloc(stemlen + 1, sizeof(char));
   if (stem == NULL) {
     sprintf(bfmsg, "bf_getstemfromname() could not calloc\n");
     bferr = 1;
@@ -304,7 +304,7 @@ float *bf_ldbfile(char *bfname, int *nrows, int *ncols, int *nfrms)
   }
 
   /* create a buffer to hold the data */
-  fdata = calloc(ntot, sizeof(float));
+  fdata = (float *)calloc(ntot, sizeof(float));
   if (fdata == NULL) {
     sprintf(bfmsg, "bf_ldbfile(): could not alloc float %d", (int)(ntot * sizeof(float)));
     bferr = 1;
@@ -334,7 +334,7 @@ float *bf_ldbfile(char *bfname, int *nrows, int *ncols, int *nfrms)
   /* --------------------- bshort ---------------------------*/
   if (type == BF_SHORT) {
     /* create a temp short buf */
-    sdata = calloc(ntot, sizeof(short));
+    sdata = (short *)calloc(ntot, sizeof(short));
     if (sdata == NULL) {
       sprintf(bfmsg, "bf_ldbfile(): could not alloc %d", (int)(ntot * sizeof(short)));
       bferr = 1;

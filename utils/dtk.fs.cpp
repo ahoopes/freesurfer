@@ -93,7 +93,7 @@ DTK_TRACK_SET *DTKloadTrackSet(char *trkfile, char *mrifile)
   }
 
   dtkset = (DTK_TRACK_SET *)calloc(sizeof(DTK_TRACK_SET), 1);
-  dtkset->template = mri;
+  dtkset->mri_template = mri;
   dtkset->hdr = (DTK_HDR *)calloc(sizeof(DTK_HDR), 1);
 
   // This should be 1000 bytes
@@ -283,7 +283,7 @@ MRI *DTKmapEndPoints(DTK_TRACK_SET *dtkset)
   int ntrk, c, r, s, nlast, n;
   DTK_TRACK *trk;
 
-  t = dtkset->template;
+  t = dtkset->mri_template;
   mri = MRIalloc(t->width, t->height, t->depth, MRI_INT);
   MRIcopyHeader(t, mri);
 
@@ -380,7 +380,7 @@ DTK_TRACK_SET *DTKextractCC(DTK_TRACK_SET *trkset)
   DTK_TRACK_SET *newset;
 
   newset = (DTK_TRACK_SET *)calloc(sizeof(DTK_TRACK_SET), 1);
-  newset->template = trkset->template;
+  newset->mri_template = trkset->mri_template;
   newset->hdr = (DTK_HDR *)calloc(sizeof(DTK_HDR), 1);
   memcpy(newset->hdr, trkset->hdr, sizeof(DTK_HDR));
   newset->hdr->n_count = 0;
@@ -412,7 +412,7 @@ DTK_TRACK_SET *DTKextractSeg(DTK_TRACK_SET *trkset, int segid)
   DTK_TRACK_SET *newset;
 
   newset = (DTK_TRACK_SET *)calloc(sizeof(DTK_TRACK_SET), 1);
-  newset->template = trkset->template;
+  newset->mri_template = trkset->mri_template;
   newset->hdr = (DTK_HDR *)calloc(sizeof(DTK_HDR), 1);
   memcpy(newset->hdr, trkset->hdr, sizeof(DTK_HDR));
   newset->hdr->n_count = 0;
@@ -446,7 +446,7 @@ DTK_TRACK_SET *DTKextractSegEndPoints(DTK_TRACK_SET *trkset, int segid)
   DTK_TRACK_SET *newset;
 
   newset = (DTK_TRACK_SET *)calloc(sizeof(DTK_TRACK_SET), 1);
-  newset->template = trkset->template;
+  newset->mri_template = trkset->mri_template;
   newset->hdr = (DTK_HDR *)calloc(sizeof(DTK_HDR), 1);
   memcpy(newset->hdr, trkset->hdr, sizeof(DTK_HDR));
   newset->hdr->n_count = 0;
@@ -525,7 +525,7 @@ MRI *DTKmapTrackNos(DTK_TRACK_SET *trkset)
   int ntrk, c, r, s, n, nhits, nmaxhits = 10000;
   DTK_TRACK *trk;
 
-  t = trkset->template;
+  t = trkset->mri_template;
   mri = MRIallocSequence(t->width, t->height, t->depth, MRI_INT, nmaxhits);
   if (mri == NULL) return (NULL);
   MRIcopyHeader(t, mri);
