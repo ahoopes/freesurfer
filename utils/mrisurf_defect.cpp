@@ -196,7 +196,7 @@ static void mrisFreeDefectVertexState(DEFECT_VERTEX_STATE *dvs)
 
 static DEFECT_VERTEX_STATE* mrisRecordVertexState(MRIS const * const mris, DEFECT * const defect, int * const vertex_trans)
 {
-  DEFECT_VERTEX_STATE* const dvs = calloc(1, sizeof(DVS));
+  DEFECT_VERTEX_STATE* const dvs = (DVS *)calloc(1, sizeof(DVS));
   if (!dvs) ErrorExit(ERROR_NOMEMORY, "mrisRecordVertexState: could not allocate dvs");
 
   dvs->defect       = defect;
@@ -331,6 +331,7 @@ static void mrisRestoreOneVertexFaceState(MRI_SURFACE *mris, DEFECT_VERTEX_STATE
 
 static void mrisRestoreOneVertexState(MRI_SURFACE *mris, DEFECT_VERTEX_STATE *dvs, int const i) {
   VERTEX_STATE const * const vs = &dvs->vs[i];
+  int vsize;
   int const vno = vs->vno; 
   if (vno < 0) return;
 
@@ -360,7 +361,7 @@ static void mrisRestoreOneVertexState(MRI_SURFACE *mris, DEFECT_VERTEX_STATE *dv
   MRIS_setNsizeCur(mris, vno, vs->nsizeCur);
   cheapAssert(vt->vtotal == vs->vtotal);
   
-  int const vsize = mrisVertexVSize(mris, vno);
+  vsize = mrisVertexVSize(mris, vno);
 
   if (vsize > 0) {  // keep the zero-size ones for faster future realloc's, realloc the non-zero ones now
   
@@ -15516,7 +15517,7 @@ mrisCheckDefectEdges(MRI_SURFACE *mris, DEFECT *defect, int vno,
 
       if (vno == e->vno1 || vno == e->vno2 || vno < 0) {
         if (whyTracing) fprintf(stderr, "isHit false because shared vno when %s\n", whyTracing);
-        goto Done;
+        return false;
       }
 
       EDGE edge2;

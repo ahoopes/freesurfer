@@ -4907,7 +4907,6 @@ static MRI *genesisRead(const char *fname, int read_volume)
   char fname_format2[STRLEN];
   char fname_dir[STRLEN];
   char fname_base[STRLEN];
-  char *c;
   MRI *mri = NULL;
   int im_init;
   int im_low, im_high;
@@ -4947,15 +4946,15 @@ static MRI *genesisRead(const char *fname, int read_volume)
   }
 
   /* ----- split the file name into name and directory ----- */
-  c = strrchr(fname, '/');
-  if (c == NULL) {
+  const char *cc = strrchr(fname, '/');
+  if (cc == NULL) {
     fname_dir[0] = '\0';
     strcpy(fname_base, fname);
   }
   else {
-    strncpy(fname_dir, fname, (c - fname + 1));
-    fname_dir[c - fname + 1] = '\0';
-    strcpy(fname_base, c + 1);
+    strncpy(fname_dir, fname, (cc - fname + 1));
+    fname_dir[cc - fname + 1] = '\0';
+    strcpy(fname_base, cc + 1);
   }
 
   /* ----- derive the file name format (for sprintf) ----- */
@@ -4969,7 +4968,7 @@ static MRI *genesisRead(const char *fname, int read_volume)
   else if (strlen(fname_base) >= 3) /* avoid core dumps below... */
   {
     twoformats = 1;
-    c = &fname_base[strlen(fname_base) - 3];
+    char *c = &fname_base[strlen(fname_base) - 3];
     if (strcmp(c, ".MR") == 0) {
       *c = '\0';
       for (c--; isdigit(*c) && c >= fname_base; c--)
@@ -5346,15 +5345,15 @@ static MRI *gelxRead(const char *fname, int read_volume)
   }
 
   /* ----- split the file name into name and directory ----- */
-  c = strrchr(fname, '/');
-  if (c == NULL) {
+  const char *cc = strrchr(fname, '/');
+  if (cc == NULL) {
     fname_dir[0] = '\0';
     strcpy(fname_base, fname);
   }
   else {
-    strncpy(fname_dir, fname, (c - fname + 1));
-    fname_dir[c - fname + 1] = '\0';
-    strcpy(fname_base, c + 1);
+    strncpy(fname_dir, fname, (cc - fname + 1));
+    fname_dir[cc - fname + 1] = '\0';
+    strcpy(fname_base, cc + 1);
   }
 
   ecount = scount = icount = 0;
@@ -6274,7 +6273,7 @@ static int analyzeWriteFrame(MRI *mri, const char *fname, int frame)
   MATRIX *T, *invT;
   char hdr_fname[STRLEN];
   char mat_fname[STRLEN];
-  char *c;
+  const char *c;
   FILE *fp;
   int error_value;
   int i, j, k;
@@ -6561,7 +6560,7 @@ static int analyzeWrite4D(MRI *mri, const char *fname)
   MATRIX *T, *invT;
   char hdr_fname[STRLEN];
   char mat_fname[STRLEN];
-  char *c;
+  const char *c;
   FILE *fp;
   int error_value;
   int i, j, k, frame;
@@ -8338,15 +8337,15 @@ static MRI *ximgRead(const char *fname, int read_volume)
   }
 
   /* ----- split the file name into name and directory ----- */
-  c = strrchr(fname, '/');
-  if (c == NULL) {
+  const char *cc = strrchr(fname, '/');
+  if (cc == NULL) {
     fname_dir[0] = '\0';
     strcpy(fname_base, fname);
   }
   else {
-    strncpy(fname_dir, fname, (c - fname + 1));
-    fname_dir[c - fname + 1] = '\0';
-    strcpy(fname_base, c + 1);
+    strncpy(fname_dir, fname, (cc - fname + 1));
+    fname_dir[cc - fname + 1] = '\0';
+    strcpy(fname_base, cc + 1);
   }
 
   /* ----- derive the file name format (for sprintf) ----- */
@@ -11213,7 +11212,7 @@ static MRI *mghRead(const char *fname, int read_volume, int frame)
   float fval, xsize, ysize, zsize, x_r, x_a, x_s, y_r, y_a, y_s, z_r, z_a, z_s, c_r, c_a, c_s, xfov, yfov, zfov;
   short sval;
   //  int tag_data_size;
-  char *ext;
+  const char *ext;
   int gzipped = 0;
   int nread;
   int tag;
@@ -11558,7 +11557,7 @@ static int mghWrite(MRI *mri, const char *fname, int frame)
   float fval;
   short sval;
   int gzipped = 0;
-  char *ext;
+  const char *ext;
 
   if (frame >= 0)
     start_frame = end_frame = frame;
@@ -11712,7 +11711,7 @@ static int mghWrite(MRI *mri, const char *fname, int frame)
   if (mri->pedir)
     znzTAGwrite(fp, TAG_PEDIR, mri->pedir, strlen(mri->pedir) + 1);
   else
-    znzTAGwrite(fp, TAG_PEDIR, "UNKNOWN", strlen("UNKNOWN"));
+    znzTAGwrite(fp, TAG_PEDIR, (void *)"UNKNOWN", strlen("UNKNOWN"));
   znzTAGwrite(fp, TAG_FIELDSTRENGTH, (void *)(&mri->FieldStrength), sizeof(mri->FieldStrength));
 
   znzTAGwriteMRIframes(fp, mri);

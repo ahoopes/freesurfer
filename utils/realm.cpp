@@ -716,12 +716,14 @@ static int chooseChild(
     return c;
 }
 
-typedef enum Widen_Mask {
-    Widen_xLo =  1, Widen_xHi = 2,
-    Widen_yLo =  4, Widen_yHi = 8,
-    Widen_zLo = 16, Widen_zHi = 32 } Widen_Mask;
+#define Widen_xLo 1
+#define Widen_xHi 2
+#define Widen_yLo 4
+#define Widen_yHi 8
+#define Widen_zLo 16
+#define Widen_zHi 32
      
-static void widenSubtree_wkr(RealmTreeNode* n, float xLo, float xHi, float yLo, float yHi, float zLo, float zHi, Widen_Mask widen_Mask) {
+static void widenSubtree_wkr(RealmTreeNode* n, float xLo, float xHi, float yLo, float yHi, float zLo, float zHi, unsigned widen_Mask) {
     if (!n || (widen_Mask == 0)) return;
     //
     if (widen_Mask & Widen_xLo) n->xLo = xLo; if (widen_Mask & Widen_xHi) n->xHi = xHi;
@@ -731,7 +733,7 @@ static void widenSubtree_wkr(RealmTreeNode* n, float xLo, float xHi, float yLo, 
     if (n->vnos) return;    // leaf nodes
 
     // there are eight children
-    //      zyx     
+    //      zyx
     //    0 000
     //    1 001
     //    2 010
@@ -742,19 +744,19 @@ static void widenSubtree_wkr(RealmTreeNode* n, float xLo, float xHi, float yLo, 
     //    7 111
     // each should only have some of its bounds widened
     //
-    widenSubtree_wkr(n->childIfPresent[0], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xHi | Widen_yHi | Widen_zHi));    
-    widenSubtree_wkr(n->childIfPresent[1], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xLo | Widen_yHi | Widen_zHi));    
-    widenSubtree_wkr(n->childIfPresent[2], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xHi | Widen_yLo | Widen_zHi));    
-    widenSubtree_wkr(n->childIfPresent[3], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xLo | Widen_yLo | Widen_zHi));    
-    widenSubtree_wkr(n->childIfPresent[4], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xHi | Widen_yHi | Widen_zLo));    
-    widenSubtree_wkr(n->childIfPresent[5], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xLo | Widen_yHi | Widen_zLo));    
-    widenSubtree_wkr(n->childIfPresent[6], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xHi | Widen_yLo | Widen_zLo));    
-    widenSubtree_wkr(n->childIfPresent[7], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xLo | Widen_yLo | Widen_zLo));    
+    widenSubtree_wkr(n->childIfPresent[0], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xHi | Widen_yHi | Widen_zHi));
+    widenSubtree_wkr(n->childIfPresent[1], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xLo | Widen_yHi | Widen_zHi));
+    widenSubtree_wkr(n->childIfPresent[2], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xHi | Widen_yLo | Widen_zHi));
+    widenSubtree_wkr(n->childIfPresent[3], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xLo | Widen_yLo | Widen_zHi));
+    widenSubtree_wkr(n->childIfPresent[4], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xHi | Widen_yHi | Widen_zLo));
+    widenSubtree_wkr(n->childIfPresent[5], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xLo | Widen_yHi | Widen_zLo));
+    widenSubtree_wkr(n->childIfPresent[6], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xHi | Widen_yLo | Widen_zLo));
+    widenSubtree_wkr(n->childIfPresent[7], xLo, xHi, yLo, yHi, zLo, zHi, widen_Mask & ~(Widen_xLo | Widen_yLo | Widen_zLo));
 } 
 
 static void widenSubtree(RealmTree* realmTree, float xLo, float xHi, float yLo, float yHi, float zLo, float zHi) {
     RealmTreeNode* n = &realmTree->root;
-    Widen_Mask widen_Mask = 0;
+    unsigned widen_Mask = 0;
     if (xLo < n->xLo) widen_Mask |= Widen_xLo;
     if (xHi > n->xHi) widen_Mask |= Widen_xHi;
     if (yLo < n->yLo) widen_Mask |= Widen_yLo;

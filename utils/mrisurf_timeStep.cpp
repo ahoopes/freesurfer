@@ -2055,7 +2055,7 @@ int MRISexpandSurface(MRI_SURFACE *mris, float distance, INTEGRATION_PARMS *parm
   int vno, n, niter, avgs, nrounds, surf_no, orig_start_t = parms->start_t;
   VERTEX *v;
   double dist, dx = 0., dy = 0., dz = 0.0, dtotal, *pial_x, *pial_y, *pial_z, l_spring_orig;
-  char fname[STRLEN], *hemi, *cp;
+  char fname[STRLEN], *cp;
   INTEGRATION_PARMS thick_parms;
   MRI_SURFACE *mris_ico;
   MHT *mht = NULL;
@@ -2074,7 +2074,7 @@ int MRISexpandSurface(MRI_SURFACE *mris, float distance, INTEGRATION_PARMS *parm
   pial_y = (double *)calloc(mris->nvertices, sizeof(double));
   pial_z = (double *)calloc(mris->nvertices, sizeof(double));
 
-  hemi = mris->hemisphere == LEFT_HEMISPHERE ? "lh" : "rh";
+  const char *hemi = mris->hemisphere == LEFT_HEMISPHERE ? "lh" : "rh";
 
   if (pial_x == NULL || pial_y == NULL || pial_z == NULL) {
     ErrorExit(ERROR_NOMEMORY, "MRISexpandSurface: could not allocaet %d element vertex array", mris->nvertices);

@@ -91,7 +91,7 @@ static PerThreadScopeTreeData* enterScope(PerThreadScopeTreeData* parent, ROMP_p
     PerThreadScopeTreeData** prev = &parent->first_child;
     while (*prev && (*prev)->key != key) { prev = &(*prev)->next_sibling; } // might need speeding up with a hash table
     if (!*prev) {
-        PerThreadScopeTreeData* ptr = calloc(1, sizeof(PerThreadScopeTreeData));
+        PerThreadScopeTreeData* ptr = (PerThreadScopeTreeData *)calloc(1, sizeof(PerThreadScopeTreeData));
         ptr->key    = key;
         ptr->parent = parent;
         *prev = ptr;
@@ -372,44 +372,44 @@ void ROMP_pf_end(
 #else
 	0;
 #endif
-    if (tid >= ROMP_maxWatchedThreadNum) goto Done;
-    
-    PerThreadScopeTreeData* tos = scopeTreeToS[tid];
-    if (!tos) goto Done;
-    
-    Nanosecs delta = TimerElapsedNanosecs(&pf_stack->beginTime);
+    if (tid < ROMP_maxWatchedThreadNum) {
 
-    tos->in_scope.ns += delta.ns;
+        PerThreadScopeTreeData* tos = scopeTreeToS[tid];
+        if (tos) {
 
-    if (pf_stack->gone_parallel)
-        if (debug) fprintf(stderr, "ROMP_pf_end tid:%d pf_stack:%p getting other thread times\n",
-            omp_get_thread_num(), pf_stack);
+            Nanosecs delta = TimerElapsedNanosecs(&pf_stack->beginTime);
+            tos->in_scope.ns += delta.ns;
 
-    if (!pf_stack->gone_parallel) {
-        // Not the same as putting a condition on the else loop
-        // The later is implemented by openmp choosing any available thread to execute the loop body, not the current thread
-        pf_end_one_thread(tid, pf_stack, tos);
-    } else {
-        int i;
-        #ifdef HAVE_OPENMP
-            #pragma omp parallel for schedule(static,1)
-        #endif
-        for (i = 0; i < ROMP_maxWatchedThreadNum; i++) pf_end_one_thread(tid, pf_stack, tos);
-    }
+            if (pf_stack->gone_parallel)
+                if (debug) fprintf(stderr, "ROMP_pf_end tid:%d pf_stack:%p getting other thread times\n",
+                    omp_get_thread_num(), pf_stack);
 
-    if (romp_level < ROMP_level__size) {
-        int i;
-        for (i = 0; i < ROMP_maxWatchedThreadNum; i++) {
-            Nanosecs* startCPUTime = &pf_stack->watchedThreadBeginCPUTimes[i];
-            if (startCPUTime->ns != 0 && startCPUTime->ns != -1) {
-                if (debug) fprintf(stderr, "%s:%d no end time for %d\n", __FILE__, __LINE__, tid);
+            if (!pf_stack->gone_parallel) {
+                // Not the same as putting a condition on the else loop
+                // The later is implemented by openmp choosing any available thread to execute the loop body, not the current thread
+                pf_end_one_thread(tid, pf_stack, tos);
+            } else {
+                int i;
+                #ifdef HAVE_OPENMP
+                    #pragma omp parallel for schedule(static,1)
+                #endif
+                for (i = 0; i < ROMP_maxWatchedThreadNum; i++) pf_end_one_thread(tid, pf_stack, tos);
             }
-        } 
-    }
-    
-    scopeTreeToS[tid] = tos->parent;
 
-Done:
+            if (romp_level < ROMP_level__size) {
+                int i;
+                for (i = 0; i < ROMP_maxWatchedThreadNum; i++) {
+                    Nanosecs* startCPUTime = &pf_stack->watchedThreadBeginCPUTimes[i];
+                    if (startCPUTime->ns != 0 && startCPUTime->ns != -1) {
+                        if (debug) fprintf(stderr, "%s:%d no end time for %d\n", __FILE__, __LINE__, tid);
+                    }
+                } 
+            }
+
+            scopeTreeToS[tid] = tos->parent;
+        }
+    }
+
     romp_level = pf_stack->entry_level;
 }
 

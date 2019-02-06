@@ -77,10 +77,6 @@
 //==================================================================
 // Local structure types
 //==================================================================
-#undef bool
-#undef true
-#undef false
-typedef enum { false = 0, true = 1 } bool;
 
 typedef struct
 {
@@ -1708,6 +1704,7 @@ int mhtfindClosestVertexGenericInBucket(MRIS_HASH_TABLE *mht,
 
   FindBucketsChecked_Count++;
 
+  MHB *bin;
   MHBT* bucket = MHTacqBucketAtVoxIx(mht, xv, yv, zv);
   if (!bucket) goto done;
 
@@ -1716,7 +1713,7 @@ int mhtfindClosestVertexGenericInBucket(MRIS_HASH_TABLE *mht,
   //-----------------------------------------
   // Iterate through vertices in this bucket
   //-----------------------------------------
-  MHB *bin = bucket->bins;
+  bin = bucket->bins;
   for (vtxix = 0; vtxix < bucket->nused; vtxix++, bin++) {
     AVtxNum = bin->fno;
 
@@ -1773,6 +1770,7 @@ int mhtfindClosestFaceCentroidGenericInBucket(MRIS_HASH_TABLE *mht,
 
   FindBucketsChecked_Count++;
 
+  MHB *bin;
   MHBT *bucket = MHTacqBucketAtVoxIx(mht, xv, yv, zv);
   if (!bucket) goto done;
 
@@ -1781,7 +1779,7 @@ int mhtfindClosestFaceCentroidGenericInBucket(MRIS_HASH_TABLE *mht,
   //-----------------------------------------
   // Iterate through vertices in this bucket
   //-----------------------------------------
-  MHB *bin = bucket->bins;
+  bin = bucket->bins;
   int faceix;
   for (faceix = 0; faceix < bucket->nused; faceix++, bin++) {
 

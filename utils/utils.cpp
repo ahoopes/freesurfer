@@ -410,7 +410,6 @@ char *FileNameOnly(const char *full_name, char *fname)
     // best solution: copy full_name to fname
     //
     fname = strcpyalloc(full_name);
-    *slash = 0;
   }
 
   number = strrchr(fname, '#');

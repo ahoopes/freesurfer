@@ -1245,7 +1245,7 @@ int MRISvectorRegister(MRI_SURFACE *mris,
   /* allocate the VALS_VP structure */
   for (n = 0; n < mris->nvertices; n++) {
     v = &mris->vertices[n];
-    vp = calloc(1, sizeof(VALS_VP));
+    vp = (VALS_VP *)calloc(1, sizeof(VALS_VP));
     vp->nvals = ncorrs;
     vp->orig_vals = (float *)calloc(ncorrs, sizeof(float)); /* before blurring */
     vp->vals = (float *)malloc(ncorrs * sizeof(float));     /* values used by

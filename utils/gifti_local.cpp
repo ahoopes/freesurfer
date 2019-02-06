@@ -898,7 +898,7 @@ MRIS *mrisReadGIFTIdanum(const char *fname, MRIS *mris, int daNum)
         gifti_free_image(image);
         return NULL;
       }
-      unsigned int *label_data = darray->data;
+      unsigned int *label_data = (unsigned int *)darray->data;
       int nindex = 0;    // index into node_index (if sparse data storage is used)
       int da_index = 0;  // index into the data array at hand
       int vno = 0;       // index into the mris struct (vertex number)
@@ -1747,7 +1747,7 @@ int MRISwriteGIFTI(MRIS *mris, int intent_code, const char *out_fname, const cha
     }
 
     /* Copy our 'annotation' data for each vertex (actually an index) */
-    unsigned int *label_data = labels->data;
+    unsigned int *label_data = (unsigned int *)labels->data;
     int label_index, theIdx, result;
     for (label_index = 0; label_index < mris->nvertices; label_index++) {
       if (mris->vertices[label_index].ripflag) {

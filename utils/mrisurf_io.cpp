@@ -76,7 +76,8 @@ int MRISreadTriangleProperties(MRI_SURFACE *mris, const char *mris_fname)
 
   float f;
   FILE *fp;
-  char fname[STRLEN], fpref[STRLEN], hemi[20], *cp;
+  char fname[STRLEN], fpref[STRLEN], hemi[20];
+  const char *cp;
 
   if (Gdiag & DIAG_SHOW && DIAG_VERBOSE_ON) {
     fprintf(stdout, "reading triangle files...");
@@ -203,7 +204,8 @@ int MRISwriteTriangleProperties(MRI_SURFACE *mris, const char *mris_fname)
   int fno, ano, vno;
   FACE *face;
   FILE *fp;
-  char fname[STRLEN], fpref[STRLEN], hemi[20], *cp;
+  char fname[STRLEN], fpref[STRLEN], hemi[20];
+  const char *cp;
 
   MRIScomputeTriangleProperties(mris);
 
@@ -286,7 +288,8 @@ int MRISwriteCurvature(MRI_SURFACE *mris, const char *sname)
 {
   int k, mritype;
   float curv;
-  char fname[STRLEN], *cp, path[STRLEN], name[STRLEN], *hemi;
+  char fname[STRLEN], path[STRLEN], name[STRLEN], *hemi;
+  const char *cp;
   FILE *fp;
 
   switch (mris->hemisphere) {
@@ -397,7 +400,8 @@ int MRISwriteDists(MRI_SURFACE *mris, const char *sname)
 {
   int k, i;
   float dist;
-  char fname[STRLEN], *cp, path[STRLEN];
+  char fname[STRLEN], path[STRLEN];
+  const char *cp;
   FILE *fp;
 
   cp = strchr(sname, '/');
@@ -1409,7 +1413,8 @@ int MRISreadAnnotation(MRI_SURFACE *mris, const char *sname)
 {
   int vno, need_hemi;
   int return_code;
-  char *cp, fname[STRLEN], path[STRLEN], fname_no_path[STRLEN];
+  char fname[STRLEN], path[STRLEN], fname_no_path[STRLEN];
+  const char *cp;
   int *array;
 #if 0
   int   numannothist;
@@ -4140,7 +4145,7 @@ static MRIS* MRISreadOverAlloc_new(const char *fname, double nVFMultiplier)
             case TAG_CMDLINE:
               if (mris->ncmds > MAX_CMDS)
                 ErrorExit(ERROR_NOMEMORY, "mghRead(%s): too many commands (%d) in file", fname, mris->ncmds);
-              mris->cmdlines[mris->ncmds] = calloc(len + 1, sizeof(char));
+              mris->cmdlines[mris->ncmds] = (char *)calloc(len + 1, sizeof(char));
               fread(mris->cmdlines[mris->ncmds], sizeof(char), len, fp);
               mris->cmdlines[mris->ncmds][len] = 0;
               mris->ncmds++;
@@ -4554,7 +4559,7 @@ static MRIS* MRISreadOverAlloc_old(const char *fname, double nVFMultiplier)
           case TAG_CMDLINE:
             if (mris->ncmds > MAX_CMDS)
               ErrorExit(ERROR_NOMEMORY, "mghRead(%s): too many commands (%d) in file", fname, mris->ncmds);
-            mris->cmdlines[mris->ncmds] = calloc(len + 1, sizeof(char));
+            mris->cmdlines[mris->ncmds] = (char *)calloc(len + 1, sizeof(char));
             fread(mris->cmdlines[mris->ncmds], sizeof(char), len, fp);
             mris->cmdlines[mris->ncmds][len] = 0;
             mris->ncmds++;
@@ -5363,7 +5368,8 @@ int MRISreadCurvatureFile(MRI_SURFACE *mris, const char *sname)
   int k, i, vnum, fnum;
   float curv = 0, curvmin, curvmax;
   FILE *fp;
-  char *cp, path[STRLEN], fname[STRLEN], type;
+  const char *cp;
+  char path[STRLEN], fname[STRLEN], type;
   int mritype, frame, nv, c, r, s, vno;
   MRI *TempMRI;
 
@@ -5522,7 +5528,8 @@ int MRISreadCurvatureFile(MRI_SURFACE *mris, const char *sname)
   ------------------------------------------------------*/
 float *MRISreadCurvatureVector(MRI_SURFACE *mris, const char *sname)
 {
-  char *cp, path[STRLEN], fname[STRLEN];
+  const char *cp;
+  char path[STRLEN], fname[STRLEN];
   float *cvec = NULL;
   int return_code = ERROR_NONE;
 
@@ -5613,7 +5620,8 @@ int MRISreadFloatFile(MRI_SURFACE *mris, const char *sname)
   int k, vnum, fnum;
   float f;
   FILE *fp;
-  char *cp, path[STRLEN], fname[STRLEN];
+  const char *cp;
+  char path[STRLEN], fname[STRLEN];
 
   cp = strchr(sname, '/');
   if (!cp) /* no path - use same one as mris was read from */
@@ -6089,7 +6097,7 @@ static MRI_SURFACE *mrisReadTriangleFile(const char *fname, double nVFMultiplier
         case TAG_CMDLINE:
           if (mris->ncmds > MAX_CMDS)
             ErrorExit(ERROR_NOMEMORY, "MRISread(%s): too many commands (%d) in file", fname, mris->ncmds);
-          mris->cmdlines[mris->ncmds] = calloc(len + 1, sizeof(char));
+          mris->cmdlines[mris->ncmds] = (char *)calloc(len + 1, sizeof(char));
           if (mris->cmdlines[mris->ncmds] == NULL)
             ErrorExit(ERROR_NOMEMORY, "MRISread(%s): could not allocate %d byte cmdline", fname, len);
           mris->cmdlines[mris->ncmds][len] = 0;
@@ -6118,7 +6126,8 @@ static MRI_SURFACE *mrisReadTriangleFile(const char *fname, double nVFMultiplier
   ------------------------------------------------------*/
 int MRISbuildFileName(MRI_SURFACE *mris, const char *sname, char *fname)
 {
-  char path[STRLEN], *slash, *dot;
+  char path[STRLEN];
+  const char *slash, *dot;
 
   slash = strchr(sname, '/');
   if (!slash) /* no path - use same one as mris was read from */
@@ -6230,7 +6239,8 @@ int MRISreadNewCurvatureFile(MRI_SURFACE *mris, const char *sname)
   int k, vnum, fnum, vals_per_vertex;
   float curv, curvmin, curvmax;
   FILE *fp;
-  char *cp, path[STRLEN], fname[STRLEN];
+  const char *cp;
+  char path[STRLEN], fname[STRLEN];
 
   cp = strchr(sname, '/');
   if (!cp) /* no path - use same one as mris was read from */
@@ -6303,7 +6313,8 @@ int MRISreadNewCurvatureFile(MRI_SURFACE *mris, const char *sname)
 }
 float *MRISreadNewCurvatureVector(MRI_SURFACE *mris, const char *sname)
 {
-  char *cp, path[STRLEN], fname[STRLEN];
+  const char *cp;
+  char path[STRLEN], fname[STRLEN];
   float *cvec = NULL;
   int return_code = ERROR_NONE;
 
