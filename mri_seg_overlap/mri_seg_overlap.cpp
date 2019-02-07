@@ -11,10 +11,10 @@
 #include "json.hpp"
 #include "log.hpp"
 
-extern "C" {
+ 
 #include "mri.h"
 #include "mri2.h"
-}
+
 
 
 struct IntermediateMetrics {

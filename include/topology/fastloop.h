@@ -27,8 +27,6 @@
 #ifndef TOPOLOGY_FASTLOOP_H
 #define TOPOLOGY_FASTLOOP_H
 
-#ifdef __cplusplus
-
 //#pragma  warning( disable : 4702 )
 #include <queue>
 #include <functional>
@@ -157,7 +155,5 @@ public:
   Loop* FindLoop(int seed);
   void FindMinimalLoop(Loop &minimial_loop , int max_init_face=-1 , int nattempts = 10);
 };
-
-#endif
 
 #endif

@@ -25,10 +25,10 @@ As a validation, it will use the gcam to morph again the volumes
 
 // FS
 #include "argparse.hpp"
-extern "C" {
+ 
 #include "mri.h"
 #include "gcamorph.h"
-}
+
 
 #include "exportGcam.help.xml.h"
 

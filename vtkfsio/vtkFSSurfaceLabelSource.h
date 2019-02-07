@@ -37,9 +37,7 @@ class vtkPolyData;
 class vtkFSSurfaceSource;
 
 #include "vtkSource.h"
-extern "C" {
 #include "mrisurf.h"
-}
 
 class vtkFSSurfaceLabelSource : public vtkSource {
 public:

@@ -31,9 +31,7 @@
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"
 
-extern "C" {
 #include "mrisurf.h"
-}
 
 vtkCxxRevisionMacro(vtkFSSurfaceWriter, "$Revision: 1.4 $");
 vtkStandardNewMacro(vtkFSSurfaceWriter);

@@ -74,7 +74,7 @@ static int max_clusters[MAX_CLASSES] = {
 int
 main(int argc, char *argv[]) {
   char         *input_file_name ;
-  int          nargs, class ;
+  int          nargs, classnum ;
   FILE         *fp ;
   /*  CLUSTER_SET  *cs ;*/
   RBF          *rbf ;
@@ -109,8 +109,8 @@ main(int argc, char *argv[]) {
     nclasses = count_classes(fp) ;
 
   if (nclusters > 0)
-    for (class = 0 ; class < nclasses ; class++)
-      max_clusters[class] = nclusters ;
+    for (classnum = 0 ; classnum < nclasses ; classnum++)
+      max_clusters[classnum] = nclusters ;
   rbf = RBFinit(NINPUTS, nclasses, max_clusters, class_names) ;
   if (RBFtrain(rbf, read_line, (void *)fp, momentum) != NO_ERROR)
     exit(1) ;
@@ -200,7 +200,7 @@ static int
 read_line(VECTOR *v_obs, int obs_no, void *vfp, int same_class,int *pclass) {
   char *cp, line[200] ;
   FILE *fp ;
-  int  n, class ;
+  int  n, classnum ;
 
   fp = (FILE *)vfp ;
 
@@ -210,22 +210,22 @@ read_line(VECTOR *v_obs, int obs_no, void *vfp, int same_class,int *pclass) {
     cp = fgetl(line, 199, fp) ;
     if (!cp)
       return(-1) ;
-    sscanf(cp, "%f %f %d", &VECTOR_ELT(v_obs,1), &VECTOR_ELT(v_obs,2), &class);
-    /* if same_class is set, only count those samples that are in the class
+    sscanf(cp, "%f %f %d", &VECTOR_ELT(v_obs,1), &VECTOR_ELT(v_obs,2), &classnum);
+    /* if same_class is set, only count those samples that are in the classnum
        specified in *pclass. This lets the caller pick the nth sample from
-       a given class.
+       a given classnum.
        */
-    if (same_class && (class != *pclass))
+    if (same_class && (classnum != *pclass))
       n-- ;
   }
 
 
-  *pclass = class ;
+  *pclass = classnum ;
   return(NO_ERROR) ;
 }
 static void
 classify_all(RBF *rbf, FILE *fp) {
-  int class, target_class, obs_no ;
+  int classnum, target_class, obs_no ;
   VECTOR *v_obs, *v_error ;
   float  sse, error, rms ;
 
@@ -236,11 +236,11 @@ classify_all(RBF *rbf, FILE *fp) {
   obs_no = 0 ;
   sse = 0.0f ;
   while (read_line(v_obs, obs_no++, (void *)fp, 0, &target_class) == NO_ERROR) {
-    class = RBFclassify(rbf, v_obs) ;
-    fprintf(stderr, "%+2.3f %+2.3f --> class %d (%2.3f)%s\n",
-            VECTOR_ELT(v_obs,1), VECTOR_ELT(v_obs,2), class,
-            RVECTOR_ELT(rbf->v_outputs, class+1),
-            class == target_class ? "" : " ERROR") ;
+    classnum = RBFclassify(rbf, v_obs) ;
+    fprintf(stderr, "%+2.3f %+2.3f --> classnum %d (%2.3f)%s\n",
+            VECTOR_ELT(v_obs,1), VECTOR_ELT(v_obs,2), classnum,
+            RVECTOR_ELT(rbf->v_outputs, classnum+1),
+            classnum == target_class ? "" : " ERROR") ;
     error = RBFcomputeErrors(rbf, target_class, v_error) ;
     sse += error ;
     RBFprintActivations(rbf, v_obs, v_error, target_class, stderr) ;
@@ -254,14 +254,14 @@ classify_all(RBF *rbf, FILE *fp) {
 static int
 count_classes(FILE *fp) {
   VECTOR *v_obs ;
-  int    class, classes[100], obs_no = 0, nclasses = 0 ;
+  int    classnum, classes[100], obs_no = 0, nclasses = 0 ;
 
   memset(classes, 0, sizeof(classes)) ;
   v_obs = VectorAlloc(NINPUTS, MATRIX_REAL) ;
 
-  while (read_line(v_obs, obs_no++, (void*)fp, 0, &class) == NO_ERROR) {
-    if (!classes[class]) {
-      classes[class] = 1 ;
+  while (read_line(v_obs, obs_no++, (void*)fp, 0, &classnum) == NO_ERROR) {
+    if (!classes[classnum]) {
+      classes[classnum] = 1 ;
       nclasses++ ;
     }
   }

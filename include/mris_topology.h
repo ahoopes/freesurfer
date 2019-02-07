@@ -42,11 +42,11 @@
   MRIS *MRISduplicateOver(MRIS *mris,int mode = 0);
   void MRIScopyHeader(MRIS *mris_src,MRIS *mris_dst);
 
-extern "C"
-{
+
+
 #include "mrisurf.h"
 #include "error.h"
-}
+
 #include "topology/surface.h"
 
 

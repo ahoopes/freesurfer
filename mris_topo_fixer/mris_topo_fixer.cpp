@@ -32,7 +32,7 @@
 #include <math.h>
 #include <ctype.h>
 
-extern "C" {
+ 
 #include "macros.h"
 #include "error.h"
 #include "diag.h"
@@ -43,7 +43,7 @@ extern "C" {
 #include "version.h"
 #include "timer.h"
 #include "topology/topo_parms.h"
-}
+
 #include "mris_topology.h"
 #include "topology/patchdisk.h"
 

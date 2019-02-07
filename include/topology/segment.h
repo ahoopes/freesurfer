@@ -27,8 +27,6 @@
 #ifndef TOPOLOGY_SEGMENT_H
 #define TOPOLOGY_SEGMENT_H
 
-#ifdef __cplusplus
-
 #include "globals.h"
 
 #define NUMBER_OF_POINTS 10
@@ -60,7 +58,5 @@ public:
   int GetMark() const;
   void SetMark(int m);
 };
-
-#endif
 
 #endif

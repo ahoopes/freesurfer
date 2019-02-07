@@ -49,14 +49,14 @@ static double scale = 1e12 ;
 int main(int argc, char *argv[]) ;
 
 int GCAscale(GCA *gca_flash, double min_val, double max_val) ;
-static  MRI *GCAcomputeAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) ;
+static  MRI *GCAcomputeAmbiguity(GCA *gca, MRI *mri, double *pamb, int classnum) ;
 static int  get_option(int argc, char *argv[]) ;
 static void print_usage(void) ;
 static void print_help(void) ;
 static void print_version(void) ;
-static  MRI *GCAcompute1DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) ;
-static  MRI *GCAcompute2DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) ;
-static  MRI *GCAcompute3DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) ;
+static  MRI *GCAcompute1DAmbiguity(GCA *gca, MRI *mri, double *pamb, int classnum) ;
+static  MRI *GCAcompute2DAmbiguity(GCA *gca, MRI *mri, double *pamb, int classnum) ;
+static  MRI *GCAcompute3DAmbiguity(GCA *gca, MRI *mri, double *pamb, int classnum) ;
 
 const char *Progname ;
 
@@ -75,7 +75,7 @@ static  double FA_STEP = 1 ;
 static int append = 0 ;
 static char *fname = "amb.log" ;
 static int left = 0 ;
-static int class = -1 ;
+static int classnum = -1 ;
 
 #define MAX_FAS 10
 int
@@ -138,7 +138,7 @@ main(int argc, char *argv[]) {
       printf("testing flip angle %2.1f\n", fa1) ;
       gca_flash = GCAcreateFlashGCAfromParameterGCA(gca, TRs, FAs, TEs, 1, lambda);
       /*    GCAscale(gca_flash, 0, 75) ;*/
-      mri =  GCAcomputeAmbiguity(gca_flash, mri, &amb, class) ;
+      mri =  GCAcomputeAmbiguity(gca_flash, mri, &amb, classnum) ;
       amb *= scale ;
       printf("\tflip angle %2.3f: ambiguity == %f\n", fa1, amb) ;
       if (amb  < min_amb || min_fa1  < 0) {
@@ -156,7 +156,7 @@ main(int argc, char *argv[]) {
     printf("minimimum ambiguity at  fas  %2.3f (%2.5f)\n", min_fa1, min_amb) ;
     FAs[0] = min_fa1 ;
     gca_flash = GCAcreateFlashGCAfromParameterGCA(gca, TRs, FAs, TEs, 1, lambda);
-    mri =  GCAcomputeAmbiguity(gca_flash, NULL, &amb, class) ;
+    mri =  GCAcomputeAmbiguity(gca_flash, NULL, &amb, classnum) ;
     MRIwrite(mri, out_name) ;
     MRIfree(&mri) ;
 #if 0
@@ -199,7 +199,7 @@ main(int argc, char *argv[]) {
         FAs[1] = RADIANS(fa2) ;
         gca_flash = GCAcreateFlashGCAfromParameterGCA(gca, TRs, FAs, TEs, 2, lambda);
         /*    GCAscale(gca_flash, 0, 75) ;*/
-        mri =  GCAcomputeAmbiguity(gca_flash, mri, &amb, class) ;
+        mri =  GCAcomputeAmbiguity(gca_flash, mri, &amb, classnum) ;
         amb *= scale ;
         printf("\tflip angles %2.3f, %2.3f: ambiguity == %f\n", fa1, fa2, amb) ;
         if (amb  < min_amb || min_fa1  < 0) {
@@ -220,7 +220,7 @@ main(int argc, char *argv[]) {
     FAs[0] = min_fa1 ;
     FAs[1] = min_fa2 ;
     gca_flash = GCAcreateFlashGCAfromParameterGCA(gca, TRs, FAs, TEs, 2, lambda);
-    mri =  GCAcomputeAmbiguity(gca_flash, NULL, &amb, class) ;
+    mri =  GCAcomputeAmbiguity(gca_flash, NULL, &amb, classnum) ;
     MRIwrite(mri, out_name) ;
     MRIfree(&mri) ;
 #if 0
@@ -267,7 +267,7 @@ main(int argc, char *argv[]) {
           printf("testing flip angles %2.1f, %2.1f %2.1f\n", fa1, fa2, fa3) ;
           gca_flash = GCAcreateFlashGCAfromParameterGCA(gca, TRs, FAs, TEs, 3, lambda);
           /*    GCAscale(gca_flash, 0, 75) ;*/
-          mri =  GCAcomputeAmbiguity(gca_flash, mri, &amb, class) ;
+          mri =  GCAcomputeAmbiguity(gca_flash, mri, &amb, classnum) ;
           amb *= scale ;
           printf("\tflip angles %2.3f, %2.3f, %2.3f: ambiguity == %f\n",
                  fa1, fa2, fa3, amb) ;
@@ -292,7 +292,7 @@ main(int argc, char *argv[]) {
     FAs[2] = min_fa3 ;
 #if 0
     gca_flash = GCAcreateFlashGCAfromParameterGCA(gca, TRs, FAs, TEs, 3, lambda);
-    mri =  GCAcomputeAmbiguity(gca_flash, NULL, &amb, class) ;
+    mri =  GCAcomputeAmbiguity(gca_flash, NULL, &amb, classnum) ;
     MRIwrite(mri, out_name) ;
     MRIfree(&mri) ;
     mri = MRIallocSequence(gca_flash->prior_width, gca_flash->prior_height,
@@ -324,7 +324,7 @@ main(int argc, char *argv[]) {
     FAs[0]  = RADIANS(MIN_FA1)  ;
     FAs[1]  = RADIANS(MIN_FA2)  ;
     gca_flash = GCAcreateFlashGCAfromParameterGCA(gca, TRs, FAs, TEs, 2, lambda);
-    mri =  GCAcomputeAmbiguity(gca_flash, NULL, &amb, class) ;
+    mri =  GCAcomputeAmbiguity(gca_flash, NULL, &amb, classnum) ;
     printf("writing max ambiguity map to %s...\n", out_name) ;
     MRIwrite(mri, out_name) ;
     MRIfree(&mri) ;
@@ -403,8 +403,8 @@ get_option(int argc, char *argv[]) {
       printf("appending output to %s...\n", fname) ;
       break ;
     case 'C':
-      class = atoi(argv[2]) ;
-      printf("optimizing for class %s (%d)\n", cma_label_to_name(class), class) ;
+      classnum = atoi(argv[2]) ;
+      printf("optimizing for classnum %s (%d)\n", cma_label_to_name(classnum), classnum) ;
       nargs = 1 ;
       break ;
     case 'S':
@@ -455,7 +455,7 @@ print_version(void) {
 
 
 static  MRI *
-GCAcomputeAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) {
+GCAcomputeAmbiguity(GCA *gca, MRI *mri, double *pamb, int classnum) {
   int        xp, yp, zp, l1, l2, i1,  i2,  i, label_count[MAX_CMA_LABEL+1][MAX_CMA_LABEL+1], label1_count[MAX_CMA_LABEL+1] ;
   GCA_PRIOR  *gcap  ;
   double     ambiguity, atotal, p1,  p2, amax, total_ambiguity, min_I, max_I, std,  Istep,  I ;
@@ -485,13 +485,13 @@ GCAcomputeAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) {
   mri->ras_good_flag = 1 ;
   switch (gca->ninputs) {
   case 1:
-    return(GCAcompute1DAmbiguity(gca, mri, pamb, class)) ;
+    return(GCAcompute1DAmbiguity(gca, mri, pamb, classnum)) ;
     break ;
   case 2:
-    return(GCAcompute2DAmbiguity(gca, mri, pamb, class)) ;
+    return(GCAcompute2DAmbiguity(gca, mri, pamb, classnum)) ;
     break ;
   case 3:
-    return(GCAcompute3DAmbiguity(gca, mri, pamb, class)) ;
+    return(GCAcompute3DAmbiguity(gca, mri, pamb, classnum)) ;
     break ;
   default:
     break ;
@@ -752,7 +752,7 @@ GCAscale(GCA *gca, double min_val, double max_val) {
 #define VAL_TO_INDEX(v,mean,std)  ((int)(MAX_VAL*((v-mean)/(2*NSTDS*std))))
 #define MAX_LABELS_PER_GCAN    10
 static  MRI *
-GCAcompute1DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) {
+GCAcompute1DAmbiguity(GCA *gca, MRI *mri, double *pamb, int classnum) {
   int        xp, yp, zp, l1, l2, i1,  i2, label_count[MAX_CMA_LABEL+1][MAX_CMA_LABEL+1], label1_count[MAX_CMA_LABEL+1],
   index1, index1_c1, index1_c2, n,ntotal ;
   GCA_PRIOR  *gcap  ;
@@ -849,7 +849,7 @@ GCAcompute1DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) {
                 continue ;
               if (l1 == l2)
                 continue ;
-              if (class > 0 && l1 != class && l2 != class)
+              if (classnum > 0 && l1 != classnum && l2 != classnum)
                 continue ;
 
               n++ ;
@@ -935,7 +935,7 @@ GCAcompute1DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) {
   return(mri) ;
 }
 static MRI *
-GCAcompute2DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) {
+GCAcompute2DAmbiguity(GCA *gca, MRI *mri, double *pamb, int classnum) {
   int        xp, yp, zp, l1, l2, i1,  i2, label_count[MAX_CMA_LABEL+1][MAX_CMA_LABEL+1], label1_count[MAX_CMA_LABEL+1],
   index1, index2, index1_c1, index1_c2, index2_c1, index2_c2, n,ntotal ;
   GCA_PRIOR  *gcap  ;
@@ -1045,7 +1045,7 @@ GCAcompute2DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) {
                 continue ;
               if (l1 == l2)
                 continue ;
-              if (class > 0 && l1 != class && l2 != class)
+              if (classnum > 0 && l1 != classnum && l2 != classnum)
                 continue ;
 
               n++ ;
@@ -1142,7 +1142,7 @@ GCAcompute2DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) {
   return(mri) ;
 }
 static  MRI *
-GCAcompute3DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) {
+GCAcompute3DAmbiguity(GCA *gca, MRI *mri, double *pamb, int classnum) {
   int        xp, yp, zp, l1, l2, i1,  i2, label_count[MAX_CMA_LABEL+1][MAX_CMA_LABEL+1], label1_count[MAX_CMA_LABEL+1],
   index1, index2, index3, index1_c1, index1_c2, index2_c1, index2_c2, index3_c1, index3_c2, n,ntotal ;
   GCA_PRIOR  *gcap  ;
@@ -1270,7 +1270,7 @@ GCAcompute3DAmbiguity(GCA *gca, MRI *mri, double *pamb, int class) {
                 continue ;
               if (l1 == l2)
                 continue ;
-              if (class > 0 && l1 != class && l2 != class)
+              if (classnum > 0 && l1 != classnum && l2 != classnum)
                 continue ;
 
               n++ ;

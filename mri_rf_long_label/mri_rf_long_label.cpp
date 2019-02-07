@@ -1,5 +1,5 @@
 /**
- * @file  mri_rf_label.c
+ * @file  mri_rf_long_label.c
  * @brief random forest classification
  *
  */
@@ -7,8 +7,8 @@
  * Original Author: Bruce Fischl
  * CVS Revision Info:
  *    $Author: fischl $
- *    $Date: 2012/05/23 23:50:50 $
- *    $Revision: 1.3 $
+ *    $Date: 2012/06/13 20:47:45 $
+ *    $Revision: 1.1 $
  *
  * Copyright © 2011 The General Hospital Corporation (Boston, MA) "MGH"
  *
@@ -120,13 +120,13 @@ main(int argc, char *argv[])
 
   make_cmd_version_string
   (argc, argv,
-   "$Id: mri_rf_label.c,v 1.3 2012/05/23 23:50:50 fischl Exp $",
+   "$Id: mri_rf_long_label.c,v 1.1 2012/06/13 20:47:45 fischl Exp $",
    "$Name:  $", cmdline);
 
   /* rkt: check for and handle version tag */
   nargs = handle_version_option
           (argc, argv,
-           "$Id: mri_rf_label.c,v 1.3 2012/05/23 23:50:50 fischl Exp $",
+           "$Id: mri_rf_long_label.c,v 1.1 2012/06/13 20:47:45 fischl Exp $",
            "$Name:  $");
   if (nargs && argc - nargs == 1)
   {
@@ -475,7 +475,7 @@ get_option(int argc, char *argv[])
       if (gca == NULL)
 	ErrorExit(ERROR_NOFILE, "%s: could not read gca from %s", argv[2]) ;
       nargs = 1 ;
-      printf("training a single classifier instead of an array using gca %s\n", argv[2]) ;
+      printf("using a single classifier instead of an array using gca %s\n", argv[2]) ;
       break ;
     case 'T':
       wm_thresh = atof(argv[2]) ;
@@ -526,11 +526,11 @@ get_option(int argc, char *argv[])
 
   Description:
   ----------------------------------------------------------------------*/
-#include "mri_rf_label.help.xml.h"
+//#include "mri_rf_label.help.xml.h"
 static void
 usage_exit(int code)
 {
-  outputHelpXml(mri_rf_label_help_xml, mri_rf_label_help_xml_len);
+//  outputHelpXml(mri_rf_label_help_xml, mri_rf_label_help_xml_len);
   exit(code);
 }
 
@@ -604,7 +604,7 @@ label_with_random_forest(RANDOM_FOREST *rf, TRANSFORM *transform, GCA *gca,
   for ( ; wmsa_whalf > 0 ; wmsa_whalf--)
     MRIdilate(mri_wmsa_possible, mri_wmsa_possible) ;
 
-  feature = calloc(rf->nfeatures, sizeof(double)) ;
+  feature = (double *)calloc(rf->nfeatures, sizeof(double)) ;
   if (feature == NULL)
     ErrorExit(ERROR_NOMEMORY, "%s: could not allocate %d-len feature vector", rf->nfeatures) ;
 
@@ -663,14 +663,8 @@ label_with_random_forest(RANDOM_FOREST *rf, TRANSFORM *transform, GCA *gca,
 	  continue ;
 	}
 	TransformSourceVoxelToAtlas(transform, mri_in, x, y, z, &xatlas, &yatlas, &zatlas) ;
-	extract_feature(mri_in, wsize, x, y, z, feature, xatlas, yatlas, zatlas) ;
-	if (mri_aseg)
-	  feature[rf->nfeatures-4] = MRIcountCSFInNbhd(mri_aseg, 5, x, y, z) ;
-	else
-	  feature[rf->nfeatures-4] = 0 ;
-	feature[rf->nfeatures-3] = 100*gm_prior(gca, mri_in, transform, x, y, z) ;
-	feature[rf->nfeatures-2] = 100*wm_prior(gca, mri_in, transform, x, y, z) ;
-	feature[rf->nfeatures-1] = 100*csf_prior(gca, mri_in, transform, x, y, z) ;
+	extract_long_features(mri_in, mri_aseg, transform, gca, wsize, x, y, z, feature) ;
+
 	if (x == Gx && y == Gy && z == Gz)
 	{
 	  int j ;
@@ -722,7 +716,7 @@ relabel_wmsa_nbrs_with_random_forest(RANDOM_FOREST *rf, TRANSFORM *transform, GC
   mri_mask = MRIcopy(mri_labeled, NULL) ;
   MRIdilate(mri_mask, mri_mask) ;  // nbrs
 
-  feature = calloc(rf->nfeatures, sizeof(double)) ;
+  feature = (double *)calloc(rf->nfeatures, sizeof(double)) ;
   if (feature == NULL)
     ErrorExit(ERROR_NOMEMORY, "%s: could not allocate %d-len feature vector", rf->nfeatures) ;
 
@@ -864,8 +858,8 @@ postprocess_segmentation_with_aseg(MRI *mri_labeled, MRI *mri_aseg, int min_voxe
 	case Unknown:
 	case Right_Putamen:
 	case Left_Putamen:
-	case Right_Thalamus:
-	case Left_Thalamus:
+	case Right_Thalamus_Proper:
+	case Left_Thalamus_Proper:
 	case Left_Lateral_Ventricle:
 	case Right_Lateral_Ventricle:
 	case Left_Inf_Lat_Vent:

@@ -54,7 +54,6 @@
 #include "mrisurf.h"
 #include "annotation.h"
 #include "version.h"
-#include "hipsu.h"
 #include "error.h"
 #include "utils.h"
 
@@ -741,7 +740,7 @@ static void addToExcludedLabelsList(COLOR_TABLE *ct, char *labelToExclude)
   // first-time setup
   if (excludedLabelsList == NULL)
   {
-    excludedLabelsList=malloc(10000*sizeof(int));
+    excludedLabelsList=(int *)malloc(10000*sizeof(int));
     numExcludedLabels=0;
   }
   if (excludedLabelsList == NULL)
@@ -789,7 +788,7 @@ static void addToIncludedLabelsList(COLOR_TABLE *ct, char *labelToInclude)
   // first-time setup
   if (includedLabelsList == NULL)
   {
-    includedLabelsList=malloc(10000*sizeof(int));
+    includedLabelsList=(int *)malloc(10000*sizeof(int));
     numIncludedLabels=0;
   }
   if (includedLabelsList == NULL)

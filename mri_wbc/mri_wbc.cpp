@@ -179,7 +179,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  wbc = calloc(sizeof(WBC),1);
+  wbc = (WBC *)calloc(sizeof(WBC),1);
   wbc->distthresh = cmdargs->distthresh;
   wbc->DoDist = cmdargs->DoDist;
   wbc->DoMat = cmdargs->DoMat;

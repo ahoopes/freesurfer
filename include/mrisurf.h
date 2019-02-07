@@ -495,10 +495,7 @@ typedef struct vertex_type_
 #undef ELTX
 #undef SEP
 
-#if defined(__cplusplus)
-    // C++ requires const members be initialized
-    vertex_type_() : dist(nullptr), dist_orig(nullptr), x(0), y(0), z(0), origx(0), origy(0), origz(0) {}
-#endif
+  vertex_type_() : dist(nullptr), dist_orig(nullptr), x(0), y(0), z(0), origx(0), origy(0), origz(0) {}
 
 }
 vertex_type, VERTEX ;
@@ -1123,10 +1120,8 @@ typedef struct INTEGRATION_PARMS
   double       stressthresh ;
   int          explode_flag ;
   
-#ifdef __cplusplus
   INTEGRATION_PARMS() : fp(NULL) {}
   INTEGRATION_PARMS(FILE* file) : fp(file) {}
-#endif 
   
 }
 INTEGRATION_PARMS ;

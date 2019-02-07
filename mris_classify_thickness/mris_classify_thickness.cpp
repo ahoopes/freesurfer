@@ -187,7 +187,7 @@ main(int argc, char *argv[]) {
   LABEL        *area ;
   FILE         *fp = NULL ;
   struct timeb start ;
-  int          msec, minutes, seconds, *training_class, class, nfeatures, offset ;
+  int          msec, minutes, seconds, *training_class, classnum, nfeatures, offset ;
   RANDOM_FOREST *rf ;
   double       **training_data ;
 
@@ -237,7 +237,7 @@ main(int argc, char *argv[]) {
 #define ARGV_OFFSET 3
 
 
-  /* first determine the number of subjects in each class */
+  /* first determine the number of subjects in each classnum */
   num_class1 = 0 ;
   n = ARGV_OFFSET ;
   do {
@@ -270,7 +270,7 @@ main(int argc, char *argv[]) {
       break ;
   } while (argv[n] != NULL) ;
 
-  fprintf(stderr, "%d subjects in class 1, %d subjects in class 2\n",
+  fprintf(stderr, "%d subjects in classnum 1, %d subjects in class 2\n",
           num_class1, num_class2) ;
 
   training_data = (double **)calloc(num_class1+num_class2, sizeof(double*));
@@ -371,8 +371,8 @@ main(int argc, char *argv[]) {
     DiagBreak() ;
     for (correct = n = 0 ; n < num_class1+num_class2 ; n++) 
     {
-      class = RFclassify(rf2, training_data[n], &pval, n < num_class1 ? 0 : 1) ;
-      if (class == training_class[n])
+      classnum = RFclassify(rf2, training_data[n], &pval, n < num_class1 ? 0 : 1) ;
+      if (classnum == training_class[n])
 	correct++ ;
     }
     printf("%d of %d correct (%2.1f%%)\n", correct, num_class1+num_class2,
@@ -382,8 +382,8 @@ main(int argc, char *argv[]) {
 
   for (correct = n = 0 ; n < num_class1+num_class2 ; n++) 
   {
-    class = RFclassify(rf, training_data[n], NULL, n < num_class1 ? 0 : 1) ;
-    if (class == training_class[n])
+    classnum = RFclassify(rf, training_data[n], NULL, n < num_class1 ? 0 : 1) ;
+    if (classnum == training_class[n])
       correct++ ;
   }
   printf("%d of %d correct (%2.1f%%)\n", correct, num_class1+num_class2,
@@ -439,7 +439,7 @@ main(int argc, char *argv[]) {
 	test_thickness[2*nvertices+a] = aseg_stats->labels[t].volume ;
       }
     }
-    class = RFclassify(rf, test_thickness, &pval, test_class) ;
+    classnum = RFclassify(rf, test_thickness, &pval, test_class) ;
 
     fl.l_type   = F_WRLCK;  /* F_RDLCK, F_WRLCK, F_UNLCK    */
     fl.l_whence = SEEK_SET; /* SEEK_SET, SEEK_CUR, SEEK_END */
@@ -451,7 +451,7 @@ main(int argc, char *argv[]) {
       ErrorExit(ERROR_NOFILE, "%s: could not open test log file %s", Progname, test_log_fname);
 
     fcntl(fd, F_SETLKW, &fl);  /* F_GETLK, F_SETLK, F_SETLKW */
-    sprintf(line, "%s %s %d %d %lf\n", test_subject, hemi, class, test_class, pval) ;
+    sprintf(line, "%s %s %d %d %lf\n", test_subject, hemi, classnum, test_class, pval) ;
     write(fd, line, (strlen(line))*sizeof(char)) ;
     fl.l_type   = F_UNLCK;  /* tell it to unlock the region */
     fcntl(fd, F_SETLK, &fl); /* set the region to unlocked */
@@ -537,14 +537,14 @@ main(int argc, char *argv[]) {
 
 #define ARGV_OFFSET 4
 
-  /* first determine the number of subjects in each class */
+  /* first determine the number of subjects in each classnum */
   num_class1 = 0 ;
   n = ARGV_OFFSET ;
   do {
     num_class1++ ;
     n++ ;
     if (argv[n] == NULL || n >= argc)
-      ErrorExit(ERROR_BADPARM, "%s: must spectify ':' between class lists",
+      ErrorExit(ERROR_BADPARM, "%s: must spectify ':' between classnum lists",
                 Progname) ;
   } while (argv[n][0] != ':') ;
 
@@ -601,7 +601,7 @@ main(int argc, char *argv[]) {
       break ;
   } while (argv[n] != NULL) ;
 
-  fprintf(stderr, "%d subjects in class 1, %d subjects in class 2\n",
+  fprintf(stderr, "%d subjects in classnum 1, %d subjects in classnum 2\n",
           num_class1, num_class2) ;
 
   c1_subjects = (char **)calloc(num_class1, sizeof(char *)) ;
@@ -955,7 +955,7 @@ main(int argc, char *argv[]) {
     /* now build feature vectors for each subject */
     extract_thickness_at_best_scale(mris, c1_avg_thickness, vbest_avgs,
                                     c1_thickness, nvertices, num_class1);
-    fprintf(stderr, "extracting thickness for class 2...\n") ;
+    fprintf(stderr, "extracting thickness for classnum 2...\n") ;
     extract_thickness_at_best_scale(mris, c2_avg_thickness, vbest_avgs,
                                     c2_thickness, nvertices, num_class2);
   } else  /* read in precomputed optimal thicknesses */
@@ -1017,18 +1017,18 @@ main(int argc, char *argv[]) {
     for (n = 0 ; n < num_class2 ; n++)
       c2_label_thickness[n] = (double *)calloc(nlabels, sizeof(double)) ;
 
-    fprintf(stderr, "collapsing thicknesses within labels for class 1\n") ;
+    fprintf(stderr, "collapsing thicknesses within labels for classnum 1\n") ;
     for (n = 0 ; n < num_class1 ; n++)
       for (i = 0 ; i < nlabels ; i++)
         c1_label_thickness[n][i] =
           cvector_average_in_label(c1_avg_thickness[n], labels[i], nvertices) ;
-    fprintf(stderr, "collapsing thicknesses within labels for class 2\n") ;
+    fprintf(stderr, "collapsing thicknesses within labels for classnum 2\n") ;
     for (n = 0 ; n < num_class2 ; n++)
       for (i = 0 ; i < nlabels ; i++)
         c2_label_thickness[n][i] =
           cvector_average_in_label(c2_avg_thickness[n], labels[i], nvertices) ;
     sprintf(fname, "%s_%s_class1.dat", hemi,prefix) ;
-    fprintf(stderr, "writing class 1 info to %s...\n", fname) ;
+    fprintf(stderr, "writing classnum 1 info to %s...\n", fname) ;
     fp = fopen(fname, "w") ;
     for (i = 0 ; i < nlabels ; i++)  /* for each row */
     {
@@ -1039,7 +1039,7 @@ main(int argc, char *argv[]) {
     fclose(fp) ;
 
     sprintf(fname, "%s_%s_class2.dat", hemi,prefix) ;
-    fprintf(stderr, "writing class 2 info to %s...\n", fname) ;
+    fprintf(stderr, "writing classnum 2 info to %s...\n", fname) ;
     fp = fopen(fname, "w") ;
     for (i = 0 ; i < nlabels ; i++) {
       for (n = 0 ; n < num_class2 ; n++)
@@ -1054,9 +1054,9 @@ main(int argc, char *argv[]) {
     write_vertex_data("c2.dat", vno, c2_avg_thickness,num_class2);
     printf("sorting complete\n") ;
 
-    /* re-write class means at these locations */
+    /* re-write classnum means at these locations */
     sprintf(fname, "%s_%s_class1.dat", hemi,prefix) ;
-    fprintf(stderr, "writing class 1 info to %s...\n", fname) ;
+    fprintf(stderr, "writing classnum 1 info to %s...\n", fname) ;
     fp = fopen(fname, "w") ;
     for (i = 0 ; i < nsort ; i++) {
       for (n = 0 ; n < num_class1 ; n++)
@@ -1065,7 +1065,7 @@ main(int argc, char *argv[]) {
     }
     fclose(fp) ;
     sprintf(fname, "%s_%s_class2.dat", hemi,prefix) ;
-    fprintf(stderr, "writing class 2 info to %s...\n", fname) ;
+    fprintf(stderr, "writing classnum 2 info to %s...\n", fname) ;
     fp = fopen(fname, "w") ;
     for (i = 0 ; i < nsort ; i++) {
       for (n = 0 ; n < num_class2 ; n++)
@@ -1206,7 +1206,7 @@ get_option(int argc, char *argv[]) {
     test_subject = argv[2] ;
     test_class = atoi(argv[3]) ;
     test_log_fname = argv[4] ;
-    fprintf(stderr, "writing subject %s class %d classification to %s\n", test_subject, test_class,test_log_fname) ;
+    fprintf(stderr, "writing subject %s classnum %d classification to %s\n", test_subject, test_class,test_log_fname) ;
     nargs = 3 ;
   } else if (!stricmp(option, "aseg")) {
     if (naseg >= MAX_ASEG_LABELS)
@@ -1274,7 +1274,7 @@ get_option(int argc, char *argv[]) {
       break ;
     case 'C':
       true_class = atoi(argv[2]) ;
-      fprintf(stderr, "generating stats for test subject as class %d\n",
+      fprintf(stderr, "generating stats for test subject as classnum %d\n",
               true_class) ;
       nargs = 1 ;
       break ;
@@ -1347,9 +1347,9 @@ print_usage(void) {
           Progname) ;
   fprintf(stderr, "where surf must be a spherical surface suitable for "
           "computing geodesics\n") ;
-  fprintf(stderr, "The <c1_subject> ... is a list of subjects from one class\n"
+  fprintf(stderr, "The <c1_subject> ... is a list of subjects from one classnum\n"
           "and the <c2_subject>... is a list of subjects from another "
-          "class.\n");
+          "classnum.\n");
 }
 
 static void

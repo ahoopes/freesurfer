@@ -7,13 +7,13 @@
 #include "pointset.hpp"
 #include "log.hpp"
 
-extern "C" {
+ 
 #include "utils.h"
 #include "mri.h"
 #include "label.h"
 #include "mrisurf.h"
 #include "mri_circulars.h"
-}
+
 
 
 static PointSet::Point sras2ras(MRIS* surf, PointSet::Point point);

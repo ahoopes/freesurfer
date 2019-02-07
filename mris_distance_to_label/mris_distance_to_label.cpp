@@ -31,7 +31,7 @@
 #include <math.h>
 #include <ctype.h>
 
-extern "C" {
+ 
 #include "macros.h"
 #include "error.h"
 #include "diag.h"
@@ -41,7 +41,7 @@ extern "C" {
 #include "macros.h"
 #include "version.h"
 #include "timer.h"
-}
+
 
 #include "fastmarching.h"
 

@@ -27,8 +27,6 @@
 #ifndef TOPOLOGY_PATCHDISK_H
 #define TOPOLOGY_PATCHDISK_H
 
-#ifdef __cplusplus
-
 #define MAX_EXTRA_VERTICES 100 //66
 #define MAX_EXTRA_FACES 150 //128
 
@@ -58,8 +56,5 @@ public:
   void Init();
   void Create(int which_patch);
 };
-
-
-#endif
 
 #endif

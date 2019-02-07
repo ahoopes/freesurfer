@@ -136,7 +136,7 @@ char *SUBJECTS_DIR = NULL;
 char *FS_TALAIRACH_SUBJECT = NULL;
 char *srcsubject, *msksubject;
 char *regfile = "register.dat";
-MRI *mSrcVol, *mROI, *mMskVol, *mSrcMskVol, *mFinalMskVol, *mSrcMskVol;
+MRI *mSrcVol, *mROI, *mMskVol, *mSrcMskVol, *mFinalMskVol;
 MRI *mritmp;
 FILE *fp;
 int nmskhits, nlabelhits, nfinalhits;

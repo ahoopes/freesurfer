@@ -38,13 +38,13 @@
 #define MORPH_WITH_MESH 1
 #define DO_MORPH_REGRESSION 0
 
-extern "C"
-{
+
+
 #include "error.h"
 #include "mri.h"
 #include "mrinorm.h"
 #include "mrisurf.h"
-};
+;
 
 
 const char *Progname;

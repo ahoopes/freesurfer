@@ -38,14 +38,6 @@
 
 const char *Progname;
 
-#ifndef Darwin
-#ifndef SunOS
-#ifndef Windows_NT
-extern void swab(const void *from, void *to, size_t n);
-#endif
-#endif
-#endif
-
 int repair_file(char *fname);
 
 void usage(void) {

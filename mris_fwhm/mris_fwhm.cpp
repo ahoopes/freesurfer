@@ -173,7 +173,7 @@ char *sumfile=NULL;
 char *datfile=NULL;
 char *ar1datfile=NULL;
 char tmpstr[2000];
-MRI *InVals=NULL, *mritmp;
+MRI *InVals=NULL;
 
 char *maskpath=NULL;
 char *labelpath=NULL;

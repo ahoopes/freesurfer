@@ -366,7 +366,7 @@ classify_vertices(MRI_SURFACE *mris, MRI *mri_prior, MRI *mri_cmat,
   {
     for (sno = 0 ; sno < nsubjects-1 ; sno++)
     {
-      in_label[sno] = calloc(mris->nvertices, sizeof(in_label[sno][0])) ;
+      in_label[sno] = (int *)calloc(mris->nvertices, sizeof(in_label[sno][0])) ;
       for (ind = 0 ; ind < labels[sno]->n_points ; ind++)
       {
         in_label[sno][labels[sno]->lv[ind].vno] = 1 ;

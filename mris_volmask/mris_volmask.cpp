@@ -38,8 +38,8 @@
 #include "cmd_line_interface.h"
 
 // FS
-extern "C"
-{
+
+
 #include "fsenv.h"
 #include "mrisurf.h"
 #include "mri.h"
@@ -50,7 +50,7 @@ extern "C"
 #include "timer.h"
 #include "gca.h"
 #include "version.h"
-};
+;
 const char *Progname;
 
 typedef Math::Point<int> Pointd;

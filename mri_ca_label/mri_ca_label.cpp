@@ -3121,7 +3121,7 @@ insert_thin_temporal_white_matter( MRI *mri_inputs, MRI *mri_labeled,
 
   printf("allocating %d TL samples, box [%d, %d, %d] -> [%d, %d, %d]...\n",
          nsamples, xmin, ymin, zmin, xmax, ymax, zmax) ;
-  gcas = calloc(nsamples, sizeof(GCA_SAMPLE)) ;
+  gcas = (GCA_SAMPLE *)calloc(nsamples, sizeof(GCA_SAMPLE)) ;
   if (!gcas)
   {
     ErrorExit(ERROR_NOMEMORY, "could not allocate gcas for TL insertion") ;

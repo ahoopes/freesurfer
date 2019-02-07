@@ -27,8 +27,6 @@
 #ifndef TOPOLOGY_FACE_H
 #define TOPOLOGY_FACE_H
 
-#ifdef __cplusplus
-
 #include "globals.h"
 
 class Face
@@ -47,7 +45,5 @@ public:
   ~Face(void);
   const Face& operator=(const Face &face);
 };
-
-#endif
 
 #endif

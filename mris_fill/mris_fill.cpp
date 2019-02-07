@@ -56,7 +56,7 @@ const char *Progname ;
 
 static double resolution = .25 ;
 static int conform = 0 ;
-static int template = 0 ;
+static int use_template = 0 ;
 static int sample_factor = 1 ;
 
 static char *vol_fname ;
@@ -102,7 +102,7 @@ main(int argc, char *argv[]) {
   fprintf(stderr, "reading surface from %s...\n", in_fname) ;
   mris = MRISread(in_fname) ;
 
-  if (template)
+  if (use_template)
   {
     fprintf(stderr, "reading volume from %s...\n", vol_fname) ;
     mri_template = MRIread(vol_fname) ;
@@ -174,7 +174,7 @@ get_option(int argc, char *argv[]) {
     nargs = 1 ;
     break ;
   case 'T':
-    template = 1 ;
+    use_template = 1 ;
     vol_fname = argv[2];
     nargs = 1 ;
     break;

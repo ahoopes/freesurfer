@@ -86,11 +86,11 @@
 #include "GeoSWorker.h"
 #include "BrushProperty.h"
 
-extern "C"
-{
+
+
 #include "utils.h"
 #include "geos.h"
-}
+
 
 #define IMAGE_RESAMPLE_FACTOR     4.0     // must be multiples of 2
 

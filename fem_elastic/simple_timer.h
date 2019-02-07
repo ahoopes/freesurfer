@@ -10,10 +10,10 @@ simple timer class - basic time measurements
 
 
 // use FS timer
-extern "C"
-{
+
+
 #include "timer.h"
-};
+;
 
 class SimpleTimer
 {

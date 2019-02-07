@@ -589,7 +589,7 @@ if(NOT MINIMAL)
     mri_update_gca
     mri_vol2roi
     mri_volcluster
-    mri_volsynth
+    # mri_volsynth
     mri_warp_convert
     mri_wbc
     mri_wmfilter
@@ -650,7 +650,7 @@ if(NOT MINIMAL)
     mris_multiscale_stats
     mris_niters2fwhm
     mris_parcellate_connectivity
-    mris_pmake
+    # mris_pmake
     mris_register_label_map
     mris_register_to_volume
     mris_remove_variance

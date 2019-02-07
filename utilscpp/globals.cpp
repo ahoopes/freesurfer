@@ -29,30 +29,11 @@
 #include <iostream>
 using namespace std;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-  //#include <stdio.h>
-  //#include <stdlib.h>
-  //#include <string.h>
-  //#include <math.h>
-  //#include <ctype.h>
-  //#include "macros.h"
 #include "error.h"
-  //#include "tags.h"
-  //#include "diag.h"
+#include "macros.h"
+
 #ifdef Windows_NT
 #include "proto.h"
-#endif
-  //#include "timer.h"
-  //#include "mrisurf.h"
-  //#include "mri.h"
-#include "macros.h"
-  //#include "icosahedron.h"
-  //#include "mrishash.h"
-  //#include "version.h"
-#ifdef __cplusplus
-}
 #endif
 
 

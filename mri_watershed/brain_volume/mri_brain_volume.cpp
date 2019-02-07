@@ -37,11 +37,6 @@ using namespace std;
 #include <time.h>
 
 #include "TVector.h"
-///////////////////////////////////////////////////////////////////////
-// all other software are all in "C"
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #include "mri.h"
 #include "macros.h"
@@ -58,11 +53,6 @@ extern "C" {
 #include "timer.h"
 #include "chklc.h"
 #include "diag.h"
-
-#ifdef __cplusplus
-}
-#endif
-////////////////////////////////////////////////////////////////////////
 
 #define WM_CONST 110 /* not used anymore */
 #define MAX_INT 100 /*100% is a good value for the watershed algo */
@@ -3235,7 +3225,7 @@ static void label_voxels(STRIP_PARMS *parms, MRI_variables *MRI_var,MRI *mri_wit
 
 #define CORR_THRESHOLD 5.3f
 
-extern "C" int finite(double v);
+int finite(double v);
 
 static void MRISchangeCoordinates(MRIS *mris,MRIS *mris_orig) {
   MRIScopyXYZ(mris, mris_orig);

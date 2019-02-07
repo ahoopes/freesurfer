@@ -349,7 +349,6 @@ static  char  Gpch_normCurv[STRBUF];
 static  char  Gpch_normHist[STRBUF];
 static  char  Gpch_normHistS[]    = "norm.hist";
 static  FILE*   GpFILE_normHist     = NULL;
-static  char  Gpch_normCurv[STRBUF];
 static  char  Gpch_normCurvS[]    = "norm.crv";
 static  char  Gpch_KHist[STRBUF];
 static  char  Gpch_KHistS[]       = "K.hist";
@@ -2101,7 +2100,7 @@ histogram_wrapper(
     ErrorExit(ERROR_SIZE, "%s: Invalid <binSize> and <bins> combination",
               Progname);
 
-  pf_histogram = calloc(G_bins, sizeof(float));
+  pf_histogram = (float *)calloc(G_bins, sizeof(float));
   histogram_create( amris,
                     f_minCurv,
                     f_binSize,
@@ -2287,7 +2286,7 @@ histogram_create(
           G_leftCols, pch_sot, " bin size", af_binSize);
   fprintf(GpSTDOUT, "%*s%s = %d\n",
           G_leftCols, pch_sot, " surface vertices", nvertices);
-  pf_curvature = calloc(nvertices, sizeof(float));
+  pf_curvature = (float *)calloc(nvertices, sizeof(float));
 
   for (vno=0; vno < nvertices; vno++) {
     pf_curvature[vno] = amris_curvature->vertices[vno].curv;

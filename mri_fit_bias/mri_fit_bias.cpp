@@ -58,7 +58,7 @@ typedef struct {
   int nfields;
   double *period; // one for each field
   int    *dim;    // one for each field
-  MRI *template;
+  MRI *mri_template;
   MRI *mask;
   MRI *field;
   double lpcutoff; // cutoff period in mm
@@ -119,7 +119,7 @@ char *SUBJECTS_DIR;
 
 MATRIX *MRIbiasPolyReg(int order, MRI *mask);
 MATRIX *MRIbiasXsegs(MRI *seg);
-MRI *MRIdctField(MRI *template, int nP[3], int offset);
+MRI *MRIdctField(MRI *mri_template, int nP[3], int offset);
 MRI *MRIfitDCTField(MRI *field, MRI *mask, int nP[3]);
 MATRIX *MRIbiasDCTReg(MRI *dctfield, MRI *mask, MATRIX *X);
 int MRIbiasFieldCorLog(MRIBF *bf);
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
   bf->logflag = 1;
   bf->ubermask = mask;
   bf->dct = DCTalloc();
-  bf->dct->template = src;
+  bf->dct->mri_template = src;
   bf->dct->lpcutoff = lpfcutoffmm;
   MRIbiasFieldCorLog(bf);
 
@@ -744,22 +744,22 @@ MATRIX *MRIbiasDCTReg(MRI *dctfield, MRI *mask, MATRIX *X)
 } 
 
 
-MRI *MRIdctField(MRI *template, int nP[3], int offset)
+MRI *MRIdctField(MRI *mri_template, int nP[3], int offset)
 {
   int c, r, s, nPtot,k=0, n;
   double *cdm, *rdm, *sdm;
   MRI *P;
 
   // dm are vectors that go from -0.5 to +0.5
-  cdm = (double *) calloc(template->width,sizeof(double));
-  for(k=0;k<template->width;k++) cdm[k] = (k - template->width/2.0)/template->width;
-  rdm = (double *) calloc(template->height,sizeof(double));
-  for(k=0;k<template->height;k++) rdm[k] = (k - template->height/2.0)/template->height;
-  sdm = (double *) calloc(template->depth,sizeof(double));
-  for(k=0;k<template->depth;k++) sdm[k] = (k - template->depth/2.0)/template->depth;
+  cdm = (double *) calloc(mri_template->width,sizeof(double));
+  for(k=0;k<mri_template->width;k++) cdm[k] = (k - mri_template->width/2.0)/mri_template->width;
+  rdm = (double *) calloc(mri_template->height,sizeof(double));
+  for(k=0;k<mri_template->height;k++) rdm[k] = (k - mri_template->height/2.0)/mri_template->height;
+  sdm = (double *) calloc(mri_template->depth,sizeof(double));
+  for(k=0;k<mri_template->depth;k++) sdm[k] = (k - mri_template->depth/2.0)/mri_template->depth;
 
   nPtot = nP[0]+nP[1]+nP[2] + offset;
-  P = MRIallocSequence(template->width, template->height, template->depth, MRI_FLOAT, nPtot);
+  P = MRIallocSequence(mri_template->width, mri_template->height, mri_template->depth, MRI_FLOAT, nPtot);
 
   // Start with a constant = 1
   k = 0;
@@ -767,10 +767,10 @@ MRI *MRIdctField(MRI *template, int nP[3], int offset)
     #ifdef HAVE_OPENMP
     #pragma omp parallel for 
     #endif
-    for(c=0; c < template->width; c++){
+    for(c=0; c < mri_template->width; c++){
       int r, s;
-      for(r=0; r < template->height; r++){
-        for(s=0; s < template->depth; s++){
+      for(r=0; r < mri_template->height; r++){
+        for(s=0; s < mri_template->depth; s++){
     	  MRIsetVoxVal(P,c,r,s,k,1);
         }
       }
@@ -782,12 +782,12 @@ MRI *MRIdctField(MRI *template, int nP[3], int offset)
     #ifdef HAVE_OPENMP
     #pragma omp parallel for 
     #endif
-    for(c=0; c < template->width; c++){
+    for(c=0; c < mri_template->width; c++){
       int r, s;
       double f;
       f = cos(2*M_PI*cdm[c]*n);
-      for(r=0; r < template->height; r++){
-	for(s=0; s < template->depth; s++){
+      for(r=0; r < mri_template->height; r++){
+	for(s=0; s < mri_template->depth; s++){
 	  MRIsetVoxVal(P,c,r,s,k,f);
 	}
       }
@@ -799,12 +799,12 @@ MRI *MRIdctField(MRI *template, int nP[3], int offset)
     #ifdef HAVE_OPENMP
     #pragma omp parallel for 
     #endif
-    for(r=0; r < template->height; r++){
+    for(r=0; r < mri_template->height; r++){
       int c, s;
       double f;
       f = cos(2*M_PI*rdm[r]*n);
-      for(c=0; c < template->width; c++){
-	for(s=0; s < template->depth; s++){
+      for(c=0; c < mri_template->width; c++){
+	for(s=0; s < mri_template->depth; s++){
 	  MRIsetVoxVal(P,c,r,s,k,f);
 	}
       }
@@ -816,12 +816,12 @@ MRI *MRIdctField(MRI *template, int nP[3], int offset)
     #ifdef HAVE_OPENMP
     #pragma omp parallel for 
     #endif
-    for(s=0; s < template->depth; s++){
+    for(s=0; s < mri_template->depth; s++){
       int c, r;
       double f;
       f = cos(2*M_PI*sdm[s]*n);
-      for(c=0; c < template->width; c++){
-	for(r=0; r < template->height; r++){
+      for(c=0; c < mri_template->width; c++){
+	for(r=0; r < mri_template->height; r++){
 	  MRIsetVoxVal(P,c,r,s,k,f);
 	}
       }
@@ -1002,12 +1002,12 @@ int MRIbiasFieldCorLog(MRIBF *bf)
 int DCTfield(DCTFS *dct)
 {
   int n,c,r,s,dim;
-  MRI *template = dct->template;
+  MRI *mri_template = dct->mri_template;
   double v,period,t=0,offset;
   MATRIX *vox2ras=NULL,*ras2vox=NULL; //*crs=NULL,*ras=NULL;
 
   printf("DCTfield():\n");
-  vox2ras = MRIxfmCRS2XYZ(template,0);
+  vox2ras = MRIxfmCRS2XYZ(mri_template,0);
   ras2vox = MatrixInverse(vox2ras,NULL);
   //dct->offsetCRS = MatrixMultiplyD(ras2vox,dct->offsetRAS,dct->offsetCRS);
   // Put the 0 voxel at the corner of the bounding box
@@ -1021,10 +1021,10 @@ int DCTfield(DCTFS *dct)
 	 dct->offsetRAS->rptr[2][1],dct->offsetRAS->rptr[3][1]);
 
   if(dct->field) MRIfree(&dct->field);
-  dct->field = MRIallocSequence(template->width, template->height, 
-				template->depth, MRI_FLOAT, dct->nfields);
-  MRIcopyHeader(template,dct->field);
-  MRIcopyPulseParameters(template,dct->field);
+  dct->field = MRIallocSequence(mri_template->width, mri_template->height, 
+				mri_template->depth, MRI_FLOAT, dct->nfields);
+  MRIcopyHeader(mri_template,dct->field);
+  MRIcopyPulseParameters(mri_template,dct->field);
 
   //crs = MatrixAlloc(4,1,MATRIX_REAL);
   //crs->rptr[4][1] = 1;
@@ -1034,11 +1034,11 @@ int DCTfield(DCTFS *dct)
     offset = dct->offsetCRS->rptr[dim][1];
     printf("n = %2d, dim=%d period=%6.2f (%6.4f) offset = %7.3f\n",n,dim,period,1.0/period,offset);
     fflush(stdout);
-    for(c=0; c < template->width; c++){
+    for(c=0; c < mri_template->width; c++){
       //crs->rptr[1][1] = c;
-      for(r=0; r < template->height; r++){
+      for(r=0; r < mri_template->height; r++){
         //crs->rptr[2][1] = r;
-	for(s=0; s < template->depth; s++){
+	for(s=0; s < mri_template->depth; s++){
 	  if(dct->mask && MRIgetVoxVal(dct->mask,c,r,s,0)<0.5) continue;
 	  //crs->rptr[3][1] = s;
 	  if(period == 0){
@@ -1087,18 +1087,18 @@ int DCTspecLPF(DCTFS *dct)
     switch(dim){
     case 1:
       if(dct->bbfit) nvox = dct->bbfit->dx;
-      else           nvox = dct->template->width;
-      res = dct->template->xsize;
+      else           nvox = dct->mri_template->width;
+      res = dct->mri_template->xsize;
       break;
     case 2:
       if(dct->bbfit) nvox = dct->bbfit->dy;
-      else           nvox = dct->template->height;
-      res = dct->template->ysize;
+      else           nvox = dct->mri_template->height;
+      res = dct->mri_template->ysize;
       break;
     case 3:
       if(dct->bbfit) nvox = dct->bbfit->dz;
-      else           nvox = dct->template->depth;
-      res = dct->template->zsize;
+      else           nvox = dct->mri_template->depth;
+      res = dct->mri_template->zsize;
       break;
     }
     // deltaF is the frequency resolution.  Using 0.5 allows for a

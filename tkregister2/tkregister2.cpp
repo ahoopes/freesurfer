@@ -4963,9 +4963,7 @@ static void* interp;
 #endif // HAVE_TCL_TK_GL
 
 
-int main(argc, argv)   /* new main */
-  int argc;
-  char **argv;
+int main(int argc, char **argv)   /* new main */
 {
   int nargs;
 
@@ -4984,7 +4982,7 @@ int main(argc, argv)   /* new main */
 
   /* start program, now as function; gl window not opened yet */
   //printf("tkregister: starting register\n");
-  Register((ClientData) NULL, interp, argc, argv);/* event loop commented out*/
+  Register((ClientData) NULL, &interp, argc, argv);/* event loop commented out*/
 
 #ifdef HAVE_TCL_TK_GL
 

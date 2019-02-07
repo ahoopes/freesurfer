@@ -1,10 +1,8 @@
 #include <stdexcept>
 #include <sstream>
 
-extern "C" {
 #include "error.h"
 #include "mrisurf.h"
-}
 
 #include "vtkFSSurfaceScalarsReader.h"
 #include "vtkDataObject.h"

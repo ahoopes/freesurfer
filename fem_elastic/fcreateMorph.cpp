@@ -17,10 +17,10 @@ This binary creates a morph, given transforms
 
 // FS
 #include "argparse.hpp"
-extern "C" {
+ 
 #include "gcamorph.h"
 #include "mri.h"
-}
+
 
 #include "createMorph.help.xml.h"
 

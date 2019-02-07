@@ -47,10 +47,10 @@
 
 // FS includes
 #include "argparse.hpp"
-extern "C" {
+ 
 #include "error.h"
 #include "mrisurf.h"
-}
+
 
 #include "mris_resample.help.xml.h"
 

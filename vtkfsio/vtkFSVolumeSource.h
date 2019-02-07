@@ -34,9 +34,7 @@
 #include "vtkStructuredPointsSource.h"
 #include "vtkImageData.h"
 #include "vtkMatrix4x4.h"
-extern "C" {
 #include "mri.h"
-}
 
 // These are defined in the mri headers somewhere. You will probably
 // have to do this in files that include this file.

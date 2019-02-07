@@ -75,7 +75,7 @@ static MRI_REGION*mriFindLabel(MRI *mri,int label,int offset) {
 
 // the source mri mri_src is a float distance map with zero values inside.
 // the resolution is mri_src->xsize
-extern "C" void MRISextractOutsideDistanceMap(MRIS *mris, MRI *mri_src, int label , int offset, float resolution, float max_distance) {
+void MRISextractOutsideDistanceMap(MRIS *mris, MRI *mri_src, int label , int offset, float resolution, float max_distance) {
   MRI *mri_distance, *mri_fastmarching;
 
   /* resolution*/

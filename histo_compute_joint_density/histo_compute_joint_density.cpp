@@ -112,7 +112,7 @@ main(int argc, char *argv[]) {
     MRIvalRange(mri1, &min_val1, &max_val1) ;
     valid1_min = MAX(valid1_min, min_val1) ;
     valid1_max = MIN(valid1_max, max_val1) ;
-    valid1 = calloc(256, sizeof(int)) ;
+    valid1 = (int *)calloc(256, sizeof(int)) ;
     for (i = valid1_min ; i <= valid1_max ; i++)
       valid1[i] = 1 ;
 
@@ -125,7 +125,7 @@ main(int argc, char *argv[]) {
     mri2 = mri_tmp ;
     MRIsegmentFree(&mriseg) ;
   } else {
-    valid1 = calloc(256, sizeof(int)) ;
+    valid1 = (int *)calloc(256, sizeof(int)) ;
     for (i = 0 ; i <= 255 ; i++)
       valid1[i] = 1 ;
   }
@@ -134,11 +134,11 @@ main(int argc, char *argv[]) {
     MRIvalRange(mri2, &min_val2, &max_val2) ;
     valid2_min = MAX(valid2_min, min_val2) ;
     valid2_max = MIN(valid2_max, max_val2) ;
-    valid2 = calloc(256, sizeof(int)) ;
+    valid2 = (int *)calloc(256, sizeof(int)) ;
     for (i = valid2_min ; i <= valid2_max ; i++)
       valid2[i] = 1 ;
   } else {
-    valid2 = calloc(256, sizeof(int)) ;
+    valid2 = (int *)calloc(256, sizeof(int)) ;
     for (i = 0 ; i <= 255 ; i++)
       valid2[i] = 1 ;
   }

@@ -513,7 +513,7 @@ int   regheader=0;
 int   noresample=0;
 
 MRI *mov, *targ, *out;
-MRI *in, *template;
+MRI *in, *mri_template;
 MRI *tmpmri;
 
 MATRIX *R=NULL, *R2=NULL, *invR, *XFM;
@@ -728,7 +728,7 @@ int main(int argc, char **argv) {
     }
     if (targ == NULL) exit(1);
     in = mov;
-    template = targ;
+    mri_template = targ;
     tempvolfile = targvolfile;
   }
   else{
@@ -746,7 +746,7 @@ int main(int argc, char **argv) {
     }    
     if(mov == NULL) exit(1);
     in = targ;
-    template = mov;
+    mri_template = mov;
     tempvolfile = movvolfile;
   }
   if (mri_soap_ctrl)
@@ -853,13 +853,13 @@ int main(int argc, char **argv) {
   // Vox-to-tkRAS Matrices
   Tin      = MRIxfmCRS2XYZtkreg(in);
   invTin   = MatrixInverse(Tin,NULL);
-  Ttemp    = MRIxfmCRS2XYZtkreg(template);
+  Ttemp    = MRIxfmCRS2XYZtkreg(mri_template);
   invTtemp = MatrixInverse(Ttemp,NULL);
 
   // Vox-to-ScannerRAS Matrices
   Sin      = MRIxfmCRS2XYZ(in,0);
   invSin   = MatrixInverse(Sin,NULL);
-  Stemp    = MRIxfmCRS2XYZ(template,0);
+  Stemp    = MRIxfmCRS2XYZ(mri_template,0);
   invStemp = MatrixInverse(Stemp,NULL);
 
   if(noresample) {
@@ -915,23 +915,23 @@ int main(int argc, char **argv) {
   printf("\n");
 
   // Allocate the output
-  template->type = precisioncode;
+  mri_template->type = precisioncode;
   if (DoSaveInputMR)  // it is now on by default
   {
-    template->tr = in->tr ;
-    template->ti = in->ti ;
-    template->flip_angle = in->flip_angle ;
-    template->te = in->te ;
+    mri_template->tr = in->tr ;
+    mri_template->ti = in->ti ;
+    mri_template->flip_angle = in->flip_angle ;
+    mri_template->te = in->te ;
 
   }
   if (!DoMorph) {
     if(DoKernel) {
-      out = MRIcloneBySpace(template,MRI_FLOAT,8);
+      out = MRIcloneBySpace(mri_template,MRI_FLOAT,8);
       printf("Computing Trilinear Kernel\n");
       MRIvol2VolTLKernel(in,out,vox2vox);
     } else if(DoDelta) {
       printf("Computing Delta\n");
-      out = MRIvol2VolDelta(in,template,R);
+      out = MRIvol2VolDelta(in,mri_template,R);
     } 
     else if(DoFill){
       printf("Running MRIvol2VolFill(), DoConserve=%d, US=%d\n",DoFillConserve,FillUpsample);
@@ -940,7 +940,7 @@ int main(int argc, char **argv) {
       out = MRIvol2VolFill(in, NULL, ltareg, FillUpsample, DoFillConserve, out);
     }
     else {
-      out = MRIcloneBySpace(template,-1,in->nframes);
+      out = MRIcloneBySpace(mri_template,-1,in->nframes);
       printf("Resampling\n");
       if(useold) MRIvol2Vol(in,out,vox2vox,interpcode,sinchw);
       if(!useold){
@@ -955,7 +955,7 @@ int main(int argc, char **argv) {
   }
   else {
     Rtransform = (TRANSFORM *)calloc(sizeof(TRANSFORM),1);
-    Rtransform->xform = (void *)TransformRegDat2LTA(template, mov, R); // LZ: this is where the morphing goes wrong.....
+    Rtransform->xform = (void *)TransformRegDat2LTA(mri_template, mov, R); // LZ: this is where the morphing goes wrong.....
 
     printf("Reading gcam\n");
     if (defM3zPath)
@@ -1080,7 +1080,7 @@ int main(int argc, char **argv) {
     MatrixCopy(R, lta->xforms[0].m_L) ;
     lta->type = REGISTER_DAT;
     lta->fscale  = 1;
-    LTAmodifySrcDstGeom(lta,in,template);
+    LTAmodifySrcDstGeom(lta,in,mri_template);
     LTAchangeType(lta,LINEAR_VOX_TO_VOX);
     LTAwrite(lta,regfile0);    
     LTAfree(&lta);

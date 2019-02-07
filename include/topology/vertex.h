@@ -26,8 +26,6 @@
 #ifndef TOPOLOGY_VERTEX_H
 #define TOPOLOGY_VERTEX_H
 
-#ifdef __cplusplus
-
 #include "globals.h"
 
 class Vertex
@@ -143,7 +141,4 @@ public:
   }
 };
 
-
 #endif
-#endif
-

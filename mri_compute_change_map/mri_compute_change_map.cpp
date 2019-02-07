@@ -123,7 +123,7 @@ main(int argc, char *argv[]) {
   if (0 == strcmp(argv[3], "identity.nofile"))
   {
 	  transform->type =  LINEAR_VOX_TO_VOX;
-		LTA* lta = transform->xform;
+		LTA* lta = (LTA *)transform->xform;
 		lta->type =  LINEAR_VOX_TO_VOX;
 	  getVolGeom(mri2,&lta->xforms[0].src);
 	  getVolGeom(mri1,&lta->xforms[0].dst);

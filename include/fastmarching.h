@@ -49,11 +49,11 @@ void MRISextractOutsideDistanceMap(MRIS *mris,
 #include <climits>
 #include <list>
 
-extern "C"
-{
+
+
 #include "mrisurf.h"
 #include "error.h"
-}
+
 
 #define mapMRI_XYZ(mri,x,y,z) for(int z =0 ; z < mri->depth ; z++) \
                  for(int y = 0 ; y < mri->height ; y++) \

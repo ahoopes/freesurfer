@@ -100,7 +100,7 @@ int checkoptsonly=0;
 struct utsname uts;
 
 char *TempVolFile=NULL;
-char *subject, *hemi, *SUBJECTS_DIR;
+char *SUBJECTS_DIR;
 
 char *statfile=NULL;
 char *segfile=NULL;

@@ -12,14 +12,13 @@
 
 #include "geodesics.h"
 
-extern "C" {
 #include "macros.h"
 #include "mrisurf.h"
 #include "timer.h"
+
 #ifdef _OPENMP
 #include "romp_support.h"
 #endif
-}
 
 // Vertex
 struct Vertex
@@ -53,7 +52,7 @@ static Vertex extendedPoint(Vertex A, Vertex B, float dA, float dB, float dAB);
 static std::pair< int, int > makeKey(int a, int b);
 static void progressBar(float progress);
 
-extern "C" Geodesics *computeGeodesics(MRIS *surf, float maxdist)
+Geodesics *computeGeodesics(MRIS *surf, float maxdist)
 {
   int msec;
   struct timeb mytimer;
@@ -340,7 +339,7 @@ extern "C" Geodesics *computeGeodesics(MRIS *surf, float maxdist)
   return geo;
 }
 
-extern "C" void geodesicsWrite(Geodesics *geo, int nvertices, char *fname)
+void geodesicsWrite(Geodesics *geo, int nvertices, char *fname)
 {
   int vtxno;
   FILE *fp;
@@ -368,7 +367,7 @@ extern "C" void geodesicsWrite(Geodesics *geo, int nvertices, char *fname)
   fclose(fp);
 }
 
-extern "C" Geodesics *geodesicsRead(char *fname, int *pnvertices)
+Geodesics *geodesicsRead(char *fname, int *pnvertices)
 {
   int magic, nthvtx;
   char tmpstr[1000];
@@ -422,7 +421,7 @@ extern "C" Geodesics *geodesicsRead(char *fname, int *pnvertices)
 \fn int geodesicsUniquify(Geodesics *geod)
 \brief Removes relicants from the v (and dist) lists; vnum is updated.
 */
-extern "C" int geodesicsUniquify(Geodesics *geod)
+int geodesicsUniquify(Geodesics *geod)
 {
   int nthnbr, *vlist, nunique, k, *vuniq;
   float *dist;

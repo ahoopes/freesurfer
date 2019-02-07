@@ -3755,7 +3755,7 @@ int GLMdiagnoseDesignMatrix(MATRIX *X)
   ret = 0;
   
   // Check the scale
-  Xsumsq = calloc(X->cols,sizeof(float));
+  Xsumsq = (float *)calloc(X->cols,sizeof(float));
   XsumsqMin = 10e10;
   XsumsqMax = 0;
   cXsumsqMin = 0;

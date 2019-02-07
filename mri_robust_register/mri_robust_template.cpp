@@ -39,11 +39,6 @@
 
 #include "MultiRegistration.h"
 
-// all other software are all in "C"
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 #include "error.h"
 #include "macros.h"
 #include "mri.h"
@@ -52,10 +47,6 @@ extern "C"
 #include "diag.h"
 #include "mrimorph.h"
 #include "version.h"
-
-#ifdef __cplusplus
-}
-#endif
 
 using namespace std;
 

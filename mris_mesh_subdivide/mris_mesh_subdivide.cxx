@@ -28,8 +28,8 @@
 #include <stdlib.h>
 
 // nint
-extern "C"
-{
+
+
 #include "macros.h"
 #include "version.h"
 
@@ -49,7 +49,7 @@ extern "C"
 #include "mri_identify.h"
 
 
-}
+
 
 #include <vtkVersion.h>
 #include <vtkSmartPointer.h>

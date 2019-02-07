@@ -29,9 +29,7 @@
 
 #include "mris_topology.h"
 #include "topology/patchdisk.h"
-extern "C" {
 #include "utils.h"
-}
 
 #include "compilerdefs.h"
 
@@ -42,7 +40,7 @@ bool doesMRISselfIntersect(MRIS *mris_work,TOPOFIX_PARMS &parms);
 
 //check the new vertices : val2, val2bak... marked2=-1 ?
 
-extern "C" bool MRIScorrectDefect(MRIS *mris, 
+bool MRIScorrectDefect(MRIS *mris, 
                                   int defect_number,
                                   TOPOFIX_PARMS &parms) 
 {
@@ -164,7 +162,7 @@ bool MRIScorrectPatchTopology(MRIS* &mris,TOPOFIX_PARMS &parms)
 #define WS 0
 
 
-extern "C" bool MRISincreaseEuler(MRIS* &mris,TOPOFIX_PARMS &parms) 
+bool MRISincreaseEuler(MRIS* &mris,TOPOFIX_PARMS &parms) 
 {
   int nattempts=parms.nattempts;
   int final_euler = -1;
@@ -479,7 +477,7 @@ bool doesMRISselfIntersect(MRIS *mris_work,TOPOFIX_PARMS &parms)
   return IsMRISselfIntersecting(mris_work);
 }
 
-extern "C" MRIS *MRISduplicateOver(MRIS *mris,int mode) 
+MRIS *MRISduplicateOver(MRIS *mris,int mode) 
 {
   //clone the surface mris
   MRIS * mris_dst = MRISclone(mris);
@@ -552,7 +550,7 @@ extern "C" MRIS *MRISduplicateOver(MRIS *mris,int mode)
 }
 
 
-extern "C" int MRISgetEuler(MRIS *mris, int defect_number) 
+int MRISgetEuler(MRIS *mris, int defect_number) 
 {
   int *list_of_faces,nfaces;
 
@@ -606,9 +604,7 @@ extern "C" int MRISgetEuler(MRIS *mris, int defect_number)
   return euler;
 }
 
-extern "C" int MRISgetEulerNumber(const MRIS *mris, 
-                                  const int *list_of_faces, 
-                                  int nfs) 
+int MRISgetEulerNumber(const MRIS *mris,  const int *list_of_faces, int nfs) 
 {
   int nv,nf,ne;
 
@@ -686,7 +682,7 @@ extern "C" int MRISgetEulerNumber(const MRIS *mris,
   return (nv-ne+nf);
 }
 
-extern "C" MRIP* MRIPextractFromMRIS(MRIS *mris, int defect_number) 
+MRIP* MRIPextractFromMRIS(MRIS *mris, int defect_number) 
 {
   int *list_of_faces, nfaces;
 

@@ -72,7 +72,7 @@ main(int argc, char *argv[]) {
   LABEL         *cortex_label, *training_label ;
   RANDOM_FOREST *rf ;
   double        *feature, pval ;
-  int           class ;
+  int           classnum ;
   MRI_SURFACE   *mris ;
   MRI           *mri_labels ;
   VERTEX        *v ;
@@ -165,17 +165,17 @@ main(int argc, char *argv[]) {
       DiagBreak() ;
     }
 
-    class = RFclassify(rf, feature, &pval, v->marked);
+    classnum = RFclassify(rf, feature, &pval, v->marked);
     if (vno == Gdiag_no)
     {
-      printf("\tclass = %d, pval = %2.2f\n", class, pval) ;
+      printf("\tclass = %d, pval = %2.2f\n", classnum, pval) ;
       Gdiag &= ~DIAG_VERBOSE ;
       DiagBreak() ;
     }
-    if (class == 1)
+    if (classnum == 1)
       DiagBreak() ;
-    MRIsetVoxVal(mri_labels, vno, 0, 0, 0, class) ;
-    if (class == 0)
+    MRIsetVoxVal(mri_labels, vno, 0, 0, 0, classnum) ;
+    if (classnum == 0)
       pval = 1-pval ;
     MRIsetVoxVal(mri_labels, vno, 0, 0, 1, pval) ;
   }

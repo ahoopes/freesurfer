@@ -1914,7 +1914,8 @@ VOL_fileWrite(
   int     i, j, k, f;
   int     I           = 0;
   char    pch_readMessage[STRBUF];
-  int           ret;
+  int     ret;
+  e_FILEACCESS retfa;
   MRI     *out;
 
   if(!Gp_MRI)
@@ -1943,14 +1944,16 @@ VOL_fileWrite(
   ret = MRIwrite(out, apch_volFileName);
   if(!ret)
   {
+    retfa = e_OK;
     cprints("", "ok");
   }
   else
   {
+    retfa = e_WRITEACCESSERROR;
     cprints("", "error");
   }
   MRIfree(&out);
-  return(ret);
+  return(retfa);
 }
 
 /*!

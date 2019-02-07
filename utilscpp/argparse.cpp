@@ -4,10 +4,7 @@
 #include <algorithm>
 
 #include "argparse.hpp"
-
-extern "C" {
 #include "utils.h"
-}
 
 
 /// Makes sure option key is valid (i.e it isn't empty and

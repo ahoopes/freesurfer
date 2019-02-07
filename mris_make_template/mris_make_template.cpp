@@ -236,7 +236,7 @@ main(int argc, char *argv[])
                                                                  structure */
       {
         v=&mris->vertices[n];
-        vp=calloc(1,sizeof(VALS_VP));
+        vp=(VALS_VP *)calloc(1,sizeof(VALS_VP));
         vp->nvals=nfields;
         vp->orig_vals=(float*)malloc(nfields*sizeof(float)); /* before
                                                                 blurring */

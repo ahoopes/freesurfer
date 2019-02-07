@@ -265,7 +265,8 @@ main(int argc, char *argv[]) {
   TRANSFORM    *transform ;
   LTA          *lta ;
   VERTEX_PARMS *vp ;
-  char         base_name[STRLEN], fname[STRLEN], *hemi ;
+  char         base_name[STRLEN], fname[STRLEN];
+  const char *hemi ;
 
   witer = piter = l4iter = 0 ;
   dp.max_dist = MAX_DIST ;

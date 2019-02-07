@@ -37,7 +37,7 @@
 ////////////////////////////////////////////
 #include "ANN.h"
 
-extern "C" {
+ 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,7 +59,7 @@ extern "C" {
 #include "version.h"
 #include "error.h"
 #include "matrix.h"
-}
+
 
 //static char vcid[] = "$Id: mris_spharm.c,v 1.7 2011/03/02 00:04:34 nicks Exp $";
 

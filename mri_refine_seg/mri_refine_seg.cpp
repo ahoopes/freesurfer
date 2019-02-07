@@ -8,12 +8,12 @@
 #include "argparse.hpp"
 #include "pointset.hpp"
 
-extern "C" {
+ 
 #include "mri.h"
 #include "mri2.h"
 #include "fio.h"
 #include "volcluster.h"
-}
+
 
 #include "mri_refine_seg.help.xml.h"
 

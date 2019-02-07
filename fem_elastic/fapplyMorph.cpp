@@ -18,9 +18,9 @@
 
 // FreeSurfer
 #include "argparse.hpp"
-extern "C" {
+ 
 #include "mri.h"
-}
+
 
 #include "applyMorph.help.xml.h"
 

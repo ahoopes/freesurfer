@@ -671,7 +671,7 @@ classify_subjects(RANDOM_FOREST *rf, char *subject_list_file, int wsize, int nlo
 {
   FILE          *fp ;
   int           x, y, z, x0, y0, z0, xk, yk, zk, label ;
-  int           nsubjects, l, v, whalf, t, class ;
+  int           nsubjects, l, v, whalf, t, classnum ;
   char          line[MAX_LINE_LEN], fname[MAX_LINE_LEN], *subject ;
   MRI           *mri_intensity[MAX_LONG][MAX_VOLS],*mri_int, *mri_aseg[MAX_LONG], *mri_labeled;
   MATRIX        *mX, *mXpinv ;
@@ -778,14 +778,14 @@ classify_subjects(RANDOM_FOREST *rf, char *subject_list_file, int wsize, int nlo
           }
 	  if (x0 == Gx && y0 == Gy && z0 == Gz)
 	    DiagBreak() ;
-	  class = RFclassify(rf, feature_vec, &pval, -1)+1 ;
+	  classnum = RFclassify(rf, feature_vec, &pval, -1)+1 ;
 #if 0
-	  if (class == 0)
-	    class = WM_hypointensities ;
+	  if (classnum == 0)
+	    classnum = WM_hypointensities ;
 	  else
-	    class = MRIgetVoxVal(mri_aseg[nlong-2], x, y, z, 0) ;
+	    classnum = MRIgetVoxVal(mri_aseg[nlong-2], x, y, z, 0) ;
 #endif
-	  MRIsetVoxVal(mri_labeled, x0, y0, z0, 0, class) ;
+	  MRIsetVoxVal(mri_labeled, x0, y0, z0, 0, classnum) ;
 	}
     for (l = 0 ; l < nlong-1 ; l++)
     {

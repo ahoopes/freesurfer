@@ -30,9 +30,8 @@
 
 #include "vtkSource.h"
 #include "vtkSmartPointer.h"
-extern "C" {
+
 #include "mrisurf.h"
-}
 
 class vtkFloatArray;
 class vtkPolyData;

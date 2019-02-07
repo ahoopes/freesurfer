@@ -974,7 +974,7 @@ get_option(int argc, char *argv[]) {
           break;
       ncollapses[n]=atoi(argv[2]);
       fprintf(stderr,"collapsing %d labels : ",ncollapses[n]);
-      collapses[n]=malloc(ncollapses[n]*sizeof(int));
+      collapses[n]=(int *)malloc(ncollapses[n]*sizeof(int));
       for (m = 0; m < ncollapses[n] ; m++) {
         r=atoi(argv[3*m+3]);
         g=atoi(argv[3*m+4]);

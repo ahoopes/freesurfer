@@ -29,10 +29,6 @@
 #include <vector>
 #include <iostream>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 #include "mri.h"
 #include "macros.h"
 #include "error.h"
@@ -46,10 +42,6 @@ extern "C"
 #include "version.h"
 #include "cma.h"
 #include "transform.h"
-#ifdef __cplusplus
-}
-#endif
-
 
 struct Parameters
 {

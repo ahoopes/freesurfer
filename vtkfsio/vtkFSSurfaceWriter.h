@@ -26,9 +26,7 @@
 #define vtkFSSurfaceWriter_h
 
 #include "vtkWriter.h"
-extern "C" {
 #include "mrisurf.h"
-}
 
 class vtkPolyData;
 
