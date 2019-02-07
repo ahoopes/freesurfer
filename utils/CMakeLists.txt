@@ -59,12 +59,13 @@ set(SOURCES
   fs_lbfgs_observer.cpp
   fs_lbfgs_subject.cpp
   fs_powell.cpp
-  fsenv.cpp
-  fsglm.cpp
-  fsinit.cpp
-  fsPrintHelp.cpp
-  gca.cpp
-  gcaboundary.cpp
+  fsenv.c
+  fsgdf.c
+  fsglm.c
+  fsinit.c
+  fsPrintHelp.c
+  gca.c
+  gcaboundary.c
   gcalinearnode.cpp
   gcalinearprior.cpp
   gcamcomputeLabelsLinearCPU.cpp
