@@ -49,8 +49,7 @@
 #endif
 #endif
 
-#include "rgb_image.h"
-
+#include "rgb.h"
 #include "macros.h"
 #include "error.h"
 #include "diag.h"

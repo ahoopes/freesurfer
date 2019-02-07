@@ -27,7 +27,7 @@
 
 
 
-#include "minc_volume_io.h"
+#include "minc.h"
 #include "const.h"
 #include "matrix.h"
 #include "dmatrix.h"

@@ -1628,7 +1628,7 @@ static int ltaFSLwrite(const LTA *lta, const char *fname)
   return (NO_ERROR);
 }
 
-#include "minc_volume_io.h"
+#include "minc.h"
 
 static int ltaMNIwrite(const LTA *lta, const char *fname)
 {

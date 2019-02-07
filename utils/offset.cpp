@@ -37,7 +37,6 @@
 /*-----------------------------------------------------
                     INCLUDE FILES
 -------------------------------------------------------*/
-#include <hipl_format.h>
 #include <math.h>
 #include <memory.h>
 #include <stdio.h>

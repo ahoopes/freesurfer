@@ -27,7 +27,7 @@
 #ifndef STATS_H
 #define STATS_H
 
-#include "minc_volume_io.h"
+#include "minc.h"
 
 #include "matrix.h"
 #include "mri.h"

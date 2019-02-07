@@ -35,7 +35,7 @@
 #include "analyze.h"
 #include "fio.h"
 #include "machine.h"
-#include "minc_volume_io.h"
+#include "minc.h"
 #include "mrisurf.h"
 #include "proto.h"
 #include "signa.h"

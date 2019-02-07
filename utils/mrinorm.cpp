@@ -40,7 +40,7 @@
 #include "error.h"
 #include "filter.h"
 #include "macros.h"
-#include "minc_volume_io.h"
+#include "minc.h"
 #include "mri.h"
 #include "mrinorm.h"
 #include "mrisegment.h"

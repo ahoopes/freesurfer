@@ -22,7 +22,6 @@
  *
  */
 
-
 #ifndef MINC_VOLUME_IO_H
 #define MINC_VOLUME_IO_H
 
@@ -30,9 +29,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined(USE_LOCAL_MINC)
-// instead of using the libminc included with an external MNI package build,
-// use the local one found in packages/minc
 #include "netcdf.h"
 #include "minc_multidim_arrays.h"
 
@@ -611,53 +607,5 @@ VIO_Status  output_volume(
     Volume                volume,
     const char*	  	  history,
     minc_output_options  *options );
-
-
-#else
-
-
-/*
- * Wrapper for MNI's volume_io.h, which has some annoyances which
- * must be circumvented.
- */
-
-/* remove unwanted warnings between hips_basic.h vs. volume_io/basic.h */
-#undef ABS
-#undef SIGN
-#ifdef Darwin
-// The result of not defining __MACTYPES__ is a scuba2 build error
-// complaining about QT conflicting with MNI over the Point typedef.
-// Notes from the file <mni installation>/include/volume_io/geom_structs.h:
-/* Th 'Point' typedef is annoying to Mac OS users, since Point has been
- * a basic type on Macs since the beginning.  Testing __MACTYPES__ should
- * work at least with the OS X codebase, I don't know if it existed in
- * earlier versions of the MacTypes.h header.
- */
-#define __MACTYPES__
-#endif
-#ifdef Status
-// avoid conflicts with usage of 'Status' in volume_io/basic.h
-#undef Status
-#endif
-#ifdef Windows_NT
-#undef ERROR
-#endif // Windows_NT
-
-#include <volume_io.h> //from MNI
-
-/* remove unwanted warnings between hips_basic.h vs. volume_io/basic.h */
-#undef ABS
-#undef SIGN
-
-void  test_convert_transform_to_starts_and_steps(
-    General_transform  *transform,
-    int                n_volume_dimensions,
-    double             step_signs[],
-    int                spatial_axes[],
-    double             starts[],
-    double             steps[],
-    double             dir_cosines[][VIO_N_DIMENSIONS] );
-    
-#endif
 
 #endif // MINC_VOLUME_IO_H

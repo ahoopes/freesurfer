@@ -1,7 +1,5 @@
-#if defined(USE_LOCAL_MINC)
-
-#ifndef  DEF_MULTI_DIM
-#define  DEF_MULTI_DIM
+#ifndef  MINC_MULTI_DIM_H
+#define  MINC_MULTI_DIM_H
 
 /**
  * @file  minc_multidim_arrays.h
@@ -312,7 +310,5 @@ typedef  struct
          case 5:  GET_MULTIDIM_PTR_5D( ptr, array, x, y, z, t, v );  break; \
 	 default: fprintf(stderr,"%s:%d no default",__FILE__,__LINE__); exit(1); \
          }
-
-#endif
 
 #endif

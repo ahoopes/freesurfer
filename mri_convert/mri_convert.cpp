@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 {
   int outside_val = 0 ;
   int nargs = 0;
-  MRI *mri, *mri2, *template, *mri_in_like;
+  MRI *mri, *mri2, *mri_template, *mri_in_like;
   int i,err=0;
   int reorder_vals[3];
   float invert_val;
@@ -2643,9 +2643,9 @@ int main(int argc, char *argv[])
     {
       printf("reading template info from (type %s) volume %s...\n",
              template_type_string, reslice_like_name);
-      template =
+      mri_template =
       MRIreadHeader(reslice_like_name, forced_template_type);
-      if(template == NULL)
+      if(mri_template == NULL)
       {
         fprintf(stderr, "error reading from volume %s\n",
                 reslice_like_name);
@@ -2656,35 +2656,35 @@ int main(int argc, char *argv[])
     {
       printf("reading template info from volume %s...\n",
              reslice_like_name);
-      template = MRIreadInfo(reslice_like_name);
-      if(template == NULL)
+      mri_template = MRIreadInfo(reslice_like_name);
+      if(mri_template == NULL)
       {
         fprintf(stderr, "error reading from volume %s\n",
                 reslice_like_name);
         exit(1);
       }
-      // if we loaded a transform above, set the lta target geometry from template:
+      // if we loaded a transform above, set the lta target geometry from mri_template:
       if(lta_transform)
       {
         lta_transform = LTAchangeType(lta_transform,LINEAR_RAS_TO_RAS);
-        LTAmodifySrcDstGeom(lta_transform, NULL, template);
+        LTAmodifySrcDstGeom(lta_transform, NULL, mri_template);
       }
     }
   }
   else
   {
-    template =
+    mri_template =
       MRIallocHeader(mri->width,
                      mri->height,
                      mri->depth,
                      mri->type,
                      mri->nframes);
-    MRIcopyHeader(mri, template);
+    MRIcopyHeader(mri, mri_template);
 
     // if we loaded a transform above, get target geometry from lta:
     if(lta_transform && lta_transform->xforms[0].dst.valid == 1)
     {
-      useVolGeomToMRI(&lta_transform->xforms[0].dst,template);
+      useVolGeomToMRI(&lta_transform->xforms[0].dst,mri_template);
     }
 
     if(conform_flag)
@@ -2705,60 +2705,60 @@ int main(int argc, char *argv[])
           conform_width = MRIfindRightSize(mri, conform_size);
         }
       }
-      template = MRIconformedTemplate(mri, conform_width, conform_size, ConfKeepDC);
+      mri_template = MRIconformedTemplate(mri, conform_width, conform_size, ConfKeepDC);
     }
     else if ( voxel_size_flag )
     {
-      template = MRIallocHeader(mri->width,
+      mri_template = MRIallocHeader(mri->width,
                                 mri->height,
                                 mri->depth,
                                 mri->type,
                                 mri->nframes);
-      MRIcopyHeader( mri, template );
+      MRIcopyHeader( mri, mri_template );
 
-      template->nframes = mri->nframes ;
+      mri_template->nframes = mri->nframes ;
 
-      template->width = (int)ceil( mri->xsize * mri->width / voxel_size[0] );
-      template->height = (int)ceil( mri->ysize * mri->height / voxel_size[1] );
-      template->depth = (int)ceil( mri->zsize * mri->depth / voxel_size[2] );
+      mri_template->width = (int)ceil( mri->xsize * mri->width / voxel_size[0] );
+      mri_template->height = (int)ceil( mri->ysize * mri->height / voxel_size[1] );
+      mri_template->depth = (int)ceil( mri->zsize * mri->depth / voxel_size[2] );
 
-      template->xsize = voxel_size[0];
-      template->ysize = voxel_size[1];
-      template->zsize = voxel_size[2];
+      mri_template->xsize = voxel_size[0];
+      mri_template->ysize = voxel_size[1];
+      mri_template->zsize = voxel_size[2];
 
-      template->xstart = - template->width / 2;
-      template->xend   = template->width / 2;
-      template->ystart = - template->height / 2;
-      template->yend   = template->height / 2;
-      template->zstart = - template->depth / 2;
-      template->zend   = template->depth / 2;
+      mri_template->xstart = - mri_template->width / 2;
+      mri_template->xend   = mri_template->width / 2;
+      mri_template->ystart = - mri_template->height / 2;
+      mri_template->yend   = mri_template->height / 2;
+      mri_template->zstart = - mri_template->depth / 2;
+      mri_template->zend   = mri_template->depth / 2;
 
     }
     else if ( downsample_flag )
     {
-      template = MRIallocHeader(mri->width,
+      mri_template = MRIallocHeader(mri->width,
                                 mri->height,
                                 mri->depth,
                                 mri->type,
                                 mri->nframes);
-      MRIcopyHeader( mri, template );
+      MRIcopyHeader( mri, mri_template );
 
-      template->nframes = mri->nframes ;
+      mri_template->nframes = mri->nframes ;
 
-      template->width  = (int)ceil( mri->width  / downsample_factor[0] );
-      template->height = (int)ceil( mri->height / downsample_factor[1] );
-      template->depth  = (int)ceil( mri->depth  / downsample_factor[2] );
+      mri_template->width  = (int)ceil( mri->width  / downsample_factor[0] );
+      mri_template->height = (int)ceil( mri->height / downsample_factor[1] );
+      mri_template->depth  = (int)ceil( mri->depth  / downsample_factor[2] );
 
-      template->xsize *= downsample_factor[0];
-      template->ysize *= downsample_factor[1];
-      template->zsize *= downsample_factor[2];
+      mri_template->xsize *= downsample_factor[0];
+      mri_template->ysize *= downsample_factor[1];
+      mri_template->zsize *= downsample_factor[2];
 
-      template->xstart = -template->xsize*template->width  / 2;
-      template->xend   =  template->xsize*template->width  / 2;
-      template->ystart = -template->ysize*template->height / 2;
-      template->yend   =  template->ysize*template->height / 2;
-      template->zstart = -template->zsize*template->depth  / 2;
-      template->zend   =  template->zsize*template->depth  / 2;
+      mri_template->xstart = -mri_template->xsize*mri_template->width  / 2;
+      mri_template->xend   =  mri_template->xsize*mri_template->width  / 2;
+      mri_template->ystart = -mri_template->ysize*mri_template->height / 2;
+      mri_template->yend   =  mri_template->ysize*mri_template->height / 2;
+      mri_template->zstart = -mri_template->zsize*mri_template->depth  / 2;
+      mri_template->zend   =  mri_template->zsize*mri_template->depth  / 2;
     }
   }
 
@@ -2766,65 +2766,65 @@ int main(int argc, char *argv[])
   if (out_i_size_flag)
   {
     float scale ;
-    scale = template->xsize / out_i_size ;
-    template->xsize = out_i_size;
-    template->width = nint(template->width *scale) ;
+    scale = mri_template->xsize / out_i_size ;
+    mri_template->xsize = out_i_size;
+    mri_template->width = nint(mri_template->width *scale) ;
   }
   if (out_j_size_flag)
   {
     float scale ;
-    scale = template->ysize / out_j_size ;
-    template->ysize = out_j_size;
-    template->height = nint(template->height *scale) ;
+    scale = mri_template->ysize / out_j_size ;
+    mri_template->ysize = out_j_size;
+    mri_template->height = nint(mri_template->height *scale) ;
   }
   if (out_k_size_flag)
   {
     float scale ;
-    scale = template->zsize / out_k_size ;
-    template->zsize = out_k_size;
-    template->depth = nint(template->depth *scale) ;
+    scale = mri_template->zsize / out_k_size ;
+    mri_template->zsize = out_k_size;
+    mri_template->depth = nint(mri_template->depth *scale) ;
   }
   if (out_n_i_flag)
   {
-    template->width = out_n_i;
+    mri_template->width = out_n_i;
   }
   if (out_n_j_flag)
   {
-    template->height = out_n_j;
+    mri_template->height = out_n_j;
   }
   if (out_n_k_flag)
   {
-    template->depth = out_n_k;
-    template->imnr1 = template->imnr0 + out_n_k - 1;
+    mri_template->depth = out_n_k;
+    mri_template->imnr1 = mri_template->imnr0 + out_n_k - 1;
   }
   if (out_i_direction_flag)
   {
-    template->x_r = out_i_directions[0];
-    template->x_a = out_i_directions[1];
-    template->x_s = out_i_directions[2];
+    mri_template->x_r = out_i_directions[0];
+    mri_template->x_a = out_i_directions[1];
+    mri_template->x_s = out_i_directions[2];
   }
   if (out_j_direction_flag)
   {
-    template->y_r = out_j_directions[0];
-    template->y_a = out_j_directions[1];
-    template->y_s = out_j_directions[2];
+    mri_template->y_r = out_j_directions[0];
+    mri_template->y_a = out_j_directions[1];
+    mri_template->y_s = out_j_directions[2];
   }
   if (out_k_direction_flag)
   {
-    template->z_r = out_k_directions[0];
-    template->z_a = out_k_directions[1];
-    template->z_s = out_k_directions[2];
+    mri_template->z_r = out_k_directions[0];
+    mri_template->z_a = out_k_directions[1];
+    mri_template->z_s = out_k_directions[2];
   }
   if (out_orientation_flag)
   {
     printf("Setting output orientation to %s\n",out_orientation_string);
-    MRIorientationStringToDircos(template, out_orientation_string);
+    MRIorientationStringToDircos(mri_template, out_orientation_string);
   }
   if(out_center_flag)
   {
-    template->c_r = out_center[0];
-    template->c_a = out_center[1];
-    template->c_s = out_center[2];
+    mri_template->c_r = out_center[0];
+    mri_template->c_a = out_center[1];
+    mri_template->c_s = out_center[2];
   }
 
   /* ----- correct starts, ends, and fov if necessary ----- */
@@ -2832,35 +2832,35 @@ int main(int argc, char *argv[])
       out_n_i_flag    || out_n_j_flag    || out_n_k_flag)
   {
 
-    fov_x = template->xsize * template->width;
-    fov_y = template->ysize * template->height;
-    fov_z = template->zsize * template->depth;
-    template->xend = fov_x / 2.0;
-    template->xstart = -template->xend;
-    template->yend = fov_y / 2.0;
-    template->ystart = -template->yend;
-    template->zend = fov_z / 2.0;
-    template->zstart = -template->zend;
+    fov_x = mri_template->xsize * mri_template->width;
+    fov_y = mri_template->ysize * mri_template->height;
+    fov_z = mri_template->zsize * mri_template->depth;
+    mri_template->xend = fov_x / 2.0;
+    mri_template->xstart = -mri_template->xend;
+    mri_template->yend = fov_y / 2.0;
+    mri_template->ystart = -mri_template->yend;
+    mri_template->zend = fov_z / 2.0;
+    mri_template->zstart = -mri_template->zend;
 
-    template->fov = (fov_x > fov_y ?
+    mri_template->fov = (fov_x > fov_y ?
                      (fov_x > fov_z ? fov_x : fov_z) :
                        (fov_y > fov_z ? fov_y : fov_z) );
 
   }
 
   /* ----- give a warning for non-orthogonal directions ----- */
-  i_dot_j = template->x_r *
-            template->y_r + template->x_a *
-            template->y_a + template->x_s *
-            template->y_s;
-  i_dot_k = template->x_r *
-  template->z_r + template->x_a *
-  template->z_a + template->x_s *
-  template->z_s;
-  j_dot_k = template->y_r *
-  template->z_r + template->y_a *
-  template->z_a + template->y_s *
-  template->z_s;
+  i_dot_j = mri_template->x_r *
+            mri_template->y_r + mri_template->x_a *
+            mri_template->y_a + mri_template->x_s *
+            mri_template->y_s;
+  i_dot_k = mri_template->x_r *
+  mri_template->z_r + mri_template->x_a *
+  mri_template->z_a + mri_template->x_s *
+  mri_template->z_s;
+  j_dot_k = mri_template->y_r *
+  mri_template->z_r + mri_template->y_a *
+  mri_template->z_a + mri_template->y_s *
+  mri_template->z_s;
   if (fabs(i_dot_j) > CLOSE_ENOUGH ||
       fabs(i_dot_k) > CLOSE_ENOUGH ||
       fabs(i_dot_k) > CLOSE_ENOUGH)
@@ -2869,22 +2869,22 @@ int main(int argc, char *argv[])
            "i_dot_j = %.6f, i_dot_k = %.6f, j_dot_k = %.6f\n",
            i_dot_j, i_dot_k, j_dot_k);
     printf("i_ras = (%g, %g, %g)\n",
-           template->x_r, template->x_a, template->x_s);
+           mri_template->x_r, mri_template->x_a, mri_template->x_s);
     printf("j_ras = (%g, %g, %g)\n",
-           template->y_r, template->y_a, template->y_s);
+           mri_template->y_r, mri_template->y_a, mri_template->y_s);
     printf("k_ras = (%g, %g, %g)\n",
-           template->z_r, template->z_a, template->z_s);
+           mri_template->z_r, mri_template->z_a, mri_template->z_s);
   }
   if (out_data_type >= 0)
   {
-    template->type = out_data_type;
+    mri_template->type = out_data_type;
   }
 
-  /* ----- catch the template info flag ----- */
+  /* ----- catch the mri_template info flag ----- */
   if (template_info_flag)
   {
     printf("template structure:\n");
-    MRIdump(template, stdout);
+    MRIdump(mri_template, stdout);
   }
 
   /* ----- exit here if read only is desired ----- */
@@ -2950,7 +2950,7 @@ int main(int argc, char *argv[])
         if (out_center_flag)
         {
           MATRIX *m, *mtmp ;
-          m = MRIgetResampleMatrix(template, mri);
+          m = MRIgetResampleMatrix(mri_template, mri);
           mtmp = MRIrasXformToVoxelXform(mri, mri,
                                          lta_transform->xforms[0].m_L, NULL) ;
           MatrixFree(&lta_transform->xforms[0].m_L) ;
@@ -2981,9 +2981,9 @@ int main(int argc, char *argv[])
       }
       if(out_center_flag)
       {
-        mri_transformed->c_r = template->c_r ;
-        mri_transformed->c_a = template->c_a ;
-        mri_transformed->c_s = template->c_s ;
+        mri_transformed->c_r = mri_template->c_r ;
+        mri_transformed->c_a = mri_template->c_a ;
+        mri_transformed->c_s = mri_template->c_s ;
       }
       LTAfree(&lta_transform);
       MRIfree(&mri);
@@ -3006,7 +3006,7 @@ int main(int argc, char *argv[])
         printf("morphing to atlas with resample type %d\n", resample_type_val) ;
         mri_transformed =
            GCAMmorphToAtlas(mri, (GCA_MORPH *)tran->xform, NULL, 0, resample_type_val) ;
-	useVolGeomToMRI(&((GCA_MORPH *)tran->xform)->atlas, template) ;
+	useVolGeomToMRI(&((GCA_MORPH *)tran->xform)->atlas, mri_template) ;
       }
       else // invert
       {
@@ -3022,10 +3022,10 @@ int main(int argc, char *argv[])
 	  MRI *mri_template = MRIalloc(gcam->image.width,  gcam->image.height, gcam->image.depth, mri->type), *mri_tmp  ;
 	  useVolGeomToMRI(&gcam->atlas, mri_template) ;
 	  mri_tmp = MRIresample(mri, mri_template, resample_type_val);
-	  MRIfree(&mri) ; MRIfree(&template) ; 
+	  MRIfree(&mri) ; MRIfree(&mri_template) ; 
 	  mri = mri_tmp ;
 	  useVolGeomToMRI(&gcam->image, mri_template) ;
-	  template = mri_template ;
+	  mri_template = mri_template ;
 	}
         printf("morphing from atlas with resample type %d\n", resample_type_val) ;
         mri_transformed = GCAMmorphFromAtlas(mri,                  
@@ -3101,11 +3101,11 @@ int main(int argc, char *argv[])
   }
 
   /* ----- change type if necessary ----- */
-  if(mri->type != template->type && nochange_flag == FALSE)
+  if(mri->type != mri_template->type && nochange_flag == FALSE)
   {
     printf("changing data type from %s to %s (noscale = %d)...\n",
-           MRItype2str(mri->type),MRItype2str(template->type),no_scale_flag);
-    mri2 = MRISeqchangeType(mri, template->type, 0.0, 0.999, no_scale_flag);
+           MRItype2str(mri->type),MRItype2str(mri_template->type),no_scale_flag);
+    mri2 = MRISeqchangeType(mri, mri_template->type, 0.0, 0.999, no_scale_flag);
     if(mri2 == NULL){
       printf("ERROR: MRISeqchangeType\n");
       exit(1);
@@ -3128,36 +3128,36 @@ int main(int argc, char *argv[])
     mri = mri2;
   }
   
-  /*printf("mri  vs.  template\n");
-  printf(" dim  ( %i , %i , %i ) vs ( %i , %i , %i )\n",mri->width,mri->height,mri->depth,template->width,template->height,template->depth);
-  printf(" size ( %.9g , %.9g , %.9g ) vs ( %.9g , %.9g , %.9g )\n",mri->xsize,mri->ysize,mri->zsize,template->xsize,template->ysize,template->zsize);
-  printf(" xras ( %.9g , %.9g , %.9g ) vs ( %.9g , %.9g , %.9g )\n",mri->x_r,mri->x_a,mri->x_s,template->x_r,template->x_a,template->x_s);
-  printf(" yras ( %.9g , %.9g , %.9g ) vs ( %.9g , %.9g , %.9g )\n",mri->y_r,mri->x_a,mri->y_s,template->y_r,template->y_a,template->y_s);
-  printf(" zras ( %.9g , %.9g , %.9g ) vs ( %.9g , %.9g , %.9g )\n",mri->z_r,mri->x_a,mri->z_s,template->z_r,template->z_a,template->z_s);
-  printf(" cras ( %.9g , %.9g , %.9g ) vs ( %.9g , %.9g , %.9g )\n",mri->c_r,mri->c_a,mri->c_s,template->c_r,template->c_a,template->c_s);
+  /*printf("mri  vs.  mri_template\n");
+  printf(" dim  ( %i , %i , %i ) vs ( %i , %i , %i )\n",mri->width,mri->height,mri->depth,mri_template->width,mri_template->height,mri_template->depth);
+  printf(" size ( %.9g , %.9g , %.9g ) vs ( %.9g , %.9g , %.9g )\n",mri->xsize,mri->ysize,mri->zsize,mri_template->xsize,mri_template->ysize,mri_template->zsize);
+  printf(" xras ( %.9g , %.9g , %.9g ) vs ( %.9g , %.9g , %.9g )\n",mri->x_r,mri->x_a,mri->x_s,mri_template->x_r,mri_template->x_a,mri_template->x_s);
+  printf(" yras ( %.9g , %.9g , %.9g ) vs ( %.9g , %.9g , %.9g )\n",mri->y_r,mri->x_a,mri->y_s,mri_template->y_r,mri_template->y_a,mri_template->y_s);
+  printf(" zras ( %.9g , %.9g , %.9g ) vs ( %.9g , %.9g , %.9g )\n",mri->z_r,mri->x_a,mri->z_s,mri_template->z_r,mri_template->z_a,mri_template->z_s);
+  printf(" cras ( %.9g , %.9g , %.9g ) vs ( %.9g , %.9g , %.9g )\n",mri->c_r,mri->c_a,mri->c_s,mri_template->c_r,mri_template->c_a,mri_template->c_s);
   */
 
   /* ----- reslice if necessary and not performed during transform ----- */
   float eps = 1e-05; /* (mr) do eps testing to avoid reslicing due to tiny differences, e.g. from IO */
   if (!out_like_flag
-   && (fabs(mri->xsize - template->xsize) > eps ||
-      fabs(mri->ysize - template->ysize) > eps ||
-      fabs(mri->zsize - template->zsize) > eps ||
-      mri->width != template->width ||
-      mri->height != template->height ||
-      mri->depth != template->depth ||
-      fabs(mri->x_r - template->x_r) > eps ||
-      fabs(mri->x_a - template->x_a) > eps ||
-      fabs(mri->x_s - template->x_s) > eps ||
-      fabs(mri->y_r - template->y_r) > eps ||
-      fabs(mri->y_a - template->y_a) > eps ||
-      fabs(mri->y_s - template->y_s) > eps ||
-      fabs(mri->z_r - template->z_r) > eps ||
-      fabs(mri->z_a - template->z_a) > eps ||
-      fabs(mri->z_s - template->z_s) > eps ||
-      fabs(mri->c_r - template->c_r) > eps ||
-      fabs(mri->c_a - template->c_a) > eps ||
-      fabs(mri->c_s - template->c_s) > eps))
+   && (fabs(mri->xsize - mri_template->xsize) > eps ||
+      fabs(mri->ysize - mri_template->ysize) > eps ||
+      fabs(mri->zsize - mri_template->zsize) > eps ||
+      mri->width != mri_template->width ||
+      mri->height != mri_template->height ||
+      mri->depth != mri_template->depth ||
+      fabs(mri->x_r - mri_template->x_r) > eps ||
+      fabs(mri->x_a - mri_template->x_a) > eps ||
+      fabs(mri->x_s - mri_template->x_s) > eps ||
+      fabs(mri->y_r - mri_template->y_r) > eps ||
+      fabs(mri->y_a - mri_template->y_a) > eps ||
+      fabs(mri->y_s - mri_template->y_s) > eps ||
+      fabs(mri->z_r - mri_template->z_r) > eps ||
+      fabs(mri->z_a - mri_template->z_a) > eps ||
+      fabs(mri->z_s - mri_template->z_s) > eps ||
+      fabs(mri->c_r - mri_template->c_r) > eps ||
+      fabs(mri->c_a - mri_template->c_a) > eps ||
+      fabs(mri->c_s - mri_template->c_s) > eps))
   {
     printf("Reslicing using ");
     switch (resample_type_val)
@@ -3181,7 +3181,7 @@ int main(int argc, char *argv[])
       printf("voting \n");
       break;
     }
-    mri2 = MRIresample(mri, template, resample_type_val);
+    mri2 = MRIresample(mri, mri_template, resample_type_val);
     if(mri2 == NULL)
     {
       exit(1);
@@ -3537,7 +3537,7 @@ int main(int argc, char *argv[])
   }
   // free memory
   //MRIfree(&mri); // This causes a seg fault with change of type
-  MRIfree(&template);
+  MRIfree(&mri_template);
 
   exit(0);
 

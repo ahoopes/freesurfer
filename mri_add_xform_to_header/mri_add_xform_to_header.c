@@ -30,7 +30,7 @@
 #include "utils.h"
 #include "mri.h"
 #include "macros.h"
-#include "minc_volume_io.h"
+#include "minc.h"
 #include "error.h"
 #include "diag.h"
 #include "proto.h"

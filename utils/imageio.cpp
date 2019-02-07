@@ -37,30 +37,21 @@
 #include <string.h>
 #include <unistd.h> /* for SEEK_ constants */
 
-#include <hipl_format.h>
 #include "hmem.h"
-
 #include "hips.h"
 
 #include "canny.h"
 #include "diag.h"
 #include "error.h"
 #include "image.h"
-#include "jpeglib.h"
 #include "machine.h"
 #include "macros.h"
 #include "matfile.h"
 #include "matrix.h"
 #include "proto.h"
-#include "rgb_image.h"
-#include "rgb_utils.h"
+#include "rgb.h"
 #include "tiffio.h"
 #include "utils.h"
-#ifndef IRIX
-#include "pbm.h"
-#include "pgm.h"
-#include "ppm.h"
-#endif
 
 /*-----------------------------------------------------
                     MACROS AND CONSTANTS
@@ -76,6 +67,9 @@ static int TiffWriteImage(IMAGE *I, const char *fname, int frame);
 static IMAGE *JPEGReadImage(const char *fname);
 static IMAGE *JPEGReadHeader(FILE *fp, IMAGE *);
 static int JPEGWriteImage(IMAGE *I, const char *fname, int frame);
+static int RGBwrite(IMAGE *I, char *fname, int frame);
+static IMAGE *RGBReadImage(char *fname);
+static IMAGE *RGBReadHeader(char *fname, IMAGE *I);
 static IMAGE *PGMReadImage(const char *fname);
 static IMAGE *PGMReadHeader(FILE *fp, IMAGE *);
 static int PGMWriteImage(IMAGE *I, const char *fname, int frame);
@@ -1256,41 +1250,23 @@ static int TiffWriteImage(IMAGE *I, const char *fname, int frame)
   return (NO_ERROR);
 }
 
-#if 0
-static IMAGE *JPEGReadImage(const char*fname)
-{
-  ErrorReturn(NULL, (ERROR_UNSUPPORTED, "jpeg not supported on IRIX")) ;
-}
-static IMAGE *JPEGReadHeader(FILE *fp, IMAGE *I)
-{
-  ErrorReturn(NULL, (ERROR_UNSUPPORTED, "jpeg not supported on IRIX")) ;
-}
-static int JPEGWriteImage(IMAGE *I, const char*fname, int frame)
-{
-  ErrorReturn(ERROR_UNSUPPORTED, (ERROR_UNSUPPORTED,
-                                  "jpeg not supported on IRIX")) ;
-}
-#endif
+#ifndef HAVE_NETPBM
 
-#ifdef IRIX
-static IMAGE *JPEGReadImage(const char *fname) { return (NULL); }
-static IMAGE *JPEGReadHeader(FILE *fp, IMAGE *I) { return (NULL); }
-static int JPEGWriteImage(IMAGE *I, const char *fname, int frame) { return (0); }
-static IMAGE *PGMReadImage(const char *fname) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "pgm not supported on IRIX")); }
-static IMAGE *PGMReadHeader(FILE *fp, IMAGE *I) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "pgm not supported on IRIX")); }
-static int PGMWriteImage(IMAGE *I, const char *fname, int frame)
-{
-  ErrorReturn(NULL, (ERROR_UNSUPPORTED, "pgm not supported on IRIX"));
-}
-static IMAGE *PPMReadImage(const char *fname) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "ppm not supported on IRIX")); }
-static IMAGE *PPMReadHeader(FILE *fp, IMAGE *I) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "ppm not supported on IRIX")); }
-static IMAGE *PBMReadImage(const char *fname) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "pbm not supported on IRIX")); }
-static IMAGE *PBMReadHeader(FILE *fp, IMAGE *I) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "pbm not supported on IRIX")); }
-static int PPMWriteImage(IMAGE *I, const char *fname, int frame)
-{
-  ErrorReturn(ERROR_UNSUPPORTED, (ERROR_UNSUPPORTED, "ppm not supported on IRIX"));
-}
-#else
+static IMAGE *PGMReadImage(const char *fname) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "pgm not supported")); }
+static IMAGE *PGMReadHeader(FILE *fp, IMAGE *I) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "pgm not supported")); }
+static int PGMWriteImage(IMAGE *I, const char *fname, int frame) { ErrorReturn(ERROR_UNSUPPORTED, (ERROR_UNSUPPORTED, "pgm not supported")); }
+static IMAGE *PPMReadImage(const char *fname) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "ppm not supported")); }
+static IMAGE *PPMReadHeader(FILE *fp, IMAGE *I) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "ppm not supported")); }
+static IMAGE *PBMReadImage(const char *fname) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "pbm not supported")); }
+static IMAGE *PBMReadHeader(FILE *fp, IMAGE *I) { ErrorReturn(NULL, (ERROR_UNSUPPORTED, "pbm not supported")); }
+static int PPMWriteImage(IMAGE *I, const char *fname, int frame) { ErrorReturn(ERROR_UNSUPPORTED, (ERROR_UNSUPPORTED, "ppm not supported")); }
+
+#else  // HAVE_NETPBM
+
+#include <netpbm/pbm.h>
+#include <netpbm/pgm.h>
+#include <netpbm/ppm.h>
+
 static IMAGE *PGMReadHeader(FILE *fp, IMAGE *I)
 {
   int rows, cols, format;
@@ -1456,10 +1432,15 @@ static IMAGE *PPMReadHeader(FILE *fp, IMAGE *I)
   return I;
 }
 
+#endif  // HAVE_NETPBM
+
 #define JPEG_INTERNALS
+
+extern "C" {
 #include "jinclude.h"
 #include "jpeglib.h"
 #include "jmorecfg.h"
+}
 
 static IMAGE *JPEGReadImage(const char *fname)
 {
@@ -1557,4 +1538,94 @@ static int JPEGWriteImage(IMAGE *I, const char *fname, int frame)
   return NO_ERROR;
 }
 
+static IMAGE *RGBReadHeader(char *fname, IMAGE *I) {
+  RGB_IMAGE *rgb;
+
+  rgb = iopen(fname, "r", 0, 0, 0, 0, 0);
+
+  if (!I)
+    I = ImageAlloc(rgb->ysize, rgb->xsize, PFRGB, 1) ;
+  else
+    init_header(I, "orig", "seq", 1, "today", rgb->ysize,
+                rgb->xsize, PFRGB, 1, "temp");
+
+  iclose(rgb);
+
+  return(I) ;
+}
+
+static IMAGE *RGBReadImage(char *fname) {
+  IMAGE *I;
+  RGB_IMAGE *rgb;
+  unsigned short rows,cols,*r,*g,*b,i,j,*tr,*tg,*tb;
+  byte *iptr;
+
+  rgb = iopen(fname, "r", 0, 0, 0, 0, 0);
+  rows = rgb->ysize;
+  cols = rgb->xsize;
+
+  if (rgb->zsize>3)
+    ErrorReturn(NULL, (ERROR_BAD_PARM,
+                       "Too many color planes in RGBReadImage (%s)\n",fname));
+
+  I = ImageAlloc(rows, cols, PFRGB, 1);
+
+  if ((r = (unsigned short *)malloc(sizeof(unsigned short)*cols)) == NULL)
+    ErrorExit(ERROR_NO_MEMORY,"Failed to allocate color buffer\n");
+
+  if ((g = (unsigned short *)malloc(sizeof(unsigned short)*cols)) == NULL)
+    ErrorExit(ERROR_NO_MEMORY,"Failed to allocate color buffer\n");
+
+  if ((b = (unsigned short *)malloc(sizeof(unsigned short)*cols)) == NULL)
+    ErrorExit(ERROR_NO_MEMORY,"Failed to allocate color buffer\n");
+
+  iptr = I->image;
+
+  for (i=0;i<rows;i++) {
+    getrow(rgb,r,i,0); /* Red */
+    getrow(rgb,g,i,1); /* Green */
+    getrow(rgb,b,i,2); /* Blue */
+
+    /* Translate color planes to RGB format */
+    tr = r;
+    tg = g;
+    tb = b;
+    for (j=0;j<cols;j++) {
+      *iptr++ = *tr++;
+      *iptr++ = *tg++;
+      *iptr++ = *tb++;
+    }
+  }
+
+  free(r);
+  free(g);
+  free(b);
+  iclose(rgb);
+
+  return I;
+}
+
+static int RGBwrite(IMAGE *I, char *fname, int frame) {
+  RGB_IMAGE  *image ;
+  int    x, y ;
+  unsigned short *r ;
+
+#ifndef Linux
+  image = iopen(fname,"w",RLE(1), 2, I->cols, I->rows, 1);
+#else
+  image = iopen(fname,"w",UNCOMPRESSED(1), 2, I->cols, I->rows, 1);
 #endif
+  r = (unsigned short *)calloc(I->cols, sizeof(unsigned short)) ;
+  for (y = 0 ; y < I->rows; y++) {
+    for (x = 0 ; x < I->cols ; x++)
+      r[x] = (unsigned short)(*IMAGEpix(I, x, y)) ;
+
+    /* fill rbuf, gbuf, and bbuf with pixel values */
+    putrow(image, r, y, 0);    /* red row */
+    putrow(image, r, y, 1);    /* green row */
+    putrow(image, r, y, 2);    /* blue row */
+  }
+  iclose(image);
+  free(r) ;
+  return(NO_ERROR) ;
+}

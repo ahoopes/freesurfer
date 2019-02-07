@@ -83,6 +83,7 @@ set(SOURCES
   gw_ic2562.cpp
   gw_utils.cpp
   hippo.cpp
+  hips.cpp
   histo.cpp
   ic12.cpp
   ic163842.cpp
@@ -104,7 +105,6 @@ set(SOURCES
   matrix.cpp
   mgh_filter.cpp
   min_heap.cpp
-  minmaxrc.cpp
   morph.cpp
   mosaic.cpp
   mri.cpp
@@ -122,8 +122,6 @@ set(SOURCES
   mriflood.cpp
   mrihisto.cpp
   mriio.cpp
-  mriio_nrrd.cpp
-  mriio_nrrd_itk.cpp
   MRIio_old.cpp
   mrimorph.cpp
   mrinorm.cpp
@@ -161,11 +159,11 @@ set(SOURCES
   randomfields.cpp
   rbf.cpp
   rbm.cpp
+  rgb.cpp
   realm.cpp
   region.cpp
   registerio.cpp
   resample.cpp
-  rescale.cpp
   retinotopy.cpp
   rfa.cpp
   rforest.cpp
@@ -214,71 +212,17 @@ set(SOURCES ${SOURCES}
   cephes/stdtr.c
 )
 
-# nrrdio-required definitions
-add_definitions(-DTEEM_DIO=0 -DTEEM_QNANHIBIT=1 -DTEEM_ENDIAN=${BYTEORDER})
-
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-  add_definitions(-DTEEM_32BIT=0)
-elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-  add_definitions(-DTEEM_32BIT=1)
-endif()
-
-# add NrrdIO sources
-set(SOURCES ${SOURCES}
-  NrrdIO/754.c
-  NrrdIO/formatPNG.c
-  NrrdIO/accessors.c
-  NrrdIO/formatPNM.c
-  NrrdIO/array.c
-  NrrdIO/formatText.c
-  NrrdIO/arraysNrrd.c
-  NrrdIO/formatVTK.c
-  NrrdIO/axis.c
-  NrrdIO/gzio.c
-  NrrdIO/biffbiff.c
-  NrrdIO/keyvalue.c
-  NrrdIO/comment.c
-  NrrdIO/methodsNrrd.c
-  NrrdIO/defaultsNrrd.c
-  NrrdIO/miscAir.c
-  NrrdIO/dio.c
-  NrrdIO/mop.c
-  NrrdIO/encodingAscii.c
-  NrrdIO/parseAir.c
-  NrrdIO/encodingBzip2.c
-  NrrdIO/parseNrrd.c
-  NrrdIO/encoding.c
-  NrrdIO/encodingGzip.c
-  NrrdIO/encodingHex.c
-  NrrdIO/read.c
-  NrrdIO/encodingRaw.c
-  NrrdIO/reorder.c
-  NrrdIO/endianAir.c
-  NrrdIO/endianNrrd.c
-  NrrdIO/sane.c
-  NrrdIO/enum.c
-  NrrdIO/simple.c
-  NrrdIO/enumsNrrd.c
-  NrrdIO/string.c
-  NrrdIO/format.c
-  NrrdIO/subset.c
-  NrrdIO/formatEPS.c
-  NrrdIO/write.c
-  NrrdIO/formatNRRD.c
-)
-
 add_library(utils STATIC ${SOURCES})
 
 target_link_libraries(utils
-  rgb
-  hipsstubs
-  dicom
   jpeg
   expat
   tiff
   xml2
   minc
   netcdf
+  nrrdio
+  dicom
   ${ZLIB_LIBRARIES}
   ${ITK_LIBRARIES}
 )

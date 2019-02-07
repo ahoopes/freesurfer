@@ -2,7 +2,7 @@ project(mri_convert)
 
 include_directories(${FS_INCLUDE_DIRS})
 
-add_executable(mri_convert mri_convert.c)
+add_executable(mri_convert mri_convert.cpp)
 add_help(mri_convert mri_convert.help.xml)
 target_link_libraries(mri_convert utils fsgdf)
 

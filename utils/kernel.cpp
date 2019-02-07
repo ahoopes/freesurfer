@@ -26,14 +26,12 @@
 /*----------------------------------------------------------------------
                            INCLUDE FILES
 ----------------------------------------------------------------------*/
-#include <hipl_format.h>
 #include <math.h>
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "diag.h"
-#include "hipsu.h"
 #include "image.h"
 #include "kernel.h"
 #include "macros.h"

@@ -33,7 +33,7 @@
 #define UCHAR  unsigned char
 #endif
 
-#include "hipl_format.h"
+#include "hips.h"
 
 typedef struct header IMAGE ;
 

@@ -33,13 +33,11 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <hips_error.h>
-
 #include "error.h"
 #include "fsinit.h"
 #include "hips.h"
 #include "proto.h"
-#include "rgb_image.h"
+#include "rgb.h"
 
 /*-----------------------------------------------------
                     MACROS AND CONSTANTS
@@ -131,7 +129,6 @@ void ErrorExit(int ecode, const char *fmt, ...)
   fflush(stderr);
   fflush(stdout);
   if (errno) perror(NULL);
-  if (hipserrno) perr(ecode, "Hips error:");
 
   if (ErrorExitDoneFile != NULL) {
     // This creates a text file with the value of 1. This can
@@ -188,10 +185,6 @@ int ErrorPrintf(int ecode, const char *fmt, ...)
   fflush(stdout);
   va_end(args);
   if (errno) perror(NULL);
-#if 0
-  if (hipserrno)
-    perr(ecode, "Hips error:") ;
-#endif
 
   va_start(args, fmt);
   fp = fopen(ERROR_FNAME, "a");

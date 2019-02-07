@@ -42,10 +42,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <hipl_format.h>
-
 #include "hips.h"
-
 #include "diag.h"
 #include "error.h"
 #include "filter.h"

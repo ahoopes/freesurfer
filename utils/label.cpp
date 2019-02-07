@@ -38,7 +38,7 @@
 #include "error.h"
 #include "fio.h"
 #include "macros.h"
-#include "minc_volume_io.h"
+#include "minc.h"
 #include "proto.h"
 #include "utils.h"
 

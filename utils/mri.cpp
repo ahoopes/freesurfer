@@ -50,7 +50,7 @@ const char *MRI_C_VERSION = "$Revision: 1.575 $";
 #include "fnv_hash.h"
 #include "macros.h"
 #include "matrix.h"
-#include "minc_volume_io.h"
+#include "minc.h"
 #include "mri2.h"
 #include "mriBSpline.h"
 #include "pdf.h"

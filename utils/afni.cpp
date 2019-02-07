@@ -48,10 +48,6 @@
 
 #include "AFNI.h"
 
-#ifdef Linux
-extern void swab(const void *from, void *to, size_t n);
-#endif
-
 /* ----- flags for keeping track of what we've gotten from the header ----- */
 #define AFNI_ALL_REQUIRED 0x0000003f
 

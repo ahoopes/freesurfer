@@ -42,7 +42,7 @@ double round(double x);
 #include "filter.h"
 #include "macros.h"
 #include "matrix.h"
-#include "minc_volume_io.h"
+#include "minc.h"
 #include "mri.h"
 #include "mri2.h"
 #include "proto.h"

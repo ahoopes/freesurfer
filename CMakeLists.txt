@@ -312,8 +312,6 @@ set(FS_INCLUDE_DIRS
 )
 
 # build third-party libraries
-# make sure to use the local minc source
-add_definitions(-DUSE_LOCAL_MINC)
 add_subdirectories(
   packages/jpeg
   packages/expat
@@ -322,6 +320,7 @@ add_subdirectories(
   packages/minc
   packages/netcdf
   packages/tetgen
+  packages/nrrdio
 )
 
 if(OPENGL_FOUND)
@@ -330,8 +329,6 @@ endif()
 
 # now build the freesurfer static libraries (order here matters!)
 add_subdirectories(
-  rgb
-  hipsstubs
   dicom
   utils
   utilscpp
@@ -458,6 +455,7 @@ if(NOT MINIMAL)
     connectgraph
     diffusion_tool
     dmri_tensoreig
+    dummy
     dngtester
     freeview
     fsfast

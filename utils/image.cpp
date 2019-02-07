@@ -33,9 +33,7 @@
 #include <string.h>
 #include <unistd.h> /* for SEEK_ constants */
 
-#include <hipl_format.h>
 #include "hmem.h"
-
 #include "hips.h"
 
 #include "canny.h"
@@ -3248,7 +3246,7 @@ IMAGE *ImageShrink(IMAGE *Isrc, IMAGE *Idst)
 /*----------------------------------------------------------------------
             Parameters:
 
-           Description:
+           Description: @ATH
              perform histogram equalization on an image
 ----------------------------------------------------------------------*/
 IMAGE *ImageHistoEqualize(IMAGE *Isrc, IMAGE *Idst)
@@ -3261,7 +3259,7 @@ IMAGE *ImageHistoEqualize(IMAGE *Isrc, IMAGE *Idst)
   byte map[256];
 
   if (Isrc->pixel_format != PFBYTE)
-    Iin = ImageConvertToByte(Isrc, NULL);
+    Iin = ImageAlloc(Isrc->rows, Isrc->cols, PFBYTE, 1);
   else
     Iin = Isrc;
 
@@ -3292,25 +3290,7 @@ IMAGE *ImageHistoEqualize(IMAGE *Isrc, IMAGE *Idst)
   }
   return (Idst);
 }
-/*----------------------------------------------------------------------
-            Parameters:
 
-           Description:
-              convert an image to byte format, scaling its intensity values to
-              0-255
-----------------------------------------------------------------------*/
-#include "rescale.h"
-IMAGE *ImageConvertToByte(IMAGE *Isrc, IMAGE *Idst)
-{
-  int MinPoint[2], MaxPoint[2], ecode;
-
-  if (!Idst) Idst = ImageAlloc(Isrc->rows, Isrc->cols, PFBYTE, 1);
-
-  ecode = h_rescale(Isrc, 0.0f, 255.0f, MinPoint, MaxPoint, Idst);
-  if (ecode != HIPS_OK) ErrorReturn(NULL, (ecode, "ImageConvert: h_rescale failed\n"));
-
-  return (Idst);
-}
 /*----------------------------------------------------------------------
             Parameters:
 

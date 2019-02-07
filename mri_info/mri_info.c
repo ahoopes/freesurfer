@@ -37,7 +37,7 @@ char *MRI_INFO_VERSION = "$Revision: 1.87 $";
 #include "utils.h"
 #include "mri.h"
 #include "gcamorph.h"
-#include "minc_volume_io.h"
+#include "minc.h"
 #include "analyze.h"
 #include "mri_identify.h"
 #include "error.h"

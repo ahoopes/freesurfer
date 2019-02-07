@@ -53,15 +53,10 @@
 #define TEEM_VERSION         10900  /* can be easily compared numerically */
 #define TEEM_VERSION_STRING "1.9.0" /* cannot be so easily compared */
 
-/* THE FOLLOWING INCLUDE IS ONLY FOR THE ITK DISTRIBUTION.
-   This header mangles the symbols in the NrrdIO library, preventing
-   conflicts in applications linked against two versions of NrrdIO. */
-//#include "itk_NrrdIO_mangle.h"
-
-//#ifdef __cplusplus
-//extern "C"
-//{
-//#endif
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define TEEM_BUILD 1
 #if defined(_WIN32) && !defined(__CYGWIN__) && !defined(TEEM_STATIC)
@@ -705,18 +700,18 @@ NRRDIO_EXPORT void airMopDebug(airArray *arr);
 #  endif
 #endif
 
-//#ifdef __cplusplus
-//}
-//#endif
+#ifdef __cplusplus
+}
+#endif
 
 
 
 
 
-//#ifdef __cplusplus
-//extern "C"
-//{
-//#endif
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define BIFF_STRLEN (256+1) /* convenience for strlen of error messages */
 
@@ -735,18 +730,18 @@ NRRDIO_EXPORT void biffSetStr(char *str, const char *key);
 NRRDIO_EXPORT char *biffGetDone(const char *key);
 NRRDIO_EXPORT void biffSetStrDone(char *str, const char *key);
 
-//#ifdef __cplusplus
-//}
-//#endif
+#ifdef __cplusplus
+}
+#endif
 
 
 
 #include <limits.h>
 
-//#ifdef __cplusplus
-//extern "C"
-//{
-//#endif
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /* feel free to set these to higher values and recompile */
 #define NRRD_DIM_MAX 16            /* Max array dimension (nrrd->dim) */
@@ -843,16 +838,16 @@ NRRDIO_EXPORT void biffSetStrDone(char *str, const char *key);
 #define NRRD_NONE "none"              /* like NRRD_UNKNOWN, but with an air
                                          of certainty */
 
-//#ifdef __cplusplus
-//}
-//#endif
+#ifdef __cplusplus
+}
+#endif
 
 
 
-//#ifdef __cplusplus
-//extern "C"
-//{
-//#endif
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /*******
 ******** NONE of these enums should have values set explicitly in their
@@ -1346,16 +1341,16 @@ enum {
 };
 
 
-//#ifdef __cplusplus
-//}
-//#endif
+#ifdef __cplusplus
+}
+#endif
 
 
 
-//#ifdef __cplusplus
-//extern "C"
-//{
-//#endif
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /*
 ******** NRRD_CELL_POS, NRRD_NODE_POS, NRRD_POS
@@ -1489,9 +1484,9 @@ do {                                          \
   }                                           \
 } while (0)
 
-//#ifdef __cplusplus
-//}
-//#endif
+#ifdef __cplusplus
+}
+#endif
 
 
 
@@ -1500,10 +1495,10 @@ do {                                          \
 
 
 
-//#ifdef __cplusplus
-//extern "C"
-//{
-//#endif
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define NRRD nrrdBiffKey
 
@@ -2150,8 +2145,8 @@ NRRDIO_EXPORT int nrrdSlice(Nrrd *nout, const Nrrd *nin,
 NRRDIO_EXPORT int nrrdCrop(Nrrd *nout, const Nrrd *nin,
                            size_t *min, size_t *max);
 
-//#ifdef __cplusplus
-//}
-//#endif
+#ifdef __cplusplus
+}
+#endif
 
   

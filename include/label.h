@@ -28,7 +28,7 @@
 #ifndef LABEL_H
 #define LABEL_H
 
-#include "minc_volume_io.h"
+#include "minc.h"
 
 #include "matrix.h"
 #include "const.h"
