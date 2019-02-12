@@ -232,7 +232,6 @@ int GCApriorToNode(const GCA *gca, int xp, int yp, int zp, int *pxn, int *pyn, i
 static int xnbr_offset[] = {1, -1, 0, 0, 0, 0};
 static int ynbr_offset[] = {0, 0, 1, -1, 0, 0};
 static int znbr_offset[] = {0, 0, 0, 0, 1, -1};
-int check_finite(char *where, double what);
 static int boundsCheck(int *pix, int *piy, int *piz, MRI *mri);
 
 static void set_equilavent_classes(int *equivalent_classes);
@@ -5230,7 +5229,7 @@ GCA_SAMPLE *GCAfindStableSamplesByLabel(GCA *gca, int nsamples, float min_prior)
     histo[n] = (float)nint(0.25 + histo[n] * (float)nsamples / total);
   }
 
-  for (n = 0; n < sizeof(exclude_classes) / sizeof(exclude_classes[0]); n++) {
+  for (n = 0; (unsigned)n < sizeof(exclude_classes) / sizeof(exclude_classes[0]); n++) {
     histo[exclude_classes[n]] = 0;
   }
 
@@ -11098,7 +11097,7 @@ int GCAnormalizeTissueStatistics(GCA *gca)
   return (NO_ERROR);
 }
 
-char *cma_label_to_name(int label)
+const char *cma_label_to_name(int label)
 {
   static char name[STRLEN];
 
@@ -17961,7 +17960,7 @@ static int lhFree(LH **plh)
   return (NO_ERROR);
 }
 
-static LABEL_HISTOS *lhRead(char *fname)
+static LABEL_HISTOS *lhRead(const char *fname)
 {
   FILE *fp;
   int nsubjects, nlabels, s, n, cnt, i, label, ntypes;
@@ -18286,7 +18285,8 @@ int GCAcomputeRenormalizationWithAlignment(GCA *gca,
                                            int *plabel_computed)
 {
   HISTOGRAM *h_mri, *h_gca, *h_mtl = NULL, *h_caudate;
-  int l, nbins, i, x, y, z, num, frame, bin, j, n, computed[MAX_CMA_LABELS], b, label, k, border = BORDER_SIZE,
+  unsigned int k, j;
+  int l, nbins, i, x, y, z, num, frame, bin, n, computed[MAX_CMA_LABELS], b, label, border = BORDER_SIZE,
                                                                                           gca_peak, mri_peak;
   float fmin, fmax, label_scales[MAX_CMA_LABELS], overlap, mean_gm_scale, mean_wm_scale, mean_csf_scale,
       label_peaks[MAX_CMA_LABELS], label_offsets[MAX_CMA_LABELS], mean_wm_offset, mean_csf_offset, mean_gm_offset,
@@ -18902,7 +18902,7 @@ int GCAcomputeRenormalizationWithAlignment(GCA *gca,
     }
 
     if (getenv("FS_USE_HISTO_COMBOS") != NULL) {
-      int j;
+      unsigned int j;
       HISTOmakePDF(h_caudate, h_caudate);
       mri_peak = HISTOfindHighestPeakInRegion(h_caudate, 0, h_caudate->nbins);
       for (j = 0; j <= 1; j++) {
@@ -19635,7 +19635,8 @@ int GCAcomputeRenormalizationWithAlignmentLongitudinal(GCA *gca,
                                                        int *plabel_computed)
 {
   HISTOGRAM *h_mri, *h_gca, *h_mtl = NULL, *h_caudate;
-  int l, nbins, i, x, y, z, num, frame, bin, j, computed[MAX_CMA_LABELS], label, k, gca_peak, mri_peak;
+  unsigned int k, j;
+  int l, nbins, i, x, y, z, num, frame, bin, computed[MAX_CMA_LABELS], label, gca_peak, mri_peak;
   float fmin, fmax, label_scales[MAX_CMA_LABELS], overlap, mean_gm_scale, mean_wm_scale, mean_csf_scale,
       label_peaks[MAX_CMA_LABELS], label_offsets[MAX_CMA_LABELS], mean_wm_offset, mean_csf_offset, mean_gm_offset,
       lower_thresh, upper_thresh;
@@ -20007,7 +20008,7 @@ int GCAcomputeRenormalizationWithAlignmentLongitudinal(GCA *gca,
   }
 
   if (getenv("FS_USE_HISTO_COMBOS") != NULL) {
-    int j;
+    unsigned int j;
     HISTOmakePDF(h_caudate, h_caudate);
     mri_peak = HISTOfindHighestPeakInRegion(h_caudate, 0, h_caudate->nbins);
     for (j = 0; j <= 1; j++) {
@@ -24174,7 +24175,8 @@ int GCArenormalizeWithEntropyMinimization(GCA *gca, MRI *mri, TRANSFORM *transfo
 {
   float scales[NUM_ENTROPY_LABELS], ll, last_posterior, peaks[NUM_ENTROPY_LABELS], contra_peaks[NUM_CONTRA_LABELS],
       pct_change, last_scales[NUM_ENTROPY_LABELS];
-  int i, done = 0, peak_bin;
+  unsigned int i;
+  int done = 0, peak_bin;
   HISTOGRAM *h_gca;
   MRI *mri_aseg;
 
@@ -24207,8 +24209,7 @@ int GCArenormalizeWithEntropyMinimization(GCA *gca, MRI *mri, TRANSFORM *transfo
         gca, mri, mri_aseg, transform, entropy_labels, contra_entropy_labels, scales, NUM_ENTROPY_LABELS, .1);
     gcaScale(gca, entropy_labels, contra_entropy_labels, scales, NUM_ENTROPY_LABELS, 1);
     {
-      int n;
-      for (n = 0; n < NUM_ENTROPY_LABELS; n++)
+      for (unsigned int n = 0; n < NUM_ENTROPY_LABELS; n++)
         printf("scales[%s] = %2.3f, peak = %2.0f (rh=%2.0f)\n",
                cma_label_to_name(entropy_labels[n]),
                scales[n],

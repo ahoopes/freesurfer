@@ -102,7 +102,7 @@ EVSCH *EVSRandSequence(int nEvTypes, int *nEvReps);
 int    EVSRandTiming(EVSCH *EvSch, float *EvDur,
                      float tRes, float tMax, float tPreScan);
 EVSCH *EVScb1Optimize(int nEvTypes, int *nEvReps, int nSearch);
-char  *EVScostString(int CostId);
+const char  *EVScostString(int CostId);
 int    EVScostId(char *CostString);
 
 int EVSdesignMtxStats(MATRIX *Xtask, MATRIX *Xnuis, EVSCH *EvSch,

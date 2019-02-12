@@ -9,7 +9,7 @@ int hips_rtocplx = 0;
 double h_entropy(int *table,int count,int pairflag) HIPS_DEP_ERROR
 int alloc_histo(struct hips_histo *histo,union pixelval *min,union pixelval *max,int nbins,int format) HIPS_DEP_ERROR
 int alloc_histobins(struct hips_histo *histo) HIPS_DEP_ERROR
-int clearparam(struct header *hd,char *name) HIPS_DEP_ERROR
+int clearparam(struct header *hd, const char *name) HIPS_DEP_ERROR
 int fread_header(FILE *fp,struct header *hd,const char *fname) HIPS_DEP_ERROR
 int fread_image(FILE *fp,struct header *hd,int fr,const char *fname) HIPS_DEP_ERROR
 int free_hdrcon(struct header *hd) HIPS_DEP_ERROR
@@ -46,7 +46,7 @@ int h_tod(struct header *hdi,struct header *hdo) HIPS_DEP_ERROR
 int h_todc(struct header *hdi,struct header *hdo) HIPS_DEP_ERROR
 int h_tof(struct header *hdi,struct header *hdo) HIPS_DEP_ERROR
 int h_toi(struct header *hdi,struct header *hdo) HIPS_DEP_ERROR
-int init_header(struct header *hd,char *onm,char *snm,int nfr,char *odt,int rw,int cl,int pfmt,int nc,char *desc) HIPS_DEP_ERROR
+int init_header(struct header *hd,const char *onm, const char *snm,int nfr, const char *odt,int rw,int cl,int pfmt,int nc,const char *desc) HIPS_DEP_ERROR
 int setparam(struct header *hda,...) HIPS_DEP_ERROR
 int update_header(struct header *hd,int argc,char **argv ) HIPS_DEP_ERROR
-struct extpar *findparam(struct header *hd,char *name) HIPS_DEP_ERROR
+struct extpar *findparam(struct header *hd, const char *name) HIPS_DEP_ERROR

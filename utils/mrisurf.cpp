@@ -125,7 +125,7 @@ static size_t showHashCalc;
 
 static bool vertix_n_hash_add(size_t vectorSize, MRIS_HASH* hashVector, MRIS const ** mrisPVector, FILE* showDiff, int vno)
 {
-    int i;
+    unsigned int i;
     #define SEP
     #define ELTP(TARGET, MBR) // don't hash pointers.   Sometime may implement hashing their target
     #define ELTX(TYPE,   MBR) // don't hash excluded elements
@@ -213,7 +213,7 @@ static bool vertix_n_hash_add(size_t vectorSize, MRIS_HASH* hashVector, MRIS con
 
 static bool face_n_hash_add(size_t vectorSize, MRIS_HASH* hashVector, MRIS const ** mrisPVector, FILE* showDiff, int fno)
 {
-    int i;
+    unsigned int i;
     #define SEP
     #define ELTP(TARGET,NAME) // don't hash pointers
     #define ELTT(TYPE,       MBR) \
@@ -278,7 +278,7 @@ static bool mris_n_hash_add(size_t vectorSize, MRIS_HASH* hashVector, MRIS const
 
 void mrisVertexHash(MRIS_HASH* hash, MRIS const * mris, int vno) {
     hash->hash = fnv_init();
-    vertix_n_hash_add(1, hash, &mris, false, vno);
+    vertix_n_hash_add(1, hash, &mris, nullptr, vno);
 }
 
 void mris_hash_add(MRIS_HASH* hash, MRIS const * mris)

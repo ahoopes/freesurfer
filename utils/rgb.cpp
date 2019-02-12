@@ -8,7 +8,7 @@
 
 #define OPEN_GL_CODE  1
 
-void isetname(RGB_IMAGE *image, char *name) {
+void isetname(RGB_IMAGE *image, const char *name) {
   strncpy(image->name,name,80);
 }
 
@@ -660,17 +660,17 @@ int getrow(RGB_IMAGE *image, unsigned short *buffer,
   return(-1) ;
 }
 
-RGB_IMAGE *imgopen(int, char *, char *,unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
+RGB_IMAGE *imgopen(int, const char *, const char *,unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 
-RGB_IMAGE *iopen(char *file, char *mode, unsigned int type, unsigned int dim, unsigned int xsize, unsigned int ysize, unsigned int zsize) {
+RGB_IMAGE *iopen(const char *file, const char *mode, unsigned int type, unsigned int dim, unsigned int xsize, unsigned int ysize, unsigned int zsize) {
   return(imgopen(0, file, mode, type, dim, xsize, ysize, zsize));
 }
 
-RGB_IMAGE *fiopen(int f, char *mode, unsigned int type, unsigned int dim, unsigned int xsize, unsigned int ysize, unsigned int zsize) {
+RGB_IMAGE *fiopen(int f, const char *mode, unsigned int type, unsigned int dim, unsigned int xsize, unsigned int ysize, unsigned int zsize) {
   return(imgopen(f, 0, mode, type, dim, xsize, ysize, zsize));
 }
 
-RGB_IMAGE *imgopen(int f, char *file, char *mode, unsigned int type, unsigned int dim, unsigned int xsize, unsigned int ysize, unsigned int zsize) {
+RGB_IMAGE *imgopen(int f, const char *file, const char *mode, unsigned int type, unsigned int dim, unsigned int xsize, unsigned int ysize, unsigned int zsize) {
   register RGB_IMAGE  *image;
   register int rw;
   int tablesize;
@@ -850,7 +850,7 @@ static void (*i_errfunc)(char *ebuf);
     want to can handle the errors themselves.  Olson, 11/88
 */
 /* most args currently used is 2 */
-void i_errhdlr(char *fmt, int a1, int a2, int a3, int a4) {
+void i_errhdlr(const char *fmt, int a1, int a2, int a3, int a4) {
   if (i_errfunc) {
     char ebuf[2048];  /* be generous; if an error includes a
                                          pathname, the maxlen is 1024, so we shouldn't ever

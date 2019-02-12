@@ -1323,7 +1323,7 @@ int AllocElementData(DCM_ELEMENT *e)
 char *ElementValueString(DCM_ELEMENT *e, int DoBackslash)
 {
   char *evstring=NULL;
-  int n, len;
+  unsigned int n, len;
   char tmpstr[2000];
   char tmpstr2[2000];
 
@@ -1541,7 +1541,7 @@ char *SiemensAsciiTagEx(const char *dcmfile, const char *TagString, int cleanup)
   static int MAX_ASCIILIST = 512;
   static int INCREMENT = 64;
 
-  int i, k;
+  int k;
   FILE *fp;
   char buf[1024];
   char command[1024 + 32];
@@ -1567,7 +1567,7 @@ char *SiemensAsciiTagEx(const char *dcmfile, const char *TagString, int cleanup)
   // cleanup section.  Make sure to set cleanup =1 at the final call
   // don't rely on TagString but the last flag only
   if (cleanup == 1) {
-    for (i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
       if (lists[i]) {
         free(lists[i]);
         lists[i] = 0;
@@ -1593,7 +1593,7 @@ char *SiemensAsciiTagEx(const char *dcmfile, const char *TagString, int cleanup)
     // backslashes in front of any parens
     memset(&filename[0], 0, 1024);
     k = 0;
-    for (i = 0; i < strlen(dcmfile); i++) {
+    for (unsigned int i = 0; i < strlen(dcmfile); i++) {
       if (dcmfile[i] == '(' || dcmfile[i] == ')' || dcmfile[i] == '[' || dcmfile[i] == ']') {
         filename[k] = 92;  // 92 is ascii dec for backslash
         k++;
@@ -1603,7 +1603,7 @@ char *SiemensAsciiTagEx(const char *dcmfile, const char *TagString, int cleanup)
     }
 
     // free allocated list of strings
-    for (i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
       if (lists[i]) {
         free(lists[i]);
         lists[i] = 0;
@@ -1652,7 +1652,7 @@ char *SiemensAsciiTagEx(const char *dcmfile, const char *TagString, int cleanup)
           {
             lists = newlists;  // update the pointer
             // initialize uninitialized list
-            for (i = 0; i < INCREMENT; ++i) {
+            for (int i = 0; i < INCREMENT; ++i) {
               lists[MAX_ASCIILIST + i] = (char *)0;
             }
             MAX_ASCIILIST = newSize;
@@ -1672,7 +1672,7 @@ char *SiemensAsciiTagEx(const char *dcmfile, const char *TagString, int cleanup)
   }
   // build up string lists available
   // search the tag
-  for (i = 0; i < count; ++i) {
+  for (int i = 0; i < count; ++i) {
     // get the variable name (the first string)
     VariableName[0] = 0;
     sscanf(lists[i], "%s %*s %*s", VariableName);
@@ -1727,7 +1727,7 @@ char *SiemensAsciiTag(const char *dcmfile, const char *TagString, int flag)
   FILE *fp;
   int dumpline, nthchar;
   char *rt;
-  char *BeginStr;
+  const char *BeginStr;
   int LenBeginStr;
   char *TestStr;
   int nTest;
@@ -2004,7 +2004,8 @@ int dcmImageDirCos(const char *dcmfile, float *Vcx, float *Vcy, float *Vcz, floa
 {
   DCM_ELEMENT *e;
   char *s;
-  int n, nbs;
+  unsigned int n;
+  int nbs;
   float rms;
 
   /* Load the direction cosines - this is a string of the form:
@@ -2067,7 +2068,8 @@ int dcmImagePosition(const char *dcmfile, float *x, float *y, float *z)
 {
   DCM_ELEMENT *e;
   char *s;
-  int n, nbs;
+  unsigned int n;
+  int nbs;
 
   /* Load the Image Position: this is a string of the form:
      x\y\z  */
@@ -4370,7 +4372,8 @@ CONDITION GetMultiDoubleFromString(DCM_OBJECT **object, DCM_TAG tag, double *d[]
   CONDITION cond;
   char *s, *ss;
   void *ctx;
-  int i, j, mult;
+  unsigned int i;
+  int j, mult;
 
   attribute.tag = tag;
   cond = DCM_GetElement(object, tag, &attribute);
@@ -4406,7 +4409,8 @@ CONDITION GetMultiShortFromString(DCM_OBJECT **object, DCM_TAG tag, short *us[],
   CONDITION cond;
   char *s, *ss;
   void *ctx;
-  int i, j, mult;
+  unsigned int i;
+  int j, mult;
 
   attribute.tag = tag;
   cond = DCM_GetElement(object, tag, &attribute);
@@ -6887,8 +6891,7 @@ int dcmGetDWIParamsGE(DCM_OBJECT *dcm, double *pbval, double *pxbvec, double *py
   DCM_ELEMENT *e;
   CONDITION cond;
   DCM_TAG tag;
-  int n;
-  unsigned int rtnLength;
+  unsigned int rtnLength, n;
   void *Ctx = NULL;
 
   if (Gdiag_no > 0) printf("Entering dcmGetDWIParamsGE()\n");
@@ -7120,9 +7123,9 @@ int dcmGetDWIParamsSiemensAlt(DCM_OBJECT *dcm, double *pbval, double *pxbvec, do
   DCM_ELEMENT *e;
   CONDITION cond;
   DCM_TAG tag;
-  unsigned int rtnLength;
+  unsigned int rtnLength, m;
   void *Ctx = NULL;
-  int n, m, k, bval_flag, bvec_flag, Allow;
+  int k, bval_flag, bvec_flag, Allow;
   char c, tmpstr[2000], *pc;
   double val, rms;
 
@@ -7168,7 +7171,7 @@ int dcmGetDWIParamsSiemensAlt(DCM_OBJECT *dcm, double *pbval, double *pxbvec, do
   // Scroll through the nasty string and find the keywords
   bval_flag = 0;
   bvec_flag = 0;
-  for (n = 0; n < e->length; n++) {
+  for (unsigned int n = 0; n < e->length; n++) {
     c = e->d.string[n];
     if (c == 'B') {
       sscanf(&(e->d.string[n]), "%s", tmpstr);
@@ -7259,7 +7262,8 @@ int dcmImageDirCosObject(DCM_OBJECT *dcm, double *Vcx, double *Vcy, double *Vcz,
   DCM_TAG tag;
   unsigned int rtnLength;
   void *Ctx = NULL;
-  int n, nbs;
+  unsigned int n;
+  int nbs;
   char *s;
   double rms;
 

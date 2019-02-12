@@ -52,7 +52,7 @@ int stricmp(char *str1, char *str2);
 char *type_to_string(int type)
 {
   char *typestring;
-  char *tmpstr;
+  const char *tmpstr;
   int lentmp;
 
   switch (type) {
@@ -1133,7 +1133,7 @@ int is_nrrd(const char *fname)
   dot = strrchr(fname, '.');
 
   if (dot != NULL) {
-    if ((strcmp(dot, ".nrrd") == 0) && (strlen(fname) == dot - fname + 5)) {
+    if ((strcmp(dot, ".nrrd") == 0) && ((signed)strlen(fname) == dot - fname + 5)) {
       return (TRUE);
     }
   }

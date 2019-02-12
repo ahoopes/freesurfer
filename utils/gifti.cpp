@@ -35,7 +35,7 @@
 #include <unistd.h>
 
 #include "error.h"  // return codes
-#include "gifti_local.h"
+#include "gifti.h"
 #include "nifti1.h"
 #include "timer.h"
 #include "utils.h"  // strcpyalloc
@@ -1412,7 +1412,6 @@ int MRISwriteGIFTI(MRIS *mris, int intent_code, const char *out_fname, const cha
     if (mris->fname) {
       const char *primary = NULL, *secondary = NULL, *geotype = NULL;
       char *name = mris->fname;
-      char *topotype = "Closed";
       if (strstr(name, "lh.")) {
         primary = "CortexLeft";
       }
@@ -1467,9 +1466,12 @@ int MRISwriteGIFTI(MRIS *mris, int intent_code, const char *out_fname, const cha
       if (strstr(name, "pial-outer")) {
         geotype = "Hull";
       }
+      const char *topotype;
       if (mris->patch) {
         geotype = "Flat";
         topotype = "Cut";
+      } else {
+        topotype = "Closed";
       }
 
       if (primary) gifti_add_to_meta(&coords->meta, "AnatomicalStructurePrimary", primary, 1);
@@ -1571,7 +1573,7 @@ int MRISwriteGIFTI(MRIS *mris, int intent_code, const char *out_fname, const cha
 
     /* include some metadata describing this shape */
     gifti_add_to_meta(&shape->meta, "Name", curv_fname, 1);
-    char *meta = NULL;
+    const char *meta = NULL;
     if (strstr(curv_fname, ".thickness")) {
       meta = "Thickness";
     }

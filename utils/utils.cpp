@@ -629,17 +629,22 @@ char *FileFullName(char *full_name)
   Return Values:
   pointer to the filename
   ------------------------------------------------------------------------*/
-char *FileTmpName(char *basename)
+char *FileTmpName(const char *basename)
 {
   static char fname[STR_LEN];
   int i;
   FILE *fp;
 
-  if (!basename) basename = "tmp";
+  const char *realname;
+  if (!basename) {
+    realname = "tmp";
+  } else {
+    realname = basename;
+  }
 
   i = 0;
   do {
-    sprintf(fname, "%s%d", basename, i++);
+    sprintf(fname, "%s%d", realname, i++);
     fp = fopen(fname, "r");
     if (fp) fclose(fp);
   } while (fp);
@@ -1097,12 +1102,12 @@ int ItemsInString(const char *str)
 char *deblank(const char *str)
 {
   char *dbstr;
-  int n, m;
+  int m;
 
   dbstr = (char *)calloc(strlen(str) + 1, sizeof(char));
 
   m = 0;
-  for (n = 0; n < strlen(str); n++) {
+  for (unsigned int n = 0; n < strlen(str); n++) {
     // printf("%d %c %d\n",n,str[n],isspace(str[n]));
     if (isspace(str[n])) continue;
     dbstr[m] = str[n];
@@ -1119,8 +1124,7 @@ char *deblank(const char *str)
 */
 char *str_toupper(char *str)
 {
-  int n;
-  for (n = 0; n < strlen(str); n++) str[n] = toupper(str[n]);
+  for (unsigned int n = 0; n < strlen(str); n++) str[n] = toupper(str[n]);
   return (0);
 }
 

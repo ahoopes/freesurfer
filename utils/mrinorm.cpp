@@ -3416,7 +3416,7 @@ int MRI3dUseFileControlPoints(MRI *mri, const char *fname)
       }
     }
     if (ndel > 0 && cp != NULL) {
-      char *fname = "control.edited.dat";
+      const char *fname = "control.edited.dat";
       printf("FS_THRESH_CTRL detected in env - deleting %d control points\n", ndel);
       for (i = 0; i < count; i++) {
         if (deleted[i]) {

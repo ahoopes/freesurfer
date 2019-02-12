@@ -124,7 +124,7 @@ static int rbfAllocateTrainingParameters(RBF *rbf);
         Description
           allocate and initialize an rbf classifier.
 ------------------------------------------------------*/
-RBF *RBFinit(int ninputs, int noutputs, int max_clusters[], char *names[])
+RBF *RBFinit(int ninputs, int noutputs, int max_clusters[], const char *names[])
 {
   RBF *rbf;
   int i;
@@ -1075,7 +1075,7 @@ RBF *RBFcopyWeights(RBF *rbf_src, RBF *rbf_dst)
 
     for (i = 0; i < rbf_src->noutputs; i++) max_clusters[i] = rbf_src->cs[i] ? rbf_src->cs[i]->max_clusters : 0;
 
-    rbf_dst = RBFinit(rbf_src->ninputs, rbf_src->noutputs, max_clusters, rbf_src->class_names);
+    rbf_dst = RBFinit(rbf_src->ninputs, rbf_src->noutputs, max_clusters, const_cast<const char**>(rbf_src->class_names));
 
     /* fill in cluster pointers in rbf struct for convenience sake */
     for (cno = classnum = 0; classnum < rbf_src->noutputs; classnum ++) {
@@ -1319,7 +1319,8 @@ int RBFwriteInto(RBF *rbf, FILE *fp)
 RBF *RBFreadFrom(FILE *fp)
 {
   int i, c, cno, classnum, noutputs, ninputs, nhidden, max_clusters[MAX_OUTPUTS];
-  char *names[MAX_OUTPUTS], *cp, line[100];
+  char *cp, line[100];
+  char *names[MAX_OUTPUTS];
   RBF *rbf;
 
   if (fscanf(fp, "%d %d %d\n", &noutputs, &ninputs, &nhidden) != 3)
@@ -1333,7 +1334,7 @@ RBF *RBFreadFrom(FILE *fp)
     names[i] = (char *)calloc(strlen(cp) + 1, sizeof(char));
     strcpy(names[i], cp);
   }
-  rbf = RBFinit(ninputs, noutputs, max_clusters, names);
+  rbf = RBFinit(ninputs, noutputs, max_clusters, const_cast<const char**>(names));
   for (i = 0; i < noutputs; i++) free(names[i]);
 
   MatrixAsciiReadFrom(fp, rbf->m_wij);

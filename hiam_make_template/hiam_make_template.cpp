@@ -52,27 +52,8 @@ const char *Progname ;
 
 static int which_norm = NORM_MEAN;
 
-#if 0
-static char *surface_names[] = {
-                                 "inflated",
-                                 "smoothwm",
-                                 "smoothwm"
-                               } ;
-
-static char *curvature_names[] = {
-                                   NULL,
-                                   "sulc",
-                                   NULL
-                                 } ;
-#else
-static char *surface_names[] = {
-                                 "hippocampus"
-                               } ;
-
-static char *curvature_names[] = {
-                                   "hippocampus.curv"
-                                 } ;
-#endif
+static const char *surface_names[] = {"hippocampus"};
+static const char *curvature_names[] = {"hippocampus.curv"};
 
 #define IMAGES_PER_SURFACE   3   /* mean, variance, and dof */
 #define SURFACES         sizeof(curvature_names) / sizeof(curvature_names[0])

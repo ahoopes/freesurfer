@@ -23,7 +23,6 @@
  */
 
 extern const char *Progname;
-const char *MRI_C_VERSION = "$Revision: 1.575 $";
 
 /*-----------------------------------------------------
   INCLUDE FILES
@@ -1324,7 +1323,7 @@ int MRIsetVoxVal(MRI *mri, int c, int r, int s, int f, float voxval)
   MRIinterpCode() - returns the numeric interpolation code given the
   name of the interpolation method.
   -----------------------------------------------------------------*/
-int MRIinterpCode(char *InterpString)
+int MRIinterpCode(const char *InterpString)
 {
   if (!strncasecmp(InterpString, "nearest", 3)) return (SAMPLE_NEAREST);
   if (!strncasecmp(InterpString, "trilinear", 3)) return (SAMPLE_TRILINEAR);
@@ -1339,7 +1338,7 @@ int MRIinterpCode(char *InterpString)
   MRIinterpString() - returns the the name of the interpolation method
   given numeric interpolation code
   -----------------------------------------------------------------*/
-char *MRIinterpString(int InterpCode)
+const char *MRIinterpString(int InterpCode)
 {
   switch (InterpCode) {
   case SAMPLE_NEAREST:
@@ -1378,7 +1377,7 @@ int MRIprecisionCode(char *PrecisionString)
   numeric precision code. The code corresponds to the value of the
   type field in the MRI structure.
   -----------------------------------------------------------------*/
-char *MRIprecisionString(int PrecisionCode)
+const char *MRIprecisionString(int PrecisionCode)
 {
   switch (PrecisionCode) {
   case MRI_UCHAR:
@@ -15128,7 +15127,7 @@ float MRIfovCol(MRI *mri)
    get the direction cosines "about right".
    --------------------------------------------------------------------*/
 
-int MRIorientationStringToDircos(MRI *mri, char *ostr)
+int MRIorientationStringToDircos(MRI *mri, const char *ostr)
 {
   int c, r = 0;
   double Mdc[3][3], v = 0;
@@ -15200,7 +15199,7 @@ int MRIorientationStringToDircos(MRI *mri, char *ostr)
    ok, otherwise is returns a string that lists all the errors
    it encountered.
    ---------------------------------------------------------------*/
-char *MRIcheckOrientationString(char *ostr)
+char *MRIcheckOrientationString(const char *ostr)
 {
   int c, nsag = 0, ncor = 0, nax = 0, err;
   char errstr[1000], *errstrret = NULL;
@@ -15339,7 +15338,7 @@ int MRIdircosToOrientationString(MRI *mri, char *ostr)
 char *MRIsliceDirectionName(MRI *mri)
 {
   char ostr[4];
-  char *slicedir = NULL;
+  const char *slicedir = NULL;
   char *rtstr;
   int len;
 

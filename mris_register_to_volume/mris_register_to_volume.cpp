@@ -159,7 +159,7 @@ static void argnerr(char *option, int n);
 static void dump_options(FILE *fp);
 static int  singledash(char *flag);
 #include "tags.h"
-static int istringnmatch(char *str1, char *str2, int n);
+static int istringnmatch(char *str1, const char *str2, int n);
 
 int main(int argc, char *argv[]) ;
 
@@ -182,7 +182,7 @@ static char *pial_fname = NULL ;
 static int pial_only = 0 ;   
 static char *regfile=NULL;
 static char *outregfile=NULL;
-static char *interpmethod = "trilinear";
+static const char *interpmethod = "trilinear";
 static int   interpcode = 0;
 static int   sinchw;
 static double   max_trans = 200 ;
@@ -201,7 +201,7 @@ static MRI *mri_reg, *mri_grad = NULL ;
 MATRIX *R0;
 
 char *SUBJECTS_DIR=NULL;
-char *subject = "unknown";
+char *subject = NULL;
 
 //static float ipr, bpr, intensity;
 //static int float2int ;
@@ -401,8 +401,7 @@ main(int argc, char **argv)
   if (regfile)
   {
     printf("reading in previously computed registration from %s\n", regfile);
-    R0 = regio_read_surfacexform_from_register_dat(regfile, mris,
-                                                   mri_reg, &subject);
+    R0 = regio_read_surfacexform_from_register_dat(regfile, mris, mri_reg, &subject);
     if (R0 == NULL)
       exit(Gerror) ;
   }
@@ -1034,7 +1033,7 @@ static int singledash(char *flag) {
   return a 1 if they match (ignoring case), a zero otherwise. If
   n=0, then do a full comparison.
   ------------------------------------------------------------*/
-static int istringnmatch(char *str1, char *str2, int n) {
+static int istringnmatch(char *str1, const char *str2, int n) {
   if (n > 0  && ! strncasecmp(str1,str2,n)) return(1);
   if (n <= 0 && ! strcasecmp(str1,str2)) return(1);
   return(0);
@@ -1991,7 +1990,7 @@ powell_minimize_rigid(MRI_SURFACE *mris, MRI *mri_reg, MRI *mri_mask, MATRIX *ma
   float *p, **xi, fret, fstart ;
   int    r, c, iter, diag, old_write ;
   double xr, yr, zr, xt, yt, zt;
-  char   *sname ;
+  const char *sname ;
 
   if (similarity_func == mrisRegistrationCNRSimilarity)
     sname = "CNR" ;

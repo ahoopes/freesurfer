@@ -22,8 +22,6 @@
  *
  */
 
-char *MRI_INFO_VERSION = "$Revision$";
-
 #include <float.h>
 #include <stdio.h>
 #include <sys/stat.h>

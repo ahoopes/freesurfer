@@ -2023,7 +2023,7 @@ static void cachedOrComputeVertexPseudoNormal(
       if (0) {
       	cheapAssert(0 <= index);
       	cheapAssert(index       < PerThreadVertexPseudoNormalCacheSize);
-      	cheapAssert(initedIndex < PerThreadVertexPseudoNormalCacheInitedSize);
+      	cheapAssert((unsigned)initedIndex < PerThreadVertexPseudoNormalCacheInitedSize);
       }
       
       inited = p->inited[initedIndex] & initedMask;
@@ -8404,7 +8404,7 @@ int topology_fixing_exit_after_diag = 0;
 
 MRI_SURFACE *MRIScorrectTopology(
     MRI_SURFACE *mris, MRI *mri, MRI *mri_wm, 
-    int nsmooth, TOPOLOGY_PARMS *parms, char *defectbase)
+    int nsmooth, TOPOLOGY_PARMS *parms, const char *defectbase)
 {
   FACE_DEFECT_LIST *fdl;
   DEFECT_LIST *dl;
@@ -15520,7 +15520,7 @@ mrisCheckDefectEdges(MRI_SURFACE *mris, DEFECT *defect, int vno,
   See if the edge e intersects any edges in the defect or it's border.
   ------------------------------------------------------*/
 
-    static bool isHit(MRI_SURFACE * mris, int vno, DEFECT *defect, EDGE* e, int n, char* whyTracing) {
+    static bool isHit(MRI_SURFACE * mris, int vno, DEFECT *defect, EDGE* e, int n, const char* whyTracing) {
       bool result = false;
 
       if (vno == e->vno1 || vno == e->vno2 || vno < 0) {

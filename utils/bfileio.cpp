@@ -38,6 +38,8 @@
  */
 
 #define BFILEIO_SRC
+
+#include <string>
 #include <errno.h>
 #include <math.h>
 #include <stdio.h>
@@ -279,8 +281,8 @@ float *bf_ldbfile(char *bfname, int *nrows, int *ncols, int *nfrms)
   short *sdata = NULL;
   float *fdata = NULL;
   FILE *fp;
-  int err, nread, type, endian, archendian, n;
-  size_t ntot;
+  int err, type, endian, archendian;
+  size_t ntot, nread;
   bferr = 0;
 
   /* get endianness of current architecture */
@@ -323,7 +325,7 @@ float *bf_ldbfile(char *bfname, int *nrows, int *ncols, int *nfrms)
       sprintf(bfmsg, "bf_ldbfile(): error reading %s", bfname);
       bferr = 1;
       fprintf(stderr, "%s \n", bfmsg);
-      fprintf(stderr, " ntoberead = %d, nread = %d\n", (int)ntot, nread);
+      fprintf(stderr, " ntoberead = %d, nread = %d\n", (int)ntot, (int)nread);
       free(fdata);
       return (NULL);
     }
@@ -350,7 +352,7 @@ float *bf_ldbfile(char *bfname, int *nrows, int *ncols, int *nfrms)
       sprintf(bfmsg, "bf_ldbfile(): error reading %s", bfname);
       bferr = 1;
       fprintf(stderr, "%s \n", bfmsg);
-      fprintf(stderr, " ntoberead = %d, nread = %d\n", (int)ntot, nread);
+      fprintf(stderr, " ntoberead = %d, nread = %d\n", (int)ntot, (int)nread);
       free(fdata);
       free(sdata);
       return (NULL);
@@ -358,7 +360,7 @@ float *bf_ldbfile(char *bfname, int *nrows, int *ncols, int *nfrms)
     if (endian != archendian) /* swap bytes if necessary */
       byteswapbufshort(sdata, ntot * sizeof(short));
     /* convert data from short to float */
-    for (n = 0; n < ntot; n++) fdata[n] = (float)sdata[n];
+    for (unsigned int n = 0; n < ntot; n++) fdata[n] = (float)sdata[n];
     free(sdata);
   }
 
@@ -374,9 +376,9 @@ int bf_svbfile(float *bfdata, char *bfname, int nrows, int ncols, int nfrms, int
   float *fdata = NULL;
   char hdrfile[1000];
   FILE *fp;
-  int type, nwrote, archendian, n, err;
+  int type, archendian, err;
   int fdatadealloc = 0;
-  size_t ntot;
+  size_t ntot, nwrote;
   bferr = 0;
 
   /* get endianness of current architecture */
@@ -436,7 +438,7 @@ int bf_svbfile(float *bfdata, char *bfname, int nrows, int ncols, int nfrms, int
       sprintf(bfmsg, "bf_svbfile(): error writing to %s", bfname);
       bferr = 1;
       fprintf(stderr, "%s \n", bfmsg);
-      fprintf(stderr, " ntobewritten = %d, nwritten = %d\n", (int)ntot, nwrote);
+      fprintf(stderr, " ntobewritten = %d, nwritten = %d\n", (int)ntot, (int)nwrote);
       return (1);
     }
   }
@@ -451,7 +453,7 @@ int bf_svbfile(float *bfdata, char *bfname, int nrows, int ncols, int nfrms, int
       fprintf(stderr, "%s \n", bfmsg);
       return (1);
     }
-    for (n = 0; n < ntot; n++) sdata[n] = (short)rint(bfdata[n]);
+    for (unsigned int n = 0; n < ntot; n++) sdata[n] = (short)rint(bfdata[n]);
 
     /* swap bytes if necessary */
     if (svendian != archendian) byteswapbufshort(sdata, ntot * sizeof(short));
@@ -466,7 +468,7 @@ int bf_svbfile(float *bfdata, char *bfname, int nrows, int ncols, int nfrms, int
       sprintf(bfmsg, "bf_svbfile(): error writing to %s", bfname);
       bferr = 1;
       fprintf(stderr, "%s \n", bfmsg);
-      fprintf(stderr, " ntobewritten = %d, nwritten = %d\n", (int)ntot, nwrote);
+      fprintf(stderr, " ntobewritten = %d, nwritten = %d\n", (int)ntot, (int)nwrote);
       return (1);
     }
   }
@@ -510,20 +512,18 @@ int bf_getnslices(char *stem)
 int bf_getvoltype(char *stem)
 {
   FILE *fp;
-  char bfile[1000], *ext;
+  char bfile[1000];
 
   memset(bfile, '\0', 1000);
 
-  ext = "bshort";
-  sprintf(bfile, "%s_000.%s", stem, ext);
+  sprintf(bfile, "%s_000.%s", stem, "bshort");
   fp = fopen(bfile, "r");
   if (fp != NULL) {
     fclose(fp);
     return (BF_SHORT);
   }
 
-  ext = "bfloat";
-  sprintf(bfile, "%s_000.%s", stem, ext);
+  sprintf(bfile, "%s_000.%s", stem, "bfloat");
   fp = fopen(bfile, "r");
   if (fp != NULL) {
     fclose(fp);
@@ -653,7 +653,7 @@ int bf_delete_volume(char *stem)
   char fname[1000];
   int nrows, ncols, nslcs, nfrms, endian, type;
   int err, slice;
-  char *ext = NULL;
+  std::string ext;
 
   if (!bf_volume_exists(stem)) {
     fprintf(stderr, "bf_delete_volume(): volume %s does not exist\n", stem);
@@ -669,7 +669,7 @@ int bf_delete_volume(char *stem)
   for (slice = 0; slice < nslcs; slice++) {
     sprintf(fname, "%s_%03d.hdr", stem, slice);
     err = unlink(fname);
-    sprintf(fname, "%s_%03d.%s", stem, slice, ext);
+    sprintf(fname, "%s_%03d.%s", stem, slice, ext.c_str());
     err = unlink(fname);
   }
   return (0);
@@ -704,7 +704,8 @@ BF_DATA *bf_ldvolume(char *stem)
   BF_DATA *bfd;
   int nrows, ncols, nslcs, nfrms, endian, type;
   int err, slice;
-  char bfname[1000], *ext;
+  char bfname[1000];
+  std::string ext;
   float *fdata;
 
   err = bf_getvoldim(stem, &nrows, &ncols, &nslcs, &nfrms, &endian, &type);
@@ -720,7 +721,7 @@ BF_DATA *bf_ldvolume(char *stem)
 
   for (slice = 0; slice < nslcs; slice++) {
     memset(bfname, '\0', 1000);
-    sprintf(bfname, "%s_%03d.%s", stem, slice, ext);
+    sprintf(bfname, "%s_%03d.%s", stem, slice, ext.c_str());
     fdata = bf_ldbfile(bfname, &nrows, &ncols, &nfrms);
     if (fdata == NULL) {
       bf_freebfd(&bfd);
@@ -737,7 +738,8 @@ BF_DATA *bf_ldslice(char *stem, int slice)
   BF_DATA *bfd;
   int nrows, ncols, nfrms, endian, type;
   int err;
-  char bfname[1000], *ext;
+  char bfname[1000];
+  std::string ext;
   float *fdata;
 
   memset(bfname, '\0', 1000);
@@ -748,7 +750,7 @@ BF_DATA *bf_ldslice(char *stem, int slice)
   else
     ext = "bfloat";
 
-  sprintf(bfname, "%s_%03d.%s", stem, slice, ext);
+  sprintf(bfname, "%s_%03d.%s", stem, slice, ext.c_str());
 
   err = bf_getbfiledim(bfname, &nrows, &ncols, &nfrms, &endian, &type);
   if (err) return (NULL);
@@ -769,7 +771,8 @@ BF_DATA *bf_ldslice(char *stem, int slice)
 int bf_svvolume(BF_DATA *bfd, char *stem, int svendian, int svtype)
 {
   int err, slice;
-  char bfname[1000], *ext;
+  char bfname[1000];
+  std::string ext;
   float *fdata;
 
   memset(bfname, '\0', 1000);
@@ -785,7 +788,7 @@ int bf_svvolume(BF_DATA *bfd, char *stem, int svendian, int svtype)
     ext = "bfloat";
 
   for (slice = 0; slice < bfd->nslcs; slice++) {
-    sprintf(bfname, "%s_%03d.%s", stem, slice, ext);
+    sprintf(bfname, "%s_%03d.%s", stem, slice, ext.c_str());
     fdata = bfd->slcdata[slice];
     err = bf_svbfile(fdata, bfname, bfd->nrows, bfd->ncols, bfd->nfrms, svendian);
     if (err) return (1);
@@ -797,7 +800,8 @@ int bf_svvolume(BF_DATA *bfd, char *stem, int svendian, int svtype)
 int bf_svslice(BF_DATA *bfd, char *stem, int slice, int svendian, int svtype)
 {
   int err;
-  char bfname[1000], *ext;
+  char bfname[1000];
+  std::string ext;
   float *fdata;
 
   memset(bfname, '\0', 1000);
@@ -812,7 +816,7 @@ int bf_svslice(BF_DATA *bfd, char *stem, int slice, int svendian, int svtype)
   }
 
   fdata = bfd->slcdata[0];
-  sprintf(bfname, "%s_%03d.%s", stem, slice, ext);
+  sprintf(bfname, "%s_%03d.%s", stem, slice, ext.c_str());
   err = bf_svbfile(fdata, bfname, bfd->nrows, bfd->ncols, bfd->nfrms, svendian);
   if (err) return (1);
 

@@ -3322,7 +3322,7 @@ int  // (NOT TRUE ANYMORE: OK means 1, BAD means 0 )  use standard ERROR returns
 LTAwriteEx(const LTA *lta, const char *fname)
 {
   FILE *fp;
-  char *user;
+  const char *user;
   char ext[STRLEN];
 
   if (!stricmp(FileNameExtension((char *)fname, ext), "XFM") || lta->type == MNI_TRANSFORM_TYPE) {

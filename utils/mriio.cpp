@@ -59,7 +59,7 @@
 #include "error.h"
 #include "fio.h"
 #include "gcamorph.h"
-#include "gifti_local.h"
+#include "gifti.h"
 #include "imautils.h"
 #include "macros.h"
 #include "matfile.h"
@@ -2243,7 +2243,7 @@ static MRI *siemensRead(const char *fname, int read_volume_flag)
       fseek(fp, 6144, SEEK_SET);
 
       for (i = 0; i < rows; i++) {
-        if (fread(&MRISvox(mri_raw, 0, i, file_n - n_low), sizeof(short), cols, fp) != cols){
+        if (fread(&MRISvox(mri_raw, 0, i, file_n - n_low), sizeof(short), cols, fp) != (unsigned)cols){
           ErrorPrintf(ERROR_BADFILE, "siemensRead(): could not read file");
         }
 #if (BYTE_ORDER == LITTLE_ENDIAN)
@@ -2294,7 +2294,7 @@ static MRI *mincRead(const char *fname, int read_volume)
   MRI *mri;
   Volume vol;
   VIO_Status status;
-  char *dim_names[4];
+  const char *dim_names[4];
   int dim_sizes[4];
   int ndims;
   int dtype;
@@ -2325,7 +2325,7 @@ static MRI *mincRead(const char *fname, int read_volume)
   }
 
   char *tmp = strcpyalloc(fname);
-  status = start_volume_input(tmp, 0, dim_names, NC_UNSPECIFIED, 0, 0, 0, TRUE, &vol, NULL, &input_info);
+  status = start_volume_input(tmp, 0, const_cast<char**>(dim_names), NC_UNSPECIFIED, 0, 0, 0, TRUE, &vol, NULL, &input_info);
   free(tmp);
 
   if (Gdiag & DIAG_VERBOSE_ON && DIAG_SHOW) {
@@ -3095,7 +3095,7 @@ static int NormalizeVector(float *v, int n)
 static int mincWrite(MRI *mri, const char *fname)
 {
   Volume minc_volume;
-  char* dimension_names[4] = {"xspace", "yspace", "zspace", "time"};
+  const char* dimension_names[4] = {"xspace", "yspace", "zspace", "time"};
   nc_type nc_data_type;
   double min, max;
   float fmin, fmax;
@@ -3256,9 +3256,9 @@ static int mincWrite(MRI *mri, const char *fname)
   max = (double)fmax;
 
   if (mri->nframes == 1)
-    minc_volume = create_volume(3, dimension_names, nc_data_type, signed_flag, min, max);
+    minc_volume = create_volume(3, const_cast<char**>(dimension_names), nc_data_type, signed_flag, min, max);
   else
-    minc_volume = create_volume(4, dimension_names, nc_data_type, signed_flag, min, max);
+    minc_volume = create_volume(4, const_cast<char**>(dimension_names), nc_data_type, signed_flag, min, max);
 
   /* di_(x,y,z) is the map from minc to orig */
   /* minc dimension size is that of di_x, etc. */
@@ -3410,7 +3410,7 @@ static int bvolumeWrite(MRI *vol, const char *fname_passed, int type)
   MRI *mri;
   float min, max;
   int swap_bytes_flag, size, bufsize, endian = 0;
-  char *ext;
+  const char *ext;
   void *buf;
 
   /* check the type and set the extension and size*/
@@ -4247,7 +4247,7 @@ static MRI *bvolumeRead(const char *fname_passed, int read_volume, int type)
   int swap_bytes_flag;
   int slice, frame, row, k;
   int nread;
-  char *ext;
+  const char *ext;
   int size;
   float min, max;
 
@@ -6277,7 +6277,7 @@ static int analyzeWriteFrame(MRI *mri, const char *fname, int frame)
   int bytes_per_voxel;
   short i1, i2, i3;
   int shortmax;
-  char *orientname[7] = {"transverse unflipped",
+  const char *orientname[7] = {"transverse unflipped",
                          "coronal unflipped",
                          "sagittal unflipped",
                          "transverse flipped",

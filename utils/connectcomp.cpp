@@ -1341,7 +1341,7 @@ void *myRealloc(void *ptr, int size)
 }
 
 /* Prints error message */
-void myError(char error_text[])
+void myError(const char error_text[])
 {
   fprintf(stderr, "Utility run-time error:\n");
   fprintf(stderr, "%s\n", error_text);

@@ -175,9 +175,9 @@ Trns_tErr Trns_CalcMatricies_ ( mriTransformRef ThisKRT );
 /* debugging support */
 Trns_tErr Trns_Verify         ( mriTransformRef ThisKRT );
 void      Trns_DebugPrint_    ( mriTransformRef ThisKRT );
-void      Trns_Signal         ( char*           inMsg,
+void      Trns_Signal         ( const char*           inMsg,
                                 int             inLineNum,
                                 Trns_tErr       ieCode );
-char*     Trns_GetErrorString ( Trns_tErr       ieCode );
+const char* Trns_GetErrorString ( Trns_tErr       ieCode );
 
 #endif

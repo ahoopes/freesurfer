@@ -224,8 +224,7 @@ void MRIScheckIsPolyhedron(MRIS *mris, const char* file, int line) {
         } else {
           Edges const * const edgesForVno2 = &edges[vno2];
           int count = 0;
-          int i;
-          for (i = 0; i < edgesForVno2->hiVnosCount; i++) {
+          for (unsigned int i = 0; i < edgesForVno2->hiVnosCount; i++) {
             if (hiVnos[edgesForVno2->hiVnosBegin + i] == vno) count++;
           }
           cheapAssert(count == 1);  // each should be entered exactly once
@@ -260,8 +259,7 @@ void MRIScheckIsPolyhedron(MRIS *mris, const char* file, int line) {
         int vno2 = face->v[n2];
         if (vno1 > vno2) { vno1 = vno2; vno2 = face->v[n1]; } else cheapAssert(vno1 != vno2);
         Edges const * const edgesForVno = &edges[vno1];
-        int i;
-        for (i = 0; i < edgesForVno->hiVnosCount; i++) {
+        for (unsigned int i = 0; i < edgesForVno->hiVnosCount; i++) {
           if (hiVnos   [edgesForVno->hiVnosBegin + i] != vno2) continue;
           // found the entry for an edge
           if (!badCount) {
@@ -283,9 +281,8 @@ void MRIScheckIsPolyhedron(MRIS *mris, const char* file, int line) {
     cheapAssert(!reportsNot1);
     
     if (badCount) break;
-    
-    int edgeNo;
-    for (edgeNo = 0; edgeNo < hiVnosSize; edgeNo++) {
+
+    for (unsigned int edgeNo = 0; edgeNo < hiVnosSize; edgeNo++) {
       int count = nFacesPerEdge[edgeNo];
       if (count == 2) continue;
       if (count <  2 && tearsOk) continue;
@@ -918,14 +915,13 @@ void MRIS_VertexNeighbourInfo_check(
     MRIS_VertexNeighbourInfo* rhs) {
     
   cheapAssert(lhs->hops == rhs->hops);
-  
-  int i;
-  for (i = 0; i <= lhs->hops; i++)
+
+  for (unsigned int i = 0; i <= lhs->hops; i++)
     cheapAssert(lhs->vnum[i] == rhs->vnum[i]); 
     
   // Even test the algorithms put them in the same order!
   //
-  for (i = 0; i < lhs->vnum[lhs->hops]; i++) 
+  for (int i = 0; i < lhs->vnum[lhs->hops]; i++) 
     cheapAssert(lhs->v[i] == rhs->v[i]);
 }
 
@@ -946,8 +942,7 @@ void MRIS_VertexNeighbourInfo_load_from_VERTEX (MRIS_VertexNeighbourInfo* info, 
 
 void MRIS_VertexNeighbourInfo_load_from_vlist (MRIS_VertexNeighbourInfo* info, MRIS* mris, int vno, size_t listSize, int* vlist, int* hops) {
   info->vnum[0] = 1;
-  int i;
-  for (i = 0; i < listSize; i++) {
+  for (unsigned int i = 0; i < listSize; i++) {
     info->v[i] = vlist[i];
     info->hops = hops[i];
     cheapAssert(info->hops >= 0);
@@ -1109,7 +1104,7 @@ static int MRISfindNeighborsAtVertex_new(MRIS *mris, int vno, int nlinks, size_t
   static Temp tempForEachThread[_MAX_FS_THREADS];
   
   Temp* const temp = &tempForEachThread[omp_get_thread_num()];
-  if (temp->capacity < mris->nvertices) {
+  if (temp->capacity < (unsigned)mris->nvertices) {
     temp->capacity = mris->nvertices;
     temp->status   = (unsigned char*)realloc(temp->status, temp->capacity*sizeof(unsigned char));
     bzero(temp->status, temp->capacity*sizeof(unsigned char));
@@ -1141,7 +1136,7 @@ static int MRISfindNeighborsAtVertex_new(MRIS *mris, int vno, int nlinks, size_t
 
   // Add the known rings
   //
-  int neighborCount = 0;
+  unsigned int neighborCount = 0;
 
   cheapAssert(vt->nsizeMax > 0);
 
@@ -1258,8 +1253,7 @@ static int MRISfindNeighborsAtVertex_new(MRIS *mris, int vno, int nlinks, size_t
   // Clear the temp for reuse later
   //
   temp->status[vno] = Status_notInSet;
-  int i;
-  for (i = 0; i < neighborCount; i++) {
+  for (unsigned int i = 0; i < neighborCount; i++) {
     temp->status[vlist[i]] = Status_notInSet;
   }
   
@@ -1922,7 +1916,7 @@ short VERTICES_commonInFaces_find(FACE *apFACE_I, FACE *apFACE_J, VECTOR *apv_ve
   int i = 0;
   int j = 0;
   int k = 0;
-  char *pch_function = "VERTICES_commonInFaces_find";
+  const char *pch_function = "VERTICES_commonInFaces_find";
   short b_hit = 0;
   float f_val = -1.;
 
@@ -3054,7 +3048,7 @@ static short FACES_aroundVertex_reorder(MRIS *apmris, int avertex, VECTOR *pv_ge
   //  o The number of connected faces is returned in the function name, or
   //    0 is there is some error.
 
-  char *pch_function = "FACES_aroundVertex_reorder";
+  const char *pch_function = "FACES_aroundVertex_reorder";
   int nfaces = 0;
   int *pFaceIndex = NULL;
   int packedCount = 1;

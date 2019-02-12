@@ -2104,14 +2104,15 @@ MRI *MRIScomputeFlattenedVolume(MRI_SURFACE *mris,
 */
 MRI_SP *MRISmakeTemplate(int nsubjects, char **subjlist, int nhemis, char **hemilist, char *surfregname)
 {
-  static char *surface_names[] = {"inflated", "smoothwm", "smoothwm"};
-  static char *curvature_names[] = {"inflated.H", "sulc", NULL};
+  static const char *surface_names[] = {"inflated", "smoothwm", "smoothwm"};
+  static const char *curvature_names[] = {"inflated.H", "sulc", NULL};
   char tmpstr[2000];
   int images_per_surface = 3;
   int nsurfaces = sizeof(curvature_names) / sizeof(curvature_names[0]);
   int nparam_images = images_per_surface * nsurfaces;
   float scale = 1;
-  char *annot_name = "aparc", *SUBJECTS_DIR, *hemi, *subject;
+  const char *annot_name = "aparc";
+  char *SUBJECTS_DIR, *hemi, *subject;
   INTEGRATION_PARMS parms;
   int which_norm = NORM_MEAN;
   int navgs = 0, nthhemi, sno, nthsubject;
@@ -2839,7 +2840,7 @@ int L2Sinit(LABEL2SURF *l2s)
   alloc the surfaces. subject can be null (this info is just passed to the
   labels).
 */
-LABEL2SURF *L2Salloc(int nsurfs, char *subject)
+LABEL2SURF *L2Salloc(int nsurfs, const char *subject)
 {
   int n;
   LABEL2SURF *l2s;
@@ -2953,7 +2954,7 @@ int L2SimportLabel(LABEL2SURF *l2s, LABEL *label, int surfno)
   because surf vg not set. Returns 0 if all tests passed or 1 if any
   test failed.
 */
-int L2Stest(char *subject)
+int L2Stest(const char *subject)
 {
   char *SUBJECTS_DIR, tmpstr[2000];
   SUBJECTS_DIR = getenv("SUBJECTS_DIR");

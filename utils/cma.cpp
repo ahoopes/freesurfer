@@ -954,7 +954,7 @@ surface-based analysis. It also computes the same values based on
 volume-based analysis to check against the surface-based results.
 \param subject
 */
-double *ComputeBrainVolumeStats(char *subject, char *suffix, char *sdir)
+double *ComputeBrainVolumeStats(char *subject, char *suff, char *sdir)
 {
   char tmpstr[2000];
   char *SUBJECTS_DIR;
@@ -972,7 +972,12 @@ double *ComputeBrainVolumeStats(char *subject, char *suffix, char *sdir)
   double OptChiasmVol, CSFVol;
   double *stats = NULL;
 
-  if (suffix == NULL) suffix = "";
+  const char *suffix;
+  if (suff == NULL) {
+    suffix = "";
+  } else {
+    suffix = suff;
+  }
 
   if (sdir)
     SUBJECTS_DIR = sdir;

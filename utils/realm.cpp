@@ -1443,7 +1443,7 @@ static void moveToNext(RealmIterator* realmIterator, Realm* realm) {
 #endif
         unsigned long c = i & leafIndexMask;
         c++;
-        if (c < n->vnosSize) {
+        if (c < (unsigned)n->vnosSize) {
             realmIterator->i++;
             return;
         }

@@ -45,7 +45,7 @@
 #include "version.h"
 #include "proto.h"
 #include "error.h"
-#include "gifti_local.h"
+#include "gifti.h"
 
 const char *Progname = "mris_info";
 

@@ -3413,7 +3413,7 @@ float FACES_commonEdgeLength_find(MRIS *apmris, FACE *apFACE_I, FACE *apFACE_J)
   //
 
   static int calls = 0;
-  char *pch_function = "FACES_commonEdgeLength_find";
+  const char *pch_function = "FACES_commonEdgeLength_find";
   VERTEX *pVERTEX_O = NULL;                 // Common vertex O
   VERTEX *pVERTEX_I = NULL;                 // Common vertex I
   static VECTOR *pVECTOR_O = NULL;          // Common vertex O cart. coords
@@ -5824,7 +5824,7 @@ short FACES_Hcurvature_determineSign(MRIS *apmris,
   //
 
   static int calls = 0;
-  char *pch_function = "FACES_Hcurvature_determineSign";
+  const char *pch_function = "FACES_Hcurvature_determineSign";
   int ret = 0;
   int vertexO = -1;
   int vertexI = -1;
@@ -5917,7 +5917,7 @@ int VERTEX_faceAngles_determine(MRIS *apmris, int avertex, VECTOR *apv_angle)
   //  o Initial design and coding.
   //
 
-  char *pch_function = "VERTEX_faceAngles_determine";
+  const char *pch_function = "VERTEX_faceAngles_determine";
   int nfaces = -1;
   float f_angle = 0.;
   float f_lenApexNormal = 0.;
@@ -6007,7 +6007,7 @@ float FACES_angleNormal_find(MRIS *apmris, int apFACE_I_fno, int apFACE_J_fno)
   float f_acosArg = 0.;                  // Dot product arguments
   float f_dot = 0.;                      // Dot product
   short sign = 1;                        // Angle "sign"
-  char *pch_function = "FACES_angleNormal_find";
+  const char *pch_function = "FACES_angleNormal_find";
 
   DebugEnterFunction(("%s", pch_function));
   if (!calls) {
@@ -6061,7 +6061,7 @@ int VERTEX_faceMinMaxAngles_determine(
   //  o Initial design and coding.
   //
 
-  char *pch_function = "VERTEX_faceMinMaxAngles_determine";
+  const char *pch_function = "VERTEX_faceMinMaxAngles_determine";
   int face = 0;                  // Face index counte
   int nfaces = 0;                // Number of faces at <avertex>
   float f_faceAngle = 0.;        // Actual face angle
@@ -6154,7 +6154,7 @@ short MRIS_discreteKH_compute(MRIS *apmris)
   //    computed.
   //
 
-  char *pch_function = "MRIS_discreteKH_compute";
+  const char *pch_function = "MRIS_discreteKH_compute";
 
   VECTOR *pv_geometricOrder = NULL;  // Geometrically ordered faces
   int vertex = 0;                    // Vertex index number
@@ -6262,7 +6262,7 @@ short MRIS_discretek1k2_compute(MRIS *apmris, short ab_signedPrinciples)
   //    f_abs(..) size.
   //
 
-  char *pch_function = "MRIS_discretek1k2_compute";
+  const char *pch_function = "MRIS_discretek1k2_compute";
   VERTEX *pVERTEX = NULL;
   float f_k1 = 0.;
   float f_k2 = 0.;
@@ -9916,7 +9916,7 @@ int MRISaverageGradients(MRIS *mris, int num_avgs)
   float sigma;
   VERTEX *v;
   MRI_SP *mrisp, *mrisp_blur;
-  char *UFSS;
+  const char *UFSS;
 
   // Must explicity "setenv USE_FAST_SURF_SMOOTHER 0" to turn off fast
   UFSS = getenv("USE_FAST_SURF_SMOOTHER");
@@ -10152,7 +10152,7 @@ int MRISaverageGradients(MRIS *mris, int num_avgs)
       // Do all the iterations
       for (i = 0 ; i < num_avgs ; i++) {
         
-        int chunksIndex;
+        unsigned int chunksIndex;
         ROMP_PF_begin
 #ifdef HAVE_OPENMP
         #pragma omp parallel for if_ROMP(assume_reproducible)

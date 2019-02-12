@@ -235,7 +235,7 @@ int mrisLogIntegrationParms(FILE *fp, MRI_SURFACE *mris, INTEGRATION_PARMS *parm
 static int mrisIntegrationEpoch(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int base_averages)
 {
   int total_steps, done, steps, n_averages, old_averages;
-  char *snum, *sdenom;
+  const char *snum, *sdenom;
   float ratio, *pdenom, *pnum;
 
   if (!FZERO(parms->l_corr)) {
@@ -2323,7 +2323,7 @@ MRI_SURFACE *MRISunfold(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int max_pas
       parms->tol = tol;
     }
 
-    for (i = 0; i < NCOEFS; i++) {
+    for (i = 0; (unsigned)i < NCOEFS; i++) {
       if (mris->status == MRIS_SPHERE && i == NCOEFS - 1) {
         continue;
       }

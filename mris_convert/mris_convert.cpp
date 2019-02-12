@@ -42,7 +42,7 @@
 #include "version.h"
 #include "matrix.h"
 #include "transform.h"
-#include "gifti_local.h"
+#include "gifti.h"
 #include "mri_identify.h"
 #include "fsenv.h"
 

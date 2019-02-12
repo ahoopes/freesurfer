@@ -198,7 +198,7 @@ else()
 endif()
 
 # compiler warnings
-set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wall")
+set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wall -Werror -Wno-pointer-arith -Wno-write-strings -Wno-sign-compare")
 # clang complains about -Wno-unused-but-set-variable and says to use -Wno-unused-const-variable
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wno-unused-const-variable")
@@ -301,15 +301,6 @@ endif()
 # first, prepare the freesurfer distribution
 add_subdirectory(distribution)
 
-# the top-level include dir contain the most commonly
-# included freesurfer header files
-set(FS_INCLUDE_DIRS
-  ${CMAKE_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/packages/minc
-  ${CMAKE_SOURCE_DIR}/packages/netcdf
-)
-
 # build third-party libraries
 add_subdirectories(
   packages/jpeg
@@ -320,11 +311,23 @@ add_subdirectories(
   packages/netcdf
   packages/tetgen
   packages/nrrdio
+  packages/nifti
+  packages/gifti
 )
 
 if(OPENGL_FOUND)
   add_subdirectory(packages/glut)
 endif()
+
+# the top-level include dir contain the most commonly
+# included freesurfer header files
+set(FS_INCLUDE_DIRS
+  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/packages/minc
+  ${CMAKE_SOURCE_DIR}/packages/netcdf
+  ${CMAKE_SOURCE_DIR}/packages/nifti
+)
 
 # now build the freesurfer static libraries (order here matters!)
 add_subdirectories(

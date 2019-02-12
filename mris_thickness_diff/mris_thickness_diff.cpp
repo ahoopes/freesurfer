@@ -80,9 +80,9 @@ static void print_usage(void) ;
 static void print_help(void) ;
 static void print_version(void) ;
 
-static char *srctypestring = "";
+static char *srctypestring = NULL;
 static int srctype = MRI_VOLUME_TYPE_UNKNOWN;
-static char *trgtypestring = "";
+static char *trgtypestring = NULL;
 static int trgtype = MRI_VOLUME_TYPE_UNKNOWN;
 
 static char *out_name = NULL;

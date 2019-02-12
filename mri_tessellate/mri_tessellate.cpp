@@ -67,8 +67,6 @@
 //    MRIvoxelToSurfaceRAS()
 //
 
-
-char *MRI_TESSELLATE_VERSION = "$Revision: 1.39 $";
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

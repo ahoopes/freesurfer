@@ -1,6 +1,6 @@
 project(netcdf)
 
-include_directories(${FS_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(SOURCES
   attr.c

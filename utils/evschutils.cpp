@@ -740,7 +740,7 @@ int EVScostId(char *CostString)
   statement) indicating a cost function to a human-readable
   string.
   ----------------------------------------------------------------*/
-char *EVScostString(int CostId)
+const char *EVScostString(int CostId)
 {
   switch (CostId) {
     case EVS_COST_UNKNOWN:

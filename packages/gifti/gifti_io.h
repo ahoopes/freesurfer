@@ -1,14 +1,14 @@
 #ifndef GIFTI_IO_H
 #define GIFTI_IO_H
 
-#ifdef Darwin
-#define __MACTYPES__
-#define Byte unsigned char
-#endif
-
 #include <zlib.h>
 #include <expat.h>
 #include <nifti1_io.h>
+
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 /* also #include "gifti_xml.h", but at the end */
 
 /* ---------------------------------------------------------------------- */
@@ -327,6 +327,10 @@ char * gifticlib_version         (void);
 
 #undef G_CHECK_NULL_STR
 #define G_CHECK_NULL_STR(s) (s ? s : "NULL")
+
+#ifdef  __cplusplus
+}
+#endif
 
 #include "gifti_xml.h" /* needs gifti_io.h, but users should not #include it */
 

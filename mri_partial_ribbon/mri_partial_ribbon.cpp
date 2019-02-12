@@ -27,7 +27,6 @@
  *
  */
 
-char *MRI_PARTIAL_RIBBON_VERSION = "$Revision: 1.11 $";
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>

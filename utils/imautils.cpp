@@ -33,10 +33,10 @@
 
 IMA_DICTIONARY_ENTRY ImaDictionary[NMAX_IMA_DICTIONARY] = {};
 int nImaDictionary = 0, ImaDictionaryGood = 0;
-char *imaTypeString[6] = {"short", "int", "long", "float", "double", "string"};
+const char *imaTypeString[6] = {"short", "int", "long", "float", "double", "string"};
 int imaTypeSize[6] = {sizeof(short), sizeof(int), sizeof(long), sizeof(float), sizeof(double), sizeof(char)};
 
-static int imaSetDictEntry(int nthEntry, char *key, int offset, char *typestring, int nitems);
+static int imaSetDictEntry(int nthEntry, const char *key, int offset, const char *typestring, int nitems);
 static int imaGetKeyEntryNo(const char *key);
 
 /*--------------------------------------------------------------------
@@ -170,7 +170,7 @@ void MkImaDictionary(void)
 }
 /*--------------------------------------------------------------------
   --------------------------------------------------------------------*/
-static int imaSetDictEntry(int nthEntry, char *key, int offset, char *typestring, int nitems)
+static int imaSetDictEntry(int nthEntry, const char *key, int offset, const char *typestring, int nitems)
 {
   int type;
 
@@ -226,7 +226,7 @@ int DumpImaDictionaryVal(FILE *fp, const char *imafile)
 {
   // extern IMA_DICTIONARY_ENTRY ImaDictionary[NMAX_IMA_DICTIONARY];
   // extern int nImaDictionary, ImaDictionaryGood;
-  char *key, *typestring;
+  const char *key, *typestring;
   int n, offset, type, typesize, nitems;
   FILE *imafp;
   short sval;

@@ -35,9 +35,9 @@
 
 #include "MRIio_old.h"
 
-static void MGHprint_error(char *str);
+static void MGHprint_error(const char *str);
 
-static void MGHprint_error(char *str)
+static void MGHprint_error(const char *str)
 {
   printf("%s", str);
   exit(0);

@@ -57,13 +57,13 @@ static int MRISAsynchronousTimeStep_optionalDxDyDzUpdate_svi(
   float x, float y, float z) 
 {
   const size_t numSubvolsPerEdge   = MRISAsynchronousTimeStep_optionalDxDyDzUpdate_numSubvolsPerEdge;
-  int const svxLo = MIN(numSubvolsPerEdge-1,(int)((x - ctx->xSubvolVerge - ctx->xLo)/ctx->xSubvolLen));
-  int const svyLo = MIN(numSubvolsPerEdge-1,(int)((y - ctx->ySubvolVerge - ctx->yLo)/ctx->ySubvolLen));
-  int const svzLo = MIN(numSubvolsPerEdge-1,(int)((z - ctx->zSubvolVerge - ctx->zLo)/ctx->zSubvolLen));
+  int const svxLo = MIN((int)numSubvolsPerEdge-1,(int)((x - ctx->xSubvolVerge - ctx->xLo)/ctx->xSubvolLen));
+  int const svyLo = MIN((int)numSubvolsPerEdge-1,(int)((y - ctx->ySubvolVerge - ctx->yLo)/ctx->ySubvolLen));
+  int const svzLo = MIN((int)numSubvolsPerEdge-1,(int)((z - ctx->zSubvolVerge - ctx->zLo)/ctx->zSubvolLen));
 
-  int const svxHi = MIN(numSubvolsPerEdge-1,(int)((x + ctx->xSubvolVerge - ctx->xLo)/ctx->xSubvolLen));
-  int const svyHi = MIN(numSubvolsPerEdge-1,(int)((y + ctx->ySubvolVerge - ctx->yLo)/ctx->ySubvolLen));
-  int const svzHi = MIN(numSubvolsPerEdge-1,(int)((z + ctx->zSubvolVerge - ctx->zLo)/ctx->zSubvolLen));
+  int const svxHi = MIN((int)numSubvolsPerEdge-1,(int)((x + ctx->xSubvolVerge - ctx->xLo)/ctx->xSubvolLen));
+  int const svyHi = MIN((int)numSubvolsPerEdge-1,(int)((y + ctx->ySubvolVerge - ctx->yLo)/ctx->ySubvolLen));
+  int const svzHi = MIN((int)numSubvolsPerEdge-1,(int)((z + ctx->zSubvolVerge - ctx->zLo)/ctx->zSubvolLen));
 
   if (svxLo != svxHi || svyLo != svyHi || svzLo != svzHi) 
     return MRISAsynchronousTimeStep_optionalDxDyDzUpdate_numSubvolsPerThread - 1;       // the svi for any items not deep inside a subvolume
@@ -716,16 +716,14 @@ static void mrisAsynchronousTimeStep_optionalDxDyDzUpdate( // BEVIN mris_make_su
   // so sort each subvols list...
   //
   { int * temp = (int*)malloc(sizeof(int)*mris->nvertices);
-    
-    int svi;
-    for (svi = 0; svi < numSubvolsPerThread; svi++) {
+
+    for (unsigned int svi = 0; svi < numSubvolsPerThread; svi++) {
     
       // build the list in the temp
       //
       int tempSize = 0;
-      
-      int tid;
-      for (tid = 0; tid < numThreads; tid++) {
+
+      for (unsigned int tid = 0; tid < numThreads; tid++) {
         SubvolInfo* subvol = subvols + tid*numSubvolsPerThread + svi;
         int vno = subvol->firstVnoPlus1 - 1;
         while (vno >= 0) {

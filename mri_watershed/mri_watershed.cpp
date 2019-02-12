@@ -27,8 +27,6 @@
  *
  */
 
-const char *MRI_WATERSHED_VERSION = "$Revision: 1.103 $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

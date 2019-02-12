@@ -1355,7 +1355,7 @@ static void PyramidFilterCenteredL2(double g[], long *ng, double h[], long *nh, 
                         FALSE if it is not a centered filter
 
 ---------------------------------------------------------------------------- */
-static int GetPyramidFilter(char *Filter, long Order, double g[], long *ng, double h[], long *nh, short *IsCentered)
+static int GetPyramidFilter(const char *Filter, long Order, double g[], long *ng, double h[], long *nh, short *IsCentered)
 {
   ng[0] = -1L;
   nh[0] = -1L;

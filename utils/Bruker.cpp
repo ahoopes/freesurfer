@@ -142,8 +142,6 @@
 
 /* Martin Hoerrmann. */
 
-char *BRUCKER_C_VERSION = "$Revision: 1.12 $";
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

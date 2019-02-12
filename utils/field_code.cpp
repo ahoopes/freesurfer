@@ -32,7 +32,7 @@
 
 #include "field_code.h"
 
-char *ReturnFieldName(int which_field)
+const char *ReturnFieldName(int which_field)
 {
   switch (which_field) {
     case OVERLAY_FRAME:

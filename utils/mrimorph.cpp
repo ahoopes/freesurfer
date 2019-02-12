@@ -101,7 +101,7 @@ static int m3dAlignPyramidLevel(MRI *mri_in, MRI *mri_ref, MRI *mri_ref_blur, MP
 static int mriOrthonormalizeTransform(MATRIX *m_L);
 static double mriIntensityRMS(MRI *mri_in, MRI *mri_ref, LTA *lta, double l_intensity, NECK_PARMS *np);
 static double mriIntensitySSE(MRI *mri_in, MRI *mri_ref, MATRIX *m_L);
-static int mriWriteImageView(MRI *mri, char *base_name, int target_size, int view, int slice);
+static int mriWriteImageView(MRI *mri, const char *base_name, int target_size, int view, int slice);
 static int writeSnapshot(MRI *mri, MORPH_PARMS *parms, int n);
 static int write3DSnapshot(MRI *mri_in, MRI *mri_ref, MORPH_PARMS *parms, MORPH_3D *m3d, int n);
 static double ltaGradientStep(
@@ -4108,7 +4108,7 @@ static int write3DSnapshot(MRI *mri_in, MRI *mri_ref, MORPH_PARMS *parms, MORPH_
     sprintf(fname, "in_%s", parms->base_name);
     MRIwriteImageViews(mri_in, fname, IMAGE_SIZE);
 #if 0
-    sprintf(fname, "in_%s.mgh", parms->base_name) ;
+    sprintf(fname, "in_%s.mgh", parms->base_mriWriteImageViewname) ;
     fprintf(stdout, "writing volume to %s...\n", fname) ;
     MRIwrite(mri_in, fname) ;
 #endif
@@ -4137,7 +4137,7 @@ static int write3DSnapshot(MRI *mri_in, MRI *mri_ref, MORPH_PARMS *parms, MORPH_
         Description
 
 ------------------------------------------------------*/
-int MRIwriteImageViews(MRI *mri, char *base_name, int target_size)
+int MRIwriteImageViews(MRI *mri, const char *base_name, int target_size)
 {
   int slice_direction = getSliceDirection(mri), x, y, z;
 
@@ -4191,9 +4191,10 @@ int MRIwriteImageViews(MRI *mri, char *base_name, int target_size)
         Description
 
 ------------------------------------------------------*/
-static int mriWriteImageView(MRI *mri, char *base_name, int target_size, int view, int slice)
+static int mriWriteImageView(MRI *mri, const char *base_name, int target_size, int view, int slice)
 {
-  char fname[STRLEN], *prefix;
+  char fname[STRLEN];
+  const char *prefix;
   IMAGE *I;
   float scale;
   //  int   slice_direction ;
@@ -4564,7 +4565,7 @@ MORPH_3D *MRI3DreadSmall(char *fname)
   if (!fp) ErrorReturn(NULL, (ERROR_NOFILE, "MRI3DreadSmall: could not open file %s", fname));
 
   magic = freadInt(fp);
-  if (magic != M3D_MAGIC) {
+  if ((unsigned)magic != M3D_MAGIC) {
     fclose(fp);
     ErrorReturn(NULL, (ERROR_BADFILE, "file %s not an old 3d morph file.\nTry a new 3d morph read routine.\n", fname));
   }
@@ -6376,7 +6377,7 @@ static int m3dMorphSkull(MORPH_3D *m3d, MRI_SURFACE *mris_in_skull, MRI_SURFACE 
     }
   }
   {
-    char *cp;
+    const char *cp;
     float sigma;
     cp = getenv("SIGMA");
     if (!cp) cp = "1.0";

@@ -25,8 +25,6 @@
  *
  */
 
-const char *MRI_SEGMENT_VERSION = "$Revision: 1.44 $";
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -124,7 +124,7 @@ int     MatrixPrint(FILE *fp, const MATRIX *mat) ;
 int     MatrixPrintFmt(FILE *fp,const char *fmt, MATRIX *mat);
 int     MatrixPrintOneLine(FILE *fp, MATRIX *mat) ;
 int     MatrixPrintTranspose(FILE *fp, MATRIX *mat) ;
-int     MatrixPrintWithString(FILE *fp, MATRIX *m, char *Pre, char *Post);
+int     MatrixPrintWithString(FILE *fp, MATRIX *m, const char *Pre, const char *Post);
 MATRIX  *MatrixTranspose(MATRIX *mIn, MATRIX *mOut) ;
 MATRIX  *MatrixAdd( const MATRIX *m1, const MATRIX *m2, MATRIX *mOut) ;
 MATRIX  *MatrixSubtract( const MATRIX *m1, const MATRIX *m2, MATRIX *mOut) ;

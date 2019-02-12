@@ -66,7 +66,8 @@ int
 main(int argc, char *argv[]) {
   char         **av, fname[STRLEN], *subject ;
   int          ac, nargs, i ;
-  char         *out_fname, *hemi, *cp, *true_label_name, *segmentation_name ;
+  const char *hemi;
+  char         *out_fname, *cp, *true_label_name, *segmentation_name ;
   int          msec, minutes, seconds, nsubjects ;
   struct timeb start ;
   LABEL        *labels[MAX_SUBJECTS] ;

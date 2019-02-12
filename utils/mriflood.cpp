@@ -22,8 +22,6 @@
  *
  */
 
-char *MRIFLOOD_VERSION = "$Revision: 1.41 $";
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -75,7 +73,7 @@ static int likely(MRI *mri, int i, int j, int k)
     return 0;
 }
 
-static void likelinessHistogram(MRI *mri, char *msg)
+static void likelinessHistogram(MRI *mri, const char *msg)
 {
   int i, j, k;
   long Hist[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -1666,7 +1664,8 @@ but is on the order of 20 times faster.
 int MRISfillInteriorRibbonTest(char *subject, int UseNew, FILE *fp)
 {
   FSENV *fsenv;
-  char tmpstr[4000], *hemistr = NULL, *surfname = NULL;
+  char tmpstr[4000];
+  const char *hemistr = NULL, *surfname = NULL;
   MRI *ribbon;
   int hemi, surftype, c, r, s, nfp, nfn, ntp, v, vrib, wmval = 0, ctxval = 0;
   MRIS *surf;

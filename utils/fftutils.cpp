@@ -64,13 +64,13 @@ static complexF **_uILookupF = NULL;
 static float *uRLookup = NULL;
 static float *uILookup = NULL;
 
-static void FFTerror(char *string)
+static void FFTerror(const char *string)
 {
   fprintf(stdout, "\nFFT Error: %s\n", string);
   exit(1);
 }
 
-void FFTdebugAssert(int b, char *string)
+void FFTdebugAssert(int b, const char *string)
 {
   if (!b) FFTerror(string);
 }

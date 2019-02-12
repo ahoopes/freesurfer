@@ -75,7 +75,7 @@ static char *out_fname = NULL; /* Output CNR filename, curv or paint */
 
 static char *thickness_fname = NULL; /* filename for surface thickness */
 
-char *trgtypestring = "paint";
+const char *trgtypestring = "paint";
 int trgtype = MRI_VOLUME_TYPE_UNKNOWN;
 
 static int nSmoothSteps = 60;

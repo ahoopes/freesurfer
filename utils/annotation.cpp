@@ -83,7 +83,8 @@ int print_annotation_colortable(FILE *fp)
 int read_named_annotation_table(char *name)
 {
   FILE *fp;
-  char *cp, fname[STRLEN], line[STRLEN];
+  char fname[STRLEN], line[STRLEN];
+  const char *cp; 
   int i;
 
   if (num_entries) {
@@ -137,7 +138,8 @@ int read_named_annotation_table(char *name)
 int read_annotation_table(void)
 {
   FILE *fp;
-  char *cp, fname[STRLEN], line[STRLEN];
+  char fname[STRLEN], line[STRLEN];
+  const char *cp;
   int i;
   extern char *annotation_table_file;
 
@@ -202,7 +204,7 @@ int annotation_to_index(int annotation)
   return (-1);
 }
 
-char *index_to_name(int index)
+const char *index_to_name(int index)
 {
   int i;
 
@@ -243,7 +245,7 @@ int index_to_annotation(int index)
   return (-1);
 }
 
-char *annotation_to_name(int annotation, int *pindex)
+const char *annotation_to_name(int annotation, int *pindex)
 {
   int i;
 
@@ -625,7 +627,7 @@ int MRISdivideAnnotationUnit(MRI_SURFACE *mris, int annot, int nunits)
     parcnames[1] = "rostralmiddlefrontal";
     MRISmergeAnnotations(surf, 2, parcnames, "frontal");
 */
-int MRISmergeAnnotations(MRIS *mris, int nparcs, char **parcnames, char *newparcname)
+int MRISmergeAnnotations(MRIS *mris, int nparcs, std::vector<std::string> parcnames, const char *newparcname)
 {
   int err, nthparc, parcid, nnewparcs, nthnewparc, m, match;
   int vtxno, *annotlist;
@@ -642,9 +644,9 @@ int MRISmergeAnnotations(MRIS *mris, int nparcs, char **parcnames, char *newparc
   // Get the list of annotation numbers too
   annotlist = (int *)calloc(nparcs, sizeof(int));
   for (m = 0; m < nparcs; m++) {
-    err = CTABfindName(mris->ct, parcnames[m], &parcid);
+    err = CTABfindName(mris->ct, parcnames[m].c_str(), &parcid);
     if (err) {
-      printf("ERROR: cannot find %s in annotation\n", parcnames[m]);
+      printf("ERROR: cannot find %s in annotation\n", parcnames[m].c_str());
       return (1);
     }
     CTABannotationAtIndex(mris->ct, parcid, &(annotlist[m]));
@@ -659,7 +661,7 @@ int MRISmergeAnnotations(MRIS *mris, int nparcs, char **parcnames, char *newparc
     // This checks whether the nth parc is in the list to merge
     match = 0;
     for (m = 0; m < nparcs; m++) {
-      if (!strcmp(mris->ct->entries[nthparc]->name, parcnames[m])) {
+      if (!strcmp(mris->ct->entries[nthparc]->name, parcnames[m].c_str())) {
         match = 1;
         break;
       }
@@ -770,7 +772,7 @@ MRI *MRISannot2border(MRIS *surf)
 int MRISaparc2lobes(MRIS *surf, int a_lobeDivisionType)
 {
   int parcCount = 0;
-  char *parcnames[64];
+  std::vector<std::string> parcnames(64);
 
   parcnames[0] = "caudalmiddlefrontal";
   parcnames[1] = "superiorfrontal";

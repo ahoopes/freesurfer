@@ -76,7 +76,7 @@ extern int fix_vertex_area;
 #include "error.h"
 #include "fio.h"
 #include "fnv_hash.h"
-#include "gifti_local.h"
+#include "gifti.h"
 #include "icosahedron.h"
 #include "machine.h"
 #include "macros.h"

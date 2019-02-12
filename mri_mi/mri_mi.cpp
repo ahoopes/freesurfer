@@ -23,8 +23,6 @@
  *
  */
 
-// char *MRI_INFO_VERSION = "$Revision: 1.1 $";
-
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>

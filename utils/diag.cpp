@@ -299,7 +299,7 @@ int DiagFprintf(unsigned long diag_bits, char *fmt, ...)
 
         Description
 ------------------------------------------------------*/
-int DiagPrintf(unsigned long diag_bits, char *fmt, ...)
+int DiagPrintf(unsigned long diag_bits, const char *fmt, ...)
 {
   va_list args;
 
@@ -365,7 +365,7 @@ void DiagShowPctDone(float pct_done, int nprints)
   }
 }
 
-int check_finite(char *where, double what)
+int check_finite(const char *where, double what)
 {
   if (!isfinite(what)) {
     ErrorPrintf(ERROR_BADPARM, "%s not finite!\n", where);

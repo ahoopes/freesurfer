@@ -9495,9 +9495,10 @@ static float neg_area_ratios[] = {
 int mrisRemoveNegativeArea(
     MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int base_averages, float min_area_pct, int max_passes)
 {
-  int total_steps, done, steps, n_averages, old_averages, npasses, niter;
+  unsigned int npasses;
+  int total_steps, done, steps, n_averages, old_averages, niter;
   float pct_neg, ratio;
-  char *snum, *sdenom;
+  const char *snum, *sdenom;
   float l_area, l_parea, l_corr, l_spring, l_dist, l_nlarea, *pnum, *pdenom, cmod;
   double tol;
 

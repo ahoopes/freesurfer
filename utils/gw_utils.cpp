@@ -292,7 +292,7 @@ static void nowstr(char *buf)
 }
 
 //------------------------------
-void gw_log_timestamp(char *label)
+void gw_log_timestamp(const char *label)
 {
   //------------------------------
   char datestr[100];

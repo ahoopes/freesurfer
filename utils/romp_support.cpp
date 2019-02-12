@@ -436,8 +436,8 @@ static void node_show_stats(FILE* file, PerThreadScopeTreeData* node, unsigned i
         inAllThreads.ns += node->in_child_threads[tid].ns;
     }
     
-    {   int d;
-        for (d = 0; d < depth; d++) fprintf(file, "    ");
+    {
+        for (unsigned int d = 0; d < depth; d++) fprintf(file, "    ");
     }
     
     fprintf(file, "%s:%s, %d, %d, %12ld, %12ld, %12ld, %6.3g, %6.3g\n", 

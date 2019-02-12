@@ -387,7 +387,7 @@ int chklc2(char *msg)
 void cmp_glib_version(void)
 {
   int i;
-  char *GNU_LIBC_VERSION_MAX = "2.15";
+  const char *GNU_LIBC_VERSION_MAX = "2.15";
   int glibc_max[2], glibc_current[2];
   static const char *new_license_msg =
       "--------------------------------------------------------------------------\n"

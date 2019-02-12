@@ -157,7 +157,7 @@ struct hips_histo {
 double h_entropy(int *table,int count,int pairflag);
 int alloc_histo(struct hips_histo *histo,union pixelval *min,union pixelval *max,int nbins,int format);
 int alloc_histobins(struct hips_histo *histo);
-int clearparam(struct header *hd,char *name);
+int clearparam(struct header *hd, const char *name);
 int fread_header(FILE *fp,struct header *hd,const char *fname);
 int fread_image(FILE *fp,struct header *hd,int fr,const char *fname);
 int free_hdrcon(struct header *hd);
@@ -194,10 +194,10 @@ int h_tod(struct header *hdi,struct header *hdo);
 int h_todc(struct header *hdi,struct header *hdo);
 int h_tof(struct header *hdi,struct header *hdo);
 int h_toi(struct header *hdi,struct header *hdo);
-int init_header(struct header *hd,char *onm,char *snm,int nfr,char *odt,int rw,int cl,int pfmt,int nc,char *desc);
+int init_header(struct header *hd,const char *onm, const char *snm,int nfr, const char *odt,int rw,int cl,int pfmt,int nc,const char *desc);
 int setparam(struct header *hda,...);
 int update_header(struct header *hd,int argc,char **argv );
-struct extpar *findparam(struct header *hd,char *name);
+struct extpar *findparam(struct header *hd, const char *name);
 
 // ------ externs ------
 

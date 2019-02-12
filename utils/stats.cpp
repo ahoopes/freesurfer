@@ -296,7 +296,8 @@ SV *StatReadVolume(const char *prefix)
   char path[STRLEN], fname[STRLEN], line[MAX_LINE_LEN], *cp;
   STAT_VOLUME *sv;
   FILE *fp;
-  int dof_mean, dof_sigma, event_number, slice_number, which_alloc, width, height, nframes, nslices, t, event, nitems,
+  unsigned int nitems;
+  int dof_mean, dof_sigma, event_number, slice_number, which_alloc, width, height, nframes, nslices, t, event,
       x, y, z;
   float *buf, fval;
   int DatVersion, DOF;
@@ -1164,7 +1165,8 @@ int StatWriteVolume(SV *sv, const char *prefix)
 {
   char path[STRLEN], fname[STRLEN];
   FILE *fp;
-  int event_number, width, height, nslices, t, event, nitems, x, y, z, nframes;
+  unsigned int nitems;
+  int event_number, width, height, nslices, t, event, x, y, z, nframes;
   float *buf, fval;
 
   width = sv->slice_width;

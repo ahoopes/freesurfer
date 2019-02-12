@@ -1,5 +1,5 @@
 /**
- * @file  gifti_local.h
+ * @file  gifti.h
  * @brief local utilities for GIFTI library
  *
  * This file has some some extra functions for use with the GIFTI

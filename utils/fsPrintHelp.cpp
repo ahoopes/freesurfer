@@ -34,7 +34,7 @@
 
 static void printName(xmlNodePtr cur);
 static void printContents(xmlDocPtr doc, xmlNodePtr cur);
-static int tagNameIs(char *c, xmlNodePtr cur);
+static int tagNameIs(const char *c, xmlNodePtr cur);
 static int wrdLen(char *c);
 
 int outputHelpDoc(const xmlDocPtr doc)
@@ -238,7 +238,7 @@ static void printContents(xmlDocPtr doc, xmlNodePtr cur)
 {
   xmlChar *contents;
   contents = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-  int i = 0, j;
+  unsigned int i = 0, j;
   while (i < strlen((char *)contents)) {
     int tabNum = 1;
     printf("\n\t");
@@ -251,7 +251,7 @@ static void printContents(xmlDocPtr doc, xmlNodePtr cur)
     }
     for (j = i; j < FSPRINT_MAX_CHARS - tabNum * 8 + i && j < strlen((char *)contents) &&
                 (wrdLen((char *)(contents + j)) > FSPRINT_MAX_CHARS - tabNum * 8 ||
-                 wrdLen((char *)(contents + j)) <= FSPRINT_MAX_CHARS - tabNum * 8 + i - j);
+                 (unsigned)wrdLen((char *)(contents + j)) <= FSPRINT_MAX_CHARS - tabNum * 8 + i - j);
          j++) {
       if (*(contents + j) == '\n') {
         j++;
@@ -272,14 +272,14 @@ static void printContents(xmlDocPtr doc, xmlNodePtr cur)
 }
 
 // Checks if the name of the tag is the same as the string parameter
-static int tagNameIs(char *c, xmlNodePtr cur) { return !(xmlStrcasecmp(cur->name, (const xmlChar *)c)); }
+static int tagNameIs(const char *c, xmlNodePtr cur) { return !(xmlStrcasecmp(cur->name, (const xmlChar *)c)); }
 
 // Counts the number of chars until the next space, dash, underscore, slash,
 // or end of the string
 // Used to keep a word from running on two lines
 static int wrdLen(char *c)
 {
-  int i;
+  unsigned int i;
   for (i = 0; i < strlen(c); i++) {
     if (*(c + i) == ' ' || *(c + i) == '_' || *(c + i) == '/') {
       return i;

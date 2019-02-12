@@ -593,7 +593,7 @@ COLOR_TABLE *CTABreadFromBinaryV1(FILE *fp, int nentries)
                  len));
   }
   name = (char *)malloc(len + 1);
-  if (fread(name, sizeof(char), len, fp) != len) {
+  if (fread(name, sizeof(char), len, fp) != (unsigned)len) {
     ErrorPrintf(ERROR_BADFILE, "CTABreadFromBinaryV1: could not read parameter(s)");
   }
   strncpy(ct->fname, name, sizeof(ct->fname));
@@ -624,7 +624,7 @@ COLOR_TABLE *CTABreadFromBinaryV1(FILE *fp, int nentries)
                    len));
     }
     name = (char *)malloc(len + 1);
-    if (fread(name, sizeof(char), len, fp) != len) {
+    if (fread(name, sizeof(char), len, fp) != (unsigned)len) {
       ErrorPrintf(ERROR_BADFILE, "CTABreadFromBinaryV1: could not read parameter(s)");
     }
     strncpy(ct->entries[structure]->name, name, sizeof(ct->entries[structure]->name));
@@ -728,7 +728,7 @@ COLOR_TABLE *CTABreadFromBinaryV2(FILE *fp)
                  "was %d",
                  len));
   name = (char *)malloc(len + 1);
-  if (fread(name, sizeof(char), len, fp) != len) {
+  if (fread(name, sizeof(char), len, fp) != (unsigned)len) {
     ErrorPrintf(ERROR_BADFILE, "CTABreadFromBinaryV1: could not read parameter(s)");
   }
   strncpy(ct->fname, name, sizeof(ct->fname));
@@ -778,7 +778,7 @@ COLOR_TABLE *CTABreadFromBinaryV2(FILE *fp)
                    len));
     }
     name = (char *)malloc(len + 1);
-    if (fread(name, sizeof(char), len, fp) != len) {
+    if (fread(name, sizeof(char), len, fp) != (unsigned)len) {
       ErrorPrintf(ERROR_BADFILE, "CTABreadFromBinaryV1: could not read parameter(s)");
     }
     strncpy(ct->entries[structure]->name, name, sizeof(ct->entries[structure]->name));
@@ -1371,7 +1371,7 @@ int CTABrgb2Annotation(int r, int g, int b)
   CTABentryNameToIndex(char *EntryName, COLOR_TABLE *ct)
   Return the color table index given the name of the entry.
   ----------------------------------------------------------------*/
-int CTABentryNameToIndex(char *EntryName, COLOR_TABLE *ct)
+int CTABentryNameToIndex(const char *EntryName, COLOR_TABLE *ct)
 {
   CTE *cte;
   int i;
@@ -1389,7 +1389,7 @@ int CTABentryNameToIndex(char *EntryName, COLOR_TABLE *ct)
   CTABentryNameToIndex(char *EntryName, COLOR_TABLE *ct)
   Return the color table annotation given the name of the entry.
   ----------------------------------------------------------------*/
-int CTABentryNameToAnnotation(char *EntryName, COLOR_TABLE *ct)
+int CTABentryNameToAnnotation(const char *EntryName, COLOR_TABLE *ct)
 {
   CTE *cte;
   int index, annotation;
@@ -1715,7 +1715,7 @@ describes the tissue classes, and (3) the schema name.
 \param ct - color table with tissue type info (may or may not be null
 depending upon the schema)
 */
-COLOR_TABLE *TissueTypeSchema(COLOR_TABLE *ct, char *schema)
+COLOR_TABLE *TissueTypeSchema(COLOR_TABLE *ct, const char *schema)
 {
   if (strcmp(schema, "default-jan-2014") == 0) {
     ct = TissueTypeSchemaDefault(ct);

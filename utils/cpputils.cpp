@@ -22,8 +22,6 @@
  *
  */
 
-const char *CPPUTILS_VERSION = "$Revision: 1.4 $";
-
 #include "cma.h"
 #include "diag.h"
 #include "macros.h"

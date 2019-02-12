@@ -29,6 +29,7 @@
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -72,7 +73,8 @@ int DTIfree(DTI **pdti)
 int DTIparamsFromSiemensAscii(const char *fname, float *bValue, int *nDir, int *nB0)
 
 {
-  char *tag, *pc;
+  std::string tag;
+  char *pc;
 
   if (!fio_FileExistsReadable(fname)) {
     printf("ERROR: cannot read %s\n", fname);
@@ -80,9 +82,9 @@ int DTIparamsFromSiemensAscii(const char *fname, float *bValue, int *nDir, int *
   }
 
   tag = "sDiffusion.alBValue[1]";
-  pc = SiemensAsciiTag(fname, tag, 0);
+  pc = SiemensAsciiTag(fname, tag.c_str(), 0);
   if (pc == NULL) {
-    printf("ERROR: cannot extract %s from %s\n", tag, fname);
+    printf("ERROR: cannot extract %s from %s\n", tag.c_str(), fname);
     return (1);
   }
   sscanf(pc, "%f", bValue);
@@ -90,9 +92,9 @@ int DTIparamsFromSiemensAscii(const char *fname, float *bValue, int *nDir, int *
   free(pc);
 
   tag = "sWiPMemBlock.alFree[8]";
-  pc = SiemensAsciiTag(fname, tag, 0);
+  pc = SiemensAsciiTag(fname, tag.c_str(), 0);
   if (pc == NULL) {
-    printf("ERROR: cannot extract %s from %s\n", tag, fname);
+    printf("ERROR: cannot extract %s from %s\n", tag.c_str(), fname);
     return (1);
   }
   sscanf(pc, "%d", nB0);
@@ -100,9 +102,9 @@ int DTIparamsFromSiemensAscii(const char *fname, float *bValue, int *nDir, int *
   free(pc);
 
   tag = "sDiffusion.lDiffDirections";
-  pc = SiemensAsciiTag(fname, tag, 0);
+  pc = SiemensAsciiTag(fname, tag.c_str(), 0);
   if (pc == NULL) {
-    printf("ERROR: cannot extract %s from %s\n", tag, fname);
+    printf("ERROR: cannot extract %s from %s\n", tag.c_str(), fname);
     return (1);
   }
   sscanf(pc, "%d", nDir);

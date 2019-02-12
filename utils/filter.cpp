@@ -1496,7 +1496,7 @@ static float weights[] = {ONE_EIGHTH, ONE_EIGHTH, -0.5f, ONE_EIGHTH, ONE_EIGHTH}
 
 IMAGE *ImageLaplacian(IMAGE *Isrc, IMAGE *outImage)
 {
-  int rows, cols, x, y, xi, yi, i;
+  int rows, cols, x, y, xi, yi;
   float *fkpix, sum, *fopix, fival;
 
   rows = Isrc->rows;
@@ -1510,7 +1510,8 @@ IMAGE *ImageLaplacian(IMAGE *Isrc, IMAGE *outImage)
       for (y = 0; y < rows; y++) {
         for (x = 0; x < cols; x++, fopix++) {
           fkpix = weights;
-          for (sum = 0.0f, i = 0; i < LAPLACIAN_POINTS; i++) {
+          sum = 0.0f;
+          for (unsigned int i = 0; i < LAPLACIAN_POINTS; i++) {
             yi = y + yoffsets[i]; /* image coordinate */
             if (yi < 0)
               yi = 0;

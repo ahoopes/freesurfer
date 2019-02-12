@@ -66,7 +66,7 @@
 
         Description
 ------------------------------------------------------*/
-GCLASSIFY *GCalloc(int nclasses, int nvars, char *class_names[])
+GCLASSIFY *GCalloc(int nclasses, int nvars, const char *class_names[])
 {
   GCLASSIFY *gc;
   GCLASS *gcl;

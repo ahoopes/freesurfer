@@ -22,9 +22,6 @@
  *
  */
 
-
-const char *MRI_WATERSHED_VERSION = "$Revision: 1.11 $";
-
 using namespace std;
 
 #include <stdio.h>

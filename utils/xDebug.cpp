@@ -149,7 +149,7 @@ void xDbg_PopStack()
   }
 }
 
-char *xDbg_GetCurrentFunction()
+const char *xDbg_GetCurrentFunction()
 {
   if (mCurrentStackDepth > 0) {
     return masStackTitle[mCurrentStackDepth - 1];

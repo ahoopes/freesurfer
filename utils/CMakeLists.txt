@@ -1,19 +1,20 @@
 project(utils)
 
 include_directories(
-  ${FS_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/include/dicom
-  ${CMAKE_SOURCE_DIR}/include/NrrdIO
   ${CMAKE_SOURCE_DIR}/packages/jpeg
-  ${CMAKE_SOURCE_DIR}/packages/expat
   ${CMAKE_SOURCE_DIR}/packages/tiff
   ${CMAKE_SOURCE_DIR}/packages/xml2
-  ${CMAKE_SOURCE_DIR}/packages/glut
+  ${CMAKE_SOURCE_DIR}/packages/minc
+  ${CMAKE_SOURCE_DIR}/packages/netcdf
+  ${CMAKE_SOURCE_DIR}/packages/nrrdio
+  ${CMAKE_SOURCE_DIR}/packages/dicom
+  ${CMAKE_SOURCE_DIR}/packages/nifti
+  ${CMAKE_SOURCE_DIR}/packages/gifti
   ${X11_INCLUDE_DIR}
   ${ITK_INCLUDE_DIRS}
 )
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings -Wno-sign-compare -Wno-unused-value")
 
 set(SOURCES
   afni.cpp
@@ -77,9 +78,7 @@ set(SOURCES
   geos.cpp
   getdelim.cpp
   getline.cpp
-  gifti_io.cpp
-  gifti_local.cpp
-  gifti_xml.cpp
+  gifti.cpp
   gtm.cpp
   gw_ic2562.cpp
   gw_utils.cpp
@@ -149,7 +148,6 @@ set(SOURCES
   mrisutils.cpp
   mriTransform.cpp
   mrivoxel.cpp
-  nifti1_io.cpp
   numerics.cpp
   offset.cpp
   path.cpp
@@ -192,7 +190,6 @@ set(SOURCES
   xDebug.cpp
   xTypes.cpp
   xVoxel.cpp
-  znzlib.cpp
 )
 
 # add cephes sources
@@ -217,13 +214,15 @@ add_library(utils STATIC ${SOURCES})
 
 target_link_libraries(utils
   jpeg
-  expat
   tiff
   xml2
   minc
   netcdf
   nrrdio
   dicom
+  nifti
+  gifti
+  expat
   ${ZLIB_LIBRARIES}
   ${ITK_LIBRARIES}
 )
@@ -234,21 +233,9 @@ endif()
 
 # utils binaries
 
-# set(GIFTI_SOURCES gifti_io.c gifti_xml.c nifti1_io.c znzlib.c)
-
-# # gifti_tool
-# add_executable(gifti_tool gifti_tool.c ${GIFTI_SOURCES})
-# target_link_libraries(gifti_tool expat ${ZLIB_LIBRARIES})
-# install(TARGETS gifti_tool DESTINATION bin)
-
-# # gifti test
-# add_executable(gifti_test gifti_test.c ${GIFTI_SOURCES})
-# target_link_libraries(gifti_test expat ${ZLIB_LIBRARIES})
-# install(TARGETS gifti_test DESTINATION bin)
-
 # # xmlToHtml
 # add_executable(xmlToHtml xmlToHtml.c)
-# target_link_libraries(xmlToHtml xml2 expat ${ZLIB_LIBRARIES})
+# target_link_libraries(xmlToHtml xml2 ${ZLIB_LIBRARIES})
 # install(TARGETS xmlToHtml DESTINATION bin)
 
 # # fsPrintHelp

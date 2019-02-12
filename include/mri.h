@@ -354,7 +354,7 @@ double MRIptr2dbl(void *pmric, int mritype);
 
 size_t MRIsizeof(int mritype);
 
-char * MRIprecisionString(int PrecisionCode);
+const char * MRIprecisionString(int PrecisionCode);
 int MRIprecisionCode(char *PrecisionString);
 
 MRI *MRImakeMosaic(MRI **mri, int nimages, int rectify) ;
@@ -470,8 +470,8 @@ MRI   *MRIapplyRASlinearTransformInterp(MRI *mri_src, MRI *mri_dst,
 MRI   *MRIapplyRASinverseLinearTransformInterp(MRI *mri_src, MRI *mri_dst,
     MATRIX *mA, int interpMethod) ;
 
-int MRIinterpCode(char *InterpString);
-char * MRIinterpString(int InterpCode);
+int MRIinterpCode(const char *InterpString);
+const char * MRIinterpString(int InterpCode);
 MRI   *MRIinterpolate(MRI *mri_src, MRI *mri_dst) ;
 MRI   *MRIconfThresh(MRI *mri_src, MRI *mri_probs, MRI *mri_classes,
                      MRI *mri_dst,float thresh, int min_target,int max_target);
@@ -1273,7 +1273,7 @@ MRI *MRIsoapBubbleLabel(MRI *mri_src, MRI *mri_label, MRI *mri_dst,
                         int niter);
 MRI    *MRIsetLabelValues(MRI *mri_src, MRI *mri_label, MRI *mri_dst,
                           int label, float val);
-int    MRIwriteImageViews(MRI *mri, char *base_name, int target_size) ;
+int    MRIwriteImageViews(MRI *mri, const char *base_name, int target_size) ;
 int MRIsetValues(MRI *mri, float val) ;
 int MRIsetFrameValues(MRI *mri, int frame, float val) ;
 MRI    *MRIwindow(MRI *mri_src, MRI *mri_dst, int which, float x0, float y0,
@@ -1488,8 +1488,8 @@ extern int MRIIO_Strip_Pound;
 
 float MRIfovCol(MRI *mri);
 int MRIdircosToOrientationString(MRI *mri, char *ostr);
-int MRIorientationStringToDircos(MRI *mri, char *ostr);
-char *MRIcheckOrientationString(char *ostr);
+int MRIorientationStringToDircos(MRI *mri, const char *ostr);
+char *MRIcheckOrientationString(const char *ostr);
 char *MRIsliceDirectionName(MRI *mri);
 MRI *MRIreverseSliceOrder(MRI *invol, MRI *outvol);
 MRI *MRIconformSliceOrder(MRI *mri);

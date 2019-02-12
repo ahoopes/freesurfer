@@ -2558,7 +2558,7 @@ MRI_SP *MRISPcombine(MRI_SP *mrisp, MRI_SP *mrisp_template, int fno)
 
         Description
 ------------------------------------------------------*/
-int MRISPwrite(MRI_SP *mrisp, char *fname)
+int MRISPwrite(MRI_SP *mrisp, const char *fname)
 {
   char ext[STRLEN] ;
   

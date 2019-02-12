@@ -288,7 +288,8 @@ int MRISwriteCurvature(MRI_SURFACE *mris, const char *sname)
 {
   int k, mritype;
   float curv;
-  char fname[STRLEN], path[STRLEN], name[STRLEN], *hemi;
+  char fname[STRLEN], path[STRLEN], name[STRLEN];
+  const char *hemi;
   const char *cp;
   FILE *fp;
 
@@ -2230,7 +2231,8 @@ int mrisWriteSnapshots(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int t)
   ------------------------------------------------------*/
 int mrisWriteSnapshot(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int t)
 {
-  char fname[STRLEN], path[STRLEN], base_name[STRLEN], *cp, *hemi;
+  char fname[STRLEN], path[STRLEN], base_name[STRLEN], *cp;
+  const char *hemi;
 
   switch (mris->hemisphere) {
     case LEFT_HEMISPHERE:

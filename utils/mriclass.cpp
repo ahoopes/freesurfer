@@ -66,8 +66,7 @@ typedef struct
                       GLOBAL DATA
 -------------------------------------------------------*/
 
-char *class_names[GAUSSIAN_NCLASSES] = {
-    "CSF", "GREY MATTER", "THIN STRANDS", "BORDER PIXELS", "WHITE MATTER", "BRIGHT MATTER"};
+const char *class_names[GAUSSIAN_NCLASSES] = {"CSF", "GREY MATTER", "THIN STRANDS", "BORDER PIXELS", "WHITE MATTER", "BRIGHT MATTER"};
 
 /*-----------------------------------------------------
                     STATIC DATA
@@ -132,7 +131,8 @@ int MRICfree(MRIC **pmric)
 MRIC *MRICalloc(int nrounds, int *types, int *features, void *parms)
 {
   MRIC *mric;
-  int f, ninputs, round;
+  unsigned f;
+  int ninputs, round;
 
   mric = (MRIC *)calloc(1, sizeof(MRIC));
   if (!mric) ErrorExit(ERROR_NO_MEMORY, "MRICalloc(%d): could not allocate struct", nrounds);
@@ -1119,9 +1119,9 @@ int MRICcomputeStatistics(MRIC *mric, int round)
         Description
 
 ------------------------------------------------------*/
-char *MRICclassName(MRIC *mric, int round, int classno)
+const char *MRICclassName(MRIC *mric, int round, int classno)
 {
-  char *class_name = "unknown";
+  const char *class_name = "unknown";
 
   switch (mric->type[round]) {
     default:
@@ -1173,9 +1173,10 @@ int MRICdump(FILE *fp, MRIC *mric)
         Description
 
 ------------------------------------------------------*/
-char *MRICfeatureName(MRIC *mric, int round, int feature_number)
+const char *MRICfeatureName(MRIC *mric, int round, int feature_number)
 {
-  int f, fno;
+  unsigned f;
+  int fno;
 
   /* first ninputs-1 correspond to inputs #s, rest to frames in priors */
 
@@ -1213,9 +1214,10 @@ char *MRICfeatureName(MRIC *mric, int round, int feature_number)
         Description
 
 ------------------------------------------------------*/
-char *MRICfeatureNumberToName(int feature_number)
+const char *MRICfeatureNumberToName(int feature_number)
 {
-  int f, fno;
+  unsigned f;
+  int fno;
 
   /* find bit which corresponds to this # */
   for (f = 0x001, fno = 0; f != MAX_FEATURE; f <<= 1)
@@ -1262,7 +1264,8 @@ char *MRICfeatureNumberToName(int feature_number)
 ------------------------------------------------------*/
 int MRICfeatureNumberCode(int feature_number)
 {
-  int f, fno;
+  unsigned f;
+  int fno;
 
   /* find bit which corresponds to this # */
   for (f = 0x001, fno = 0; f != MAX_FEATURE; f <<= 1)
@@ -1282,7 +1285,8 @@ int MRICfeatureNumberCode(int feature_number)
 ------------------------------------------------------*/
 int MRICfeatureCode(MRIC *mric, int round, int feature_number)
 {
-  int f, fno;
+  unsigned f;
+  int fno;
 
   /* first ninputs-1 correspond to inputs #s, rest to frames in priors */
 
@@ -1302,7 +1306,8 @@ int MRICfeatureCode(MRIC *mric, int round, int feature_number)
 ------------------------------------------------------*/
 int MRICfeatureNumber(MRIC *mric, int round, int feature_code)
 {
-  int f, fno;
+  unsigned f;
+  int fno;
 
   /* first ninputs-1 correspond to inputs #s, rest to frames in priors */
 

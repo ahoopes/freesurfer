@@ -74,7 +74,7 @@ typedef struct
 }
 RBF ;
 
-RBF   *RBFinit(int ninputs, int noutputs, int max_clusters[], char *names[]) ;
+RBF   *RBFinit(int ninputs, int noutputs, int max_clusters[], const char *names[]) ;
 int   RBFtrain(RBF *rbf, int (*get_observation_func)
                (VECTOR *v_obs, int no, void *parm, int same_class,int *classnum),
                void *parm, float momentum) ;

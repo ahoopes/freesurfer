@@ -867,7 +867,7 @@ int MatrixPrint(FILE *fp, const MATRIX *mat)
   return (NO_ERROR);
 }
 
-int MatrixPrintWithString(FILE *fp, MATRIX *m, char *Pre, char *Post)
+int MatrixPrintWithString(FILE *fp, MATRIX *m, const char *Pre, const char *Post)
 {
   int err;
   fprintf(fp, "%s", Pre);

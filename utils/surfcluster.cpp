@@ -503,7 +503,7 @@ SCS *SurfClusterSummary(MRI_SURFACE *Surf, MATRIX *T, int *nClusters)
   double centroidxyz[3];
   struct timeb mytimer;
   int msecTime;
-  char *UFSS;
+  const char *UFSS;
 
   // Must explicity "setenv USE_FAST_SURF_SMOOTHER 0" to turn off fast
   UFSS = getenv("USE_FAST_SURF_SMOOTHER");

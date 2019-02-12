@@ -30,8 +30,7 @@
 
 #include "mriTransform.h"
 
-char *Trns_ksaErrorStrings[Trns_knNumErrorCodes] = {
-
+const char *Trns_ksaErrorStrings[Trns_knNumErrorCodes] = {
     "No error.",
     "Invalid pointer to object.",
     "Invalid signature.",
@@ -1308,12 +1307,12 @@ cleanup:
   return eResult;
 }
 
-void Trns_Signal(char *isFuncName, int inLineNum, Trns_tErr ieCode)
+void Trns_Signal(const char *isFuncName, int inLineNum, Trns_tErr ieCode)
 {
   DebugPrint(("Signal in %s, line %d: %d, %s", isFuncName, inLineNum, ieCode, Trns_GetErrorString(ieCode)));
 }
 
-char *Trns_GetErrorString(Trns_tErr ieCode)
+const char *Trns_GetErrorString(Trns_tErr ieCode)
 {
   Trns_tErr eCode = ieCode;
 

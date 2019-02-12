@@ -52,12 +52,12 @@ unsigned long  DiagInit
  int (*vfprint)(FILE *fp, const char *fmt, va_list args),
  int (*vprint)(const char *fmt, va_list args)) ;
 
-int  DiagPrintf(unsigned long diag_bits, char *fmt, ...) ;
+int  DiagPrintf(unsigned long diag_bits, const char *fmt, ...) ;
 int  DiagFprintf(unsigned long diag_bits, char *fmt, ...) ;
 void DiagBreak(void) ;  /* dummy for break points in debugger */
 void DiagHeartbeat(float pct_done) ;
 void DiagShowPctDone(float pct_done, int nprints) ;
-int check_finite(char *where, double what) ;
+int check_finite(const char *where, double what) ;
 
 /* diagnostic codes */
 #define DIAG_SURFACE    0x00000001L  /* never in same apps, so can re-use */

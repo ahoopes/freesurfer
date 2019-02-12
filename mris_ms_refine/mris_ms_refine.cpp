@@ -192,8 +192,8 @@ static double compute_optimal_vertex_positions(MRI_SURFACE *mris, int vno,
 static double image_forward_model(double TR, double flip_angle, double dist,
                                   double thickness, double T1_wm, double PD_wm,
                                   double T1_gm, double PD_gm, double T1_csf, double PD_csf) ;
-static int write_map(MRI_SURFACE *mris, float *cv, char *name, int suffix, char *output_suffix) ;
-static int write_maps(MRI_SURFACE *mris, EXTRA_PARMS *ep, int suffix, char *output_suffix) ;
+static int write_map(MRI_SURFACE *mris, float *cv, const char *name, int suffix, const char *output_suffix) ;
+static int write_maps(MRI_SURFACE *mris, EXTRA_PARMS *ep, int suffix, const char *output_suffix) ;
 static int smooth_maps(MRI_SURFACE *mris, EXTRA_PARMS *ep, int smooth_parms) ;
 static int smooth_marked_maps(MRI_SURFACE *mris, EXTRA_PARMS *ep, int smooth_parms) ;
 static int smooth_map(MRI_SURFACE *mris, float *cv, int navgs) ;
@@ -282,8 +282,8 @@ static int vavgs = 0 ;
 static int nbrs = 2 ;
 static int write_vals = 0 ;
 
-static char *suffix = "" ;
-static char *output_suffix = "ms" ;
+static const char *suffix = "" ;
+static const char *output_suffix = "ms" ;
 static char *xform_fname = NULL ;
 
 static char pial_name[STRLEN] = "pial" ;
@@ -303,7 +303,7 @@ static float sigma = 2.0f ;
 #endif
 static float max_thickness = 5.0 ;
 
-static char *map_dir = "parameter_maps" ;
+static const char *map_dir = "parameter_maps" ;
 
 static int ms_errfunc_rip_vertices(MRI_SURFACE *mris, INTEGRATION_PARMS *parms) ;
 static double ms_errfunc_gradient(MRI_SURFACE *mris, INTEGRATION_PARMS *parms) ;
@@ -2248,7 +2248,7 @@ smooth_marked_map(MRI_SURFACE *mris, float *cv, int navgs) {
 }
 
 static int
-write_map(MRI_SURFACE *mris, float *cv, char *name, int suffix, char *output_suffix) {
+write_map(MRI_SURFACE *mris, float *cv, const char *name, int suffix, const char *output_suffix) {
   char fname[STRLEN] ;
 
   if (suffix >= 0)
@@ -2288,7 +2288,7 @@ smooth_maps(MRI_SURFACE *mris, EXTRA_PARMS *ep, int smooth_parms) {
 }
 
 static int
-write_maps(MRI_SURFACE *mris, EXTRA_PARMS *ep, int suffix, char *output_suffix) {
+write_maps(MRI_SURFACE *mris, EXTRA_PARMS *ep, int suffix, const char *output_suffix) {
   write_map(mris, ep->cv_inward_dists, "inward_dists", suffix, output_suffix) ;
   write_map(mris, ep->cv_outward_dists, "outward_dists", suffix, output_suffix) ;
   write_map(mris, ep->cv_wm_T1, "wm_T1", suffix, output_suffix) ;

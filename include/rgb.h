@@ -62,8 +62,8 @@ typedef struct {
 RGB_IMAGE;
 
 RGB_IMAGE *icreate();
-RGB_IMAGE *iopen(char *file, char *mode, unsigned int type, unsigned int dim, unsigned int xsize, unsigned int ysize, unsigned int zsize);
-RGB_IMAGE *fiopen(int f, char *mode, unsigned int type, unsigned int dim, unsigned int xsize, unsigned int ysize, unsigned int zsize);
+RGB_IMAGE *iopen(const char *file, const char *mode, unsigned int type, unsigned int dim, unsigned int xsize, unsigned int ysize, unsigned int zsize);
+RGB_IMAGE *fiopen(int f, const char *mode, unsigned int type, unsigned int dim, unsigned int xsize, unsigned int ysize, unsigned int zsize);
 long reverse(unsigned long lwrd);
 void cvtshorts( unsigned short *buffer, long n);
 void i_seterror(void (*func)(char *));
@@ -84,7 +84,7 @@ unsigned short *ibufalloc(RGB_IMAGE *image);
 int ifilbuf(RGB_IMAGE *image);
 int iflush(RGB_IMAGE *image);
 unsigned int iflsbuf(RGB_IMAGE *image, unsigned int c);
-void isetname(RGB_IMAGE *image, char *name);
+void isetname(RGB_IMAGE *image, const char *name);
 void isetcolormap(RGB_IMAGE *image, int colormap);
 
 int iclose(RGB_IMAGE *image);
@@ -98,7 +98,7 @@ unsigned long img_optseek(RGB_IMAGE *image, unsigned long offset);
 int img_write(RGB_IMAGE *image, char *buffer,int count);
 void cvtimage( long *buffer);
 void cvtlongs( long *buffer, register long n);
-void i_errhdlr(char *fmt, int a1, int a2, int a3, int a4);
+void i_errhdlr(const char *fmt, int a1, int a2, int a3, int a4);
 void swapImage(RGB_IMAGE *image);
 
 #ifndef _IOREAD

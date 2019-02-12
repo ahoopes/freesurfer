@@ -768,7 +768,7 @@ int LabelIntersect(LABEL *area1, LABEL *area2)
 
         Description
 ------------------------------------------------------*/
-LABEL *LabelAlloc(int max_points, char *subject_name, char *label_name)
+LABEL *LabelAlloc(int max_points, const char *subject_name, const char *label_name)
 {
   LABEL *area;
   char *cp, subjects_dir[STRLEN];

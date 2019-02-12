@@ -622,7 +622,7 @@ GCSA *GCSAread(char *fname)
   else if (trace) fprintf(stdout, "GCSAread(%s): opened file", fname);
   
   magic = freadInt(fp);
-  if (magic != GCSA_MAGIC)
+  if ((unsigned)magic != GCSA_MAGIC)
     ErrorReturn(NULL, (ERROR_BADFILE, "GCSAread(%s): file magic #%x != GCSA_MAGIC (%x)", fname, magic, GCSA_MAGIC));
   ninputs = freadInt(fp);
   icno_classifiers = freadInt(fp);
@@ -637,7 +637,7 @@ GCSA *GCSAread(char *fname)
   for (i = 0; i < ninputs; i++) {
     gcsa->inputs[i].type = freadInt(fp);
     j = freadInt(fp);
-    if (fread(gcsa->inputs[i].fname, sizeof(char), j, fp) != j) {
+    if (fread(gcsa->inputs[i].fname, sizeof(char), j, fp) != (unsigned)j) {
       ErrorPrintf(ERROR_BADFILE, "afniRead(): error reading from file %s", gcsa->inputs[i].fname);
     }
     gcsa->inputs[i].navgs = freadInt(fp);
@@ -906,7 +906,6 @@ int dump_gcsan(GCSA_NODE *gcsan, CP_NODE *cpn, FILE *fp, int verbose)
 {
   int n, index, i, j;
   GCS *gcs;
-  char *name;
   CP *cp;
 
   if (!cpn) return (NO_ERROR);
@@ -914,7 +913,7 @@ int dump_gcsan(GCSA_NODE *gcsan, CP_NODE *cpn, FILE *fp, int verbose)
   fprintf(fp, "GCSAN with %d labels (%d training examples)\n", cpn->nlabels, cpn->total_training);
   for (n = 0; n < cpn->nlabels; n++) {
     cp = &cpn->cps[n];
-    name = annotation_to_name(cpn->labels[n], &index);
+    const char *name = annotation_to_name(cpn->labels[n], &index);
     fprintf(fp, "  %d: label %s (%d, %d)\n", n, name, index, cpn->labels[n]);
     gcs = getGC(gcsan, cpn->labels[n], NULL);
     if (!gcs) ErrorPrintf(ERROR_BADPARM, "dump_gcsan: could not find GCS for node %d!", n);

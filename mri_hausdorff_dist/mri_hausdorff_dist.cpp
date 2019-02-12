@@ -24,8 +24,6 @@
  *
  */
 
-char *MRI_HAUSDORFF_DIST_VERSION = "$Revision: 1.14 $";
-
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>

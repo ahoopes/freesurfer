@@ -173,7 +173,7 @@ int regio_print_register(
     FILE *fp, const char *subject, float inplaneres, float betplaneres, float intensity, const MATRIX *R, int float2int)
 {
   int r, c;
-  char *f2imethod;
+  const char *f2imethod;
 
   if (subject == NULL)
     fprintf(fp, "subject-unknown\n");

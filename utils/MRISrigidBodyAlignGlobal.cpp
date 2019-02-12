@@ -83,8 +83,8 @@ void MRISrigidBodyAlignGlobal_findMinSSE(
   // Project these coordinates to the surface of a sphere of radius mris->radius
   // This assumes that the vertices are already well away from (0,0,0)
   //
-  { int i;
-    for (i = 0; i < verticesSize; i++) {
+  {
+    for (unsigned int i = 0; i < verticesSize; i++) {
       float invLength = mris->radius/sqrtf(squaref(xv[i])+squaref(yv[i])+squaref(zv[i]));
       xv[i] *= invLength;
       yv[i] *= invLength;
@@ -278,7 +278,7 @@ void MRISrigidBodyAlignGlobal_findMinSSE(
             ROMP_PFLB_begin
 
             int const viLo = partition*verticesPerPartition;
-            int const viHi = MIN(verticesSize, viLo + verticesPerPartition);
+            int const viHi = MIN(verticesSize, (unsigned)viLo + verticesPerPartition);
 
             double*                         const ssesForAlphas   = &  ssesForAlphasForPartitions[partition*forAlphasCapacity];
             MRISPfunctionValResultForAlpha* const fvsForAlphas    = &   fvsForAlphasForPartitions[partition*forAlphasCapacity];
@@ -310,8 +310,7 @@ void MRISrigidBodyAlignGlobal_findMinSSE(
                   alphasForAlphas, ajsSize, // input requests
                   vertexTrace);
 
-              int ajsI;
-              for (ajsI = 0; ajsI < ajsSize ; ajsI++) {
+              for (unsigned int ajsI = 0; ajsI < ajsSize ; ajsI++) {
                 int    const aj     = ajsForAlphas[ajsI];
                 double const target = fvsForAlphas[ajsI].curr;
                 double const std    = fvsForAlphas[ajsI].next;
@@ -395,8 +394,7 @@ void MRISrigidBodyAlignGlobal_findMinSSE(
 
           // Add to the output centers
           //
-          int ajsI;
-          for (ajsI = 0; ajsI < ajsSize ; ajsI++) {
+          for (unsigned int ajsI = 0; ajsI < ajsSize ; ajsI++) {
             int const aj = ajsForAlphas[ajsI];
             int const ai = center_ai + gridStride*(aj - nangles/2);
 

@@ -4718,7 +4718,7 @@ MRI *MRISloadSurfVals(const char *srcvalfile,
   imag_val, curv, curvbak, fsmask, nc. Others can be easily added. If
   there is an error, a 1 is returned; otherwise 0.
   -----------------------------------------------------------------*/
-int MRIScopyMRI(MRIS *Surf, MRI *Src, int Frame, char *Field)
+int MRIScopyMRI(MRIS *Surf, MRI *Src, int Frame, const char *Field)
 {
   int vtx, useval = 0, usecurv = 0, nvox, c, r, s;
   float val;
@@ -4892,7 +4892,7 @@ int MRIScopyMRI(MRIS *Surf, MRI *Src, int Frame, char *Field)
   type will be MRI_FLOAT. A pointer to mri is returned. If an error
   occurs, NULL is returned.
   -----------------------------------------------------------------*/
-MRI *MRIcopyMRIS(MRI *mri, MRIS *surf, int Frame, char *Field)
+MRI *MRIcopyMRIS(MRI *mri, MRIS *surf, int Frame, const char *Field)
 {
   int vtx, useval = 0, usecurv = 0, nvox, c, r, s;
   float val;
@@ -5076,7 +5076,7 @@ MRI *MRISsmoothMRI(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *BinMask, MRI *Ta
   MRI *SrcTmp;
   struct timeb mytimer;
   int msecTime;
-  char *UFSS;
+  const char *UFSS;
 
   // Must explicity "setenv USE_FAST_SURF_SMOOTHER 0" to turn off fast
   UFSS = getenv("USE_FAST_SURF_SMOOTHER");

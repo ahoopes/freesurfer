@@ -926,7 +926,7 @@ int HISTOfindHighestPeakInRegion(HISTOGRAM *h, int b0, int b1)
 
   Description
   ------------------------------------------------------*/
-int HISTOplot(HISTOGRAM *histo, char *fname)
+int HISTOplot(HISTOGRAM *histo, const char *fname)
 {
   FILE *fp;
   int bin_no, bmin, bmax;
@@ -2990,7 +2990,7 @@ int HISTOwrite(HISTOGRAM *histo, char *fname)
   \fn int HISTOwriteTxt(HISTOGRAM *histo, char *fname) 
   \brief Writes histogram into the given filename in ascii format.
  */
-int HISTOwriteTxt(HISTOGRAM *histo, char *fname) 
+int HISTOwriteTxt(HISTOGRAM *histo, const char *fname) 
 {
   int n;
   FILE *fp;

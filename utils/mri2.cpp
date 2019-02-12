@@ -385,7 +385,7 @@ int mri_framepower(MRI *vol, float *framepower)
   number of voxels in vol that meet the threshold criteria
   (ie, the number of 1's in volbin).
   -----------------------------------------------------------------*/
-MRI *mri_binarize(MRI *vol, float thresh, char *tail, int invert, MRI *volbin, int *nover)
+MRI *mri_binarize(MRI *vol, float thresh, const char *tail, int invert, MRI *volbin, int *nover)
 {
   int r, c, s, f, tailcode;
   float val;

@@ -804,8 +804,7 @@ int MRISsetCurvatureName(int nth, char const *name)
 
 int MRISprintCurvatureNames(FILE *fp)
 {
-  int k;
-  for (k = 0; k < sizeof(curvature_names) / sizeof(curvature_names[0]); k++) {
+  for (unsigned int k = 0; k < sizeof(curvature_names) / sizeof(curvature_names[0]); k++) {
     if (curvature_names[k])
       printf("%d %s\n", k, curvature_names[k]);
     else if (mrisurf_surface_names[k])
@@ -1511,7 +1510,7 @@ void cprints(char *apch_left, char *apch_right)
   fflush(stderr);
 }
 
-void cprintd(char *apch_left, int a_right)
+void cprintd(const char *apch_left, int a_right)
 {
   //
   // PRECONDITIONS
@@ -1610,7 +1609,7 @@ short VECTOR_elementIndex_find(VECTOR *apV, float af_searchTerm)
 }
 
 
-short MRIS_vertexProgress_print(MRIS *apmris, int avertex, char *apch_message)
+short MRIS_vertexProgress_print(MRIS *apmris, int avertex, const char *apch_message)
 {
   //
   // PRECONDITIONS

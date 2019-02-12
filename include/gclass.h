@@ -57,7 +57,7 @@ typedef struct
 }
 GAUSSIAN_CLASSIFIER, GCLASSIFY ;
 
-GCLASSIFY *GCalloc(int nclass, int nvars, char *class_names[]) ;
+GCLASSIFY *GCalloc(int nclass, int nvars, const char *class_names[]) ;
 int       GCtrain(GCLASSIFY *gc, int classnum, MATRIX *m_inputs) ;
 int       GCfree(GCLASSIFY **pgc) ;
 int       GCclassify(GCLASSIFY *gc, MATRIX *m_input, MATRIX *m_priors,

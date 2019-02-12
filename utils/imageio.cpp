@@ -740,7 +740,7 @@ static IMAGE *TiffReadImage(const char *fname, int frame0)
   float    r, g, b, y;
   float    *pf;
 #endif
-  int scanlinesize;  //, extra_samples;
+  unsigned int scanlinesize;  //, extra_samples;
   int index = 0;
   float xres, yres, res;
 
@@ -972,7 +972,7 @@ static IMAGE *TiffReadImage(const char *fname, int frame0)
             if (byte_ > 0) DiagBreak();
             if (fillorder == FILLORDER_LSB2MSB) {
               for (bitmask = 0x01, bit = 0; bit < 8; bit++) {
-                if (col + bit == Gx && index == Gy) DiagBreak();
+                if (col + bit == (unsigned)Gx && index == Gy) DiagBreak();
                 *IMAGEpix(I, col + bit, index) = ((byte_ & bitmask) > 0);
                 bitmask = bitmask << 1;
               }
@@ -980,7 +980,7 @@ static IMAGE *TiffReadImage(const char *fname, int frame0)
             else  // fillorder == FILLORDER_MSB2LSB
             {
               for (bitmask = 0x01 << 7, bit = 0; bit < 8; bit++) {
-                if (col + bit == Gx && index == Gy) DiagBreak();
+                if (col + bit == (unsigned)Gx && index == Gy) DiagBreak();
                 *IMAGEpix(I, col + bit, index) = ((byte_ & bitmask) > 0);
                 bitmask = bitmask >> 1;
               }
