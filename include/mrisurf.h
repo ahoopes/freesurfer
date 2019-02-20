@@ -1994,7 +1994,7 @@ MRIS* MRISextractMarkedVertices(MRIS *mris);
 MRIS* MRISremoveRippedSurfaceElements(MRIS *mris);
 
 MRI_SURFACE *MRIScorrectTopology(MRI_SURFACE *mris, MRI *mri, 
-   MRI *mri_wm, int nsmooth, TOPOLOGY_PARMS *parms, char *defectbasename);
+   MRI *mri_wm, int nsmooth, TOPOLOGY_PARMS *parms, const char *defectbasename);
 
 int MRISsmoothOnSphere(MRIS* mris, int niters);
 int mrisCountIntersectingFaces(MRIS *mris, int*flist , int nfaces);

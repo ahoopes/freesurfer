@@ -253,6 +253,11 @@ IMAGE  *ImageDownsample2Horizontal(IMAGE *Isrc, IMAGE *Idst) ;
 IMAGE  *ImageDownsample2(IMAGE *Isrc, IMAGE *Idst) ;
 IMAGE  *ImageUpsample2(IMAGE *Isrc, IMAGE *Idst) ;
 
+// hips functions
+int init_header(IMAGE *I,char *onm,char *snm,int nfr,char *odt,int rw,int cl,int pfmt,int nc,const char *desc);
+int h_copy(IMAGE *Isrc, IMAGE *Idst);
+int free_header(IMAGE *I);
+
 /*
   constants which specify the morphological operation carried out
   by ImageMorph routine.

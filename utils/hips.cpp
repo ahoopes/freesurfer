@@ -13,13 +13,11 @@ int clearparam(struct header *hd, const char *name) HIPS_DEP_ERROR
 int fread_header(FILE *fp,struct header *hd,const char *fname) HIPS_DEP_ERROR
 int fread_image(FILE *fp,struct header *hd,int fr,const char *fname) HIPS_DEP_ERROR
 int free_hdrcon(struct header *hd) HIPS_DEP_ERROR
-int free_header(struct header *hd) HIPS_DEP_ERROR
 int fwrite_header(FILE *fp,struct header *hd,const char *fname) HIPS_DEP_ERROR
 int fwrite_image(FILE *fp,struct header *hd,int fr,const char *fname) HIPS_DEP_ERROR
 int getparam(struct header *hda,...) HIPS_DEP_ERROR
 int h_add(struct header *hdi1,struct header *hdi2,struct header *hdo) HIPS_DEP_ERROR
 int h_clearhisto(struct hips_histo *histogram) HIPS_DEP_ERROR
-int h_copy(struct header *hdi,struct header *hdo) HIPS_DEP_ERROR
 int h_diff(struct header *hdi1,struct header *hdi2,struct header *hdo) HIPS_DEP_ERROR
 int h_div(struct header *hdi1,struct header *hdi2,struct header *hdo) HIPS_DEP_ERROR
 int h_divscale(struct header *hdi,struct header *hdo,union pixelval *b) HIPS_DEP_ERROR
@@ -46,7 +44,6 @@ int h_tod(struct header *hdi,struct header *hdo) HIPS_DEP_ERROR
 int h_todc(struct header *hdi,struct header *hdo) HIPS_DEP_ERROR
 int h_tof(struct header *hdi,struct header *hdo) HIPS_DEP_ERROR
 int h_toi(struct header *hdi,struct header *hdo) HIPS_DEP_ERROR
-int init_header(struct header *hd,const char *onm, const char *snm,int nfr, const char *odt,int rw,int cl,int pfmt,int nc,const char *desc) HIPS_DEP_ERROR
 int setparam(struct header *hda,...) HIPS_DEP_ERROR
 int update_header(struct header *hd,int argc,char **argv ) HIPS_DEP_ERROR
 struct extpar *findparam(struct header *hd, const char *name) HIPS_DEP_ERROR
