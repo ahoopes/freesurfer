@@ -355,7 +355,7 @@ double MRIptr2dbl(void *pmric, int mritype);
 size_t MRIsizeof(int mritype);
 
 const char * MRIprecisionString(int PrecisionCode);
-int MRIprecisionCode(char *PrecisionString);
+int MRIprecisionCode(const char *PrecisionString);
 
 MRI *MRImakeMosaic(MRI **mri, int nimages, int rectify) ;
 

@@ -68,7 +68,7 @@ int   type = -1;
 int   typesize = 1;
 int   offset = -1;
 int   stringlen = 1;
-char  *key = NULL;
+const char  *key = NULL;
 int   keyno = -1;
 int   dumpfileinfo = 0;
 int debug, verbose;

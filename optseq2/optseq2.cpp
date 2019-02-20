@@ -144,7 +144,7 @@ FILE *fpSvAll;
 
 int nTaskAvgs;
 int   CostId = EVS_COST_EFF;
-char *CostString;
+const char *CostString;
 float CostSum, CostSum2, CostAvg, CostStd, SumCorrect, Sum2Correct;
 float EffMax, VRFAvgMax;
 float VRFAvgStd_Cost_Ratio;

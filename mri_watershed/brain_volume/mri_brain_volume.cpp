@@ -425,7 +425,7 @@ get_option(int argc, char *argv[],STRIP_PARMS *parms) {
 
   option = argv[1] + 1 ;            /* past '-' */
   if (!strcmp(option, "-version")) {
-    fprintf(stderr,"%s\n\n", MRI_WATERSHED_VERSION );
+    fprintf(stderr,"##version##\n");
     exit(0);
   } else if (!strcmp(option, "forceParam")) {
     parms->forceParam = atof(argv[2]);

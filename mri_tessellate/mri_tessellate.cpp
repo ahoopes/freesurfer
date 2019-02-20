@@ -609,7 +609,7 @@ get_option(int argc, char *argv[])
   }
   else if (!strcasecmp(option, "-version"))
   {
-    fprintf(stderr, "Version: %s\n", MRI_TESSELLATE_VERSION);
+    fprintf(stderr, "Version: ##version##\n");
     exit(0);
   }
   else if (!stricmp(option, "seed"))

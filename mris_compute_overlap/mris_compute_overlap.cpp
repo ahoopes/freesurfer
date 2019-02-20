@@ -58,8 +58,8 @@ static char sdir[STRLEN] ;
   ----------------------------------------------------------------------*/
 int
 main(int argc, char *argv[]) {
-  char   **av, *subject_name, *cp, *hemi,
-  *surf_name, *annot_name, fname[STRLEN], *name ;
+  char   **av, *subject_name, *cp, *hemi, *surf_name, *annot_name, fname[STRLEN];
+  const char *name ;
   int    ac, nargs, msec, minutes, label, seconds, i ;
   double area, total_area ;
   struct timeb start ;

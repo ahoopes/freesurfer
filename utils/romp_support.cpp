@@ -110,7 +110,7 @@ ROMP_pf_static_struct* known_ROMP_pf;
 
 
 static Nanosecs cpuTimeUsed() {
-    clockid_t clockid;
+    clockid_t clockid = clockid_t();
     int s = pthread_getcpuclockid(pthread_self(), &clockid);
     if (s != 0) {
 	   fprintf(stderr, "%s:%d pthread_getcpuclockid failed", __FILE__, __LINE__);

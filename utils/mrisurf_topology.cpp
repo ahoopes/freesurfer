@@ -1054,7 +1054,8 @@ void MRIS_check_vertexNeighbours(MRIS* mris) {
   }
   if (!doTesting) return;  
 
-  MRIS_VertexNeighbourInfo info0,info1;
+  MRIS_VertexNeighbourInfo info0 = MRIS_VertexNeighbourInfo();
+  MRIS_VertexNeighbourInfo info1 = MRIS_VertexNeighbourInfo();
   int vlist[MAX_NEIGHBORS], hops[MAX_NEIGHBORS];
   
   int vno;

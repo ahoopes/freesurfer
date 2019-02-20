@@ -439,7 +439,7 @@ get_option(int argc, char *argv[])
   option = argv[1] + 1 ;            /* past '-' */
   if (!strcasecmp(option, "-version"))
   {
-    fprintf(stderr, "Version: %s\n", MRI_SEGMENT_VERSION);
+    fprintf(stderr, "Version: ##version## \n");
     exit(0);
   }
   else if (!stricmp(option, "-help")||!stricmp(option, "-usage"))

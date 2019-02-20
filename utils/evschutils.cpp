@@ -724,7 +724,7 @@ float EVScb1Error(EVSCH *EvSch)
   EVScostId() - converts from a string indicating a cost function
   to a numeric id that can be used in a case statement.
   ----------------------------------------------------------------*/
-int EVScostId(char *CostString)
+int EVScostId(const char *CostString)
 {
   if (!strcmp("eff", CostString)) return (EVS_COST_EFF);
   if (!strcmp("effinv", CostString)) return (EVS_COST_EFF_INV);

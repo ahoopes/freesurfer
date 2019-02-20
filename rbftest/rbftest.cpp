@@ -64,12 +64,8 @@ static float momentum = 0.0f ;
 static int nclusters = 0 ;
 static int nclasses = 0 ;
 
-static char *class_names[MAX_CLASSES] = { "gray", "white" , "two", "three",
-                                        "four"
-                                        } ;
-static int max_clusters[MAX_CLASSES] = {
-                                         NCLUSTERS, NCLUSTERS, NCLUSTERS
-                                       } ;
+static const char *class_names[MAX_CLASSES] = {"gray", "white" , "two", "three", "four"};
+static int max_clusters[MAX_CLASSES] = {NCLUSTERS, NCLUSTERS, NCLUSTERS};
 
 int
 main(int argc, char *argv[]) {

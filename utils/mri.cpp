@@ -1361,7 +1361,7 @@ const char *MRIinterpString(int InterpCode)
   name of the precision. This corresponds to the value of the type
   field in the MRI structure.
   -----------------------------------------------------------------*/
-int MRIprecisionCode(char *PrecisionString)
+int MRIprecisionCode(const char *PrecisionString)
 {
   if (!strcasecmp(PrecisionString, "uchar")) return (MRI_UCHAR);
   if (!strcasecmp(PrecisionString, "short")) return (MRI_SHORT);

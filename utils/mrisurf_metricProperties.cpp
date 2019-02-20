@@ -1806,7 +1806,7 @@ int MRIScomputeMetricProperties(MRIS *mris)
   bool const useOldBehaviour = !!getenv("FREESURFER_OLD_MRIScomputeMetricProperties");
   bool const useNewBehaviour = !!getenv("FREESURFER_NEW_MRIScomputeMetricProperties") || !useOldBehaviour;
 
-  MRIS_MP *mp = new MRIS_MP();
+  MRIS_MP *mp = nullptr;
   MRISMP_ctr(mp);
 
   if (useNewBehaviour) {

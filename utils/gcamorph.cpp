@@ -6022,7 +6022,7 @@ int GCAMmorphSurf(MRIS *mris, GCA_MORPH *gcam)
   int vtxno;
   for (vtxno = 0; vtxno < mris->nvertices; vtxno++) {
     VERTEX *v = &mris->vertices[vtxno];
-    float Mx, My, Mz;
+    float Mx = 0, My = 0, Mz = 0;
     int err = GCAMsampleInverseMorphRAS(gcam, v->x, v->y, v->z, &Mx, &My, &Mz);
     if (err) {
       printf("WARNING: GCAMmorphSurf(): error converting vertex %d\n", vtxno);
