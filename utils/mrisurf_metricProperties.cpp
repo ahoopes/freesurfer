@@ -1806,24 +1806,22 @@ int MRIScomputeMetricProperties(MRIS *mris)
   bool const useOldBehaviour = !!getenv("FREESURFER_OLD_MRIScomputeMetricProperties");
   bool const useNewBehaviour = !!getenv("FREESURFER_NEW_MRIScomputeMetricProperties") || !useOldBehaviour;
 
-  MRIS_MP *mp = nullptr;
-  MRISMP_ctr(mp);
+  MRIS_MP mp = MRIS_MP();
+  MRISMP_ctr(&mp);
 
   if (useNewBehaviour) {
     MRISfreeDistsButNotOrig(mris);                                      // So they can be stolen to avoid unnecessary mallocs and frees
-  
-    MRISMP_load(mris, mp);                                              // Copy the input data before MRIScomputeMetricPropertiesWkr changes it
-    MRISMP_computeMetricProperties(mp);                                // It should not matter the order these are done in
+    MRISMP_load(mris, &mp);                                              // Copy the input data before MRIScomputeMetricPropertiesWkr changes it
+    MRISMP_computeMetricProperties(&mp);                                // It should not matter the order these are done in
   }
   
   if (useOldBehaviour) {
     MRIScomputeMetricPropertiesWkr(mris);
   }
   
-  if (useNewBehaviour) MRISMP_unload(mris, mp, useOldBehaviour);       // Verify the two approaches got the same answers, or use the new answers 
+  if (useNewBehaviour) MRISMP_unload(mris, &mp, useOldBehaviour);       // Verify the two approaches got the same answers, or use the new answers 
 
-  MRISMP_dtr(mp);
-  delete mp;
+  MRISMP_dtr(&mp);
   
   return (NO_ERROR);
 }
