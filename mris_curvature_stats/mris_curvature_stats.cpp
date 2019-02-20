@@ -2204,8 +2204,6 @@ histogram_wrapper(
 // Usable AlmostEqual function
 // Bruce Dawson, see
 //  http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
-#define true  1
-#define false 0
 int AlmostEqual2sComplement(float A, float B, int maxUlps)
 {
   int aInt;
