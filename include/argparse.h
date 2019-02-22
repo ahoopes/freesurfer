@@ -2,8 +2,8 @@
 // by Hilton Bristow, which is developed with the BSD 3-Clause License:
 // https://github.com/hbristow/argparse
 
-#ifndef ARGPARSE_HPP
-#define ARGPARSE_HPP
+#ifndef ARGPARSE_H
+#define ARGPARSE_H
 
 #if __cplusplus >= 201103L
 #include <unordered_map>

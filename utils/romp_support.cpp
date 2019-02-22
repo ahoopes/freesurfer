@@ -83,7 +83,7 @@ static PerThreadScopeTreeData* scopeTreeToS  [ROMP_maxWatchedThreadNum];
 static struct { NanosecsTimer timer; int inited; } tidStartTime[ROMP_maxWatchedThreadNum];
 static void maybeInitTidStartTime(int tid) {
     if (tidStartTime[tid].inited) return;
-    TimerStartNanosecs(&tidStartTime[tid].timer);
+    tidStartTime[tid].timer.reset();
     tidStartTime[tid].inited = 1;
 }
 
@@ -195,7 +195,7 @@ static void rompExitHandler(void)
     int tid;
     for (tid = 0; tid < ROMP_maxWatchedThreadNum; tid++) {
         PerThreadScopeTreeData* root = &scopeTreeRoots[tid];
-        if (tidStartTime[tid].inited) root->in_scope = TimerElapsedNanosecs(&tidStartTime[tid].timer);
+        if (tidStartTime[tid].inited) root->in_scope = tidStartTime[tid].timer.nanoseconds();
     }
     
     ROMP_show_stats(stderr);
@@ -216,13 +216,13 @@ static void rompExitHandler(void)
 #endif
 }
 
-static NanosecsTimer mainTimer;
+static Timer mainTimer;
 
 static void initMainTimer() {
     static int once;
     if (once++ == 0) {
-        TimerStartNanosecs(&mainTimer);
-	atexit(rompExitHandler);
+        mainTimer.reset()
+        atexit(rompExitHandler);
     }
 }
 
@@ -251,14 +251,14 @@ static StaticData* initStaticData(ROMP_pf_static_struct * pf_static)
     omp_set_lock(&lock);
 #endif
     {	// Might have been made by another thread
-    	ptr = (StaticData*)pf_static->ptr;
-    	if (!ptr) {
-	    initMainTimer();
-    	    ptr = (StaticData*)calloc(1, sizeof(StaticData));
-    	    pf_static->ptr = ptr;
-    	    ptr->next = known_ROMP_pf;
-    	    known_ROMP_pf = pf_static;
-    	}	
+        ptr = (StaticData*)pf_static->ptr;
+        if (!ptr) {
+            initMainTimer();
+            ptr = (StaticData*)calloc(1, sizeof(StaticData));
+            pf_static->ptr = ptr;
+            ptr->next = known_ROMP_pf;
+            known_ROMP_pf = pf_static;
+        }	
     }
 #ifdef HAVE_OPENMP
     omp_unset_lock(&lock);
@@ -328,7 +328,7 @@ void ROMP_pf_begin(
         }
     }
     
-    TimerStartNanosecs(&pf_stack->beginTime);
+    pf_stack->timer.reset();
 }
 
 
@@ -377,7 +377,7 @@ void ROMP_pf_end(
         PerThreadScopeTreeData* tos = scopeTreeToS[tid];
         if (tos) {
 
-            Nanosecs delta = TimerElapsedNanosecs(&pf_stack->beginTime);
+            Nanosecs delta = pf_stack->timer.nanoseconds();
             tos->in_scope.ns += delta.ns;
 
             if (pf_stack->gone_parallel)
@@ -456,16 +456,13 @@ static void node_show_stats(FILE* file, PerThreadScopeTreeData* node, unsigned i
 
 void ROMP_show_stats(FILE* file)
 {
-    fprintf(file, "ROMP_show_stats %s\n", current_date_time_noOverride());
+    fprintf(file, "ROMP_show_stats %s\n", currentDateTime(false));
     fprintf(file, "file, line, level, in pf, in pflb, in_pfThread, pflb/elapsed, pft/elapsed\n");
 
     if (getMainFile())  {
-        Nanosecs mainDuration = TimerElapsedNanosecs(&mainTimer);
-  	fprintf(file, "%s, %d, 0, %12ld, %12ld, %12ld, %6.3g, %6.3g\n", 
-      	    mainFile, mainLine, 
-	    mainDuration.ns, 0L, 0L,
-	    1.0,
-	    1.0);
+        Nanosecs mainDuration = mainTimer.nanoseconds();
+        fprintf(file, "%s, %d, 0, %12ld, %12ld, %12ld, %6.3g, %6.3g\n", mainFile, mainLine, 
+            mainDuration.ns, 0L, 0L, 1.0, 1.0);
     }
         
     int tid;

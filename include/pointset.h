@@ -1,5 +1,5 @@
-#ifndef POINTSET_HPP
-#define POINTSET_HPP
+#ifndef POINTSET_H
+#define POINTSET_H
 
 #include <string>
 #include <vector>
