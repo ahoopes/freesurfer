@@ -205,9 +205,9 @@ option(SUPPRESS_WARNINGS "Allow building in subdirs to supress warnings" ON)
 
 # compiler warnings
 set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wall -Werror -Wno-pointer-arith -Wno-write-strings -Wno-sign-compare")
-# clang complains about -Wno-unused-but-set-variable and says to use -Wno-unused-const-variable
 
 if(SUPPRESS_WARNINGS)
+  # clang complains about -Wno-unused-but-set-variable and says to use -Wno-unused-const-variable
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wno-unused-const-variable")
   else()
@@ -274,7 +274,7 @@ endif()
 #                   setup python
 # --------------------------------------------------
 
-# Unfortunately, the python version used to run bind c-libraries must be equivalent to
+# Unfortunately, the python version used to run pybind c-libraries must be equivalent to
 # the version used to build the libraries. The easiest and least intrusive way of making freesurfer
 # python scripts run out-of-the-box (and to help guarantee reproducibility) requires
 # distributing a minimal, custom python installation called fspython. This fspython package

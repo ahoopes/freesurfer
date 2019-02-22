@@ -1,5 +1,5 @@
-#ifndef LUT_HPP
-#define LUT_HPP
+#ifndef LUT_H
+#define LUT_H
 
 #include <string>
 #include <map>

@@ -2,8 +2,8 @@
 // library (by Emil Ernerfeldt), which is developed in the public domain:
 // https://github.com/emilk/loguru
 
-#ifndef LOG_HPP
-#define LOG_HPP
+#ifndef LOG_H
+#define LOG_H
 
 #include <sstream>
 
