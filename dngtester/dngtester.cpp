@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 {
   MRIS *surf, *surf2;
   int msec, nvertices; //vtxno=0;
-  struct timeb  mytimer;
+  Timer mytimer;
   MRI *mri, *mriindex, *mri2;
   Geodesics *geod;
   float maxdist;
@@ -274,16 +274,16 @@ int main(int argc, char **argv)
   // apply smoothing: 5 args: surf geod input index output
   surf = MRISread(argv[1]);
   printf("reaDing geo\n"); fflush(stdout);
-  TimerStart(&mytimer) ;
+  mytimer.reset() ;
   geod = geodesicsRead(argv[2], &nvertices);
-  msec = TimerStop(&mytimer) ;
+  msec = mytimer.milliseconds() ;
   printf("t = %g min\n",msec/(1000.0*60));
   mri  = MRIread(argv[3]);
   mriindex  = MRIread(argv[4]);
   printf("Smoothing\n");
-  TimerStart(&mytimer) ;
+  mytimer.reset() ;
   mri2 = GeoSmooth(mri, 10, surf, geod, mriindex, NULL);
-  msec = TimerStop(&mytimer) ;
+  msec = mytimer.milliseconds() ;
   printf("t = %g min\n",msec/(1000.0*60));
   fflush(stdout);
   MRIwrite(mri2,argv[5]);
@@ -302,31 +302,31 @@ int main(int argc, char **argv)
   // create geod file: 3 args: surf distmax output
   surf = MRISread(argv[1]);
   sscanf(argv[2],"%f",&maxdist);
-  TimerStart(&mytimer) ;
+  mytimer.reset() ;
   geod = computeGeodesics(surf, maxdist);
-  msec = TimerStop(&mytimer) ;
+  msec = mytimer.milliseconds() ;
   printf("done t = %g min\n",msec/(1000.0*60));
   geodesicsWrite(geod, surf->nvertices, argv[3]);
-  msec = TimerStop(&mytimer) ;
+  msec = mytimer.milliseconds() ;
   printf("done write t = %g min\n",msec/(1000.0*60));
   exit(0); //-------------------------
 
 
   //GeoDumpVertex("uvtx.108489.dist.dat", geod, 108489);
-  TimerStart(&mytimer) ;
+  mytimer.reset() ;
   geod = geodesicsReadV2(argv[1], &nvertices);
-  msec = TimerStop(&mytimer) ;
+  msec = mytimer.milliseconds() ;
   printf(" read2 t = %g min\n",msec/(1000.0*60));
   exit(0); //-------------------------
 
-  TimerStart(&mytimer) ;
+  mytimer.reset() ;
   geodesicsWrite(geod, nvertices, "u1.geod");
-  msec = TimerStop(&mytimer) ;
+  msec = mytimer.milliseconds() ;
   printf(" write1 t = %g min\n",msec/(1000.0*60));
 
-  TimerStart(&mytimer) ;
+  mytimer.reset() ;
   geodesicsWriteV2(geod, nvertices, "u2.geod");
-  msec = TimerStop(&mytimer) ;
+  msec = mytimer.milliseconds() ;
   printf(" write2 t = %g min\n",msec/(1000.0*60));
 
   exit(0); //-------------------------

@@ -530,7 +530,7 @@ int main(int argc, char *argv[]) {
 
   int n,m,nsubjects;
   // int          msec, minutes, seconds ;
-  // struct timeb start;
+  // Timer start;
 
   /* rkt: check for and handle version tag */
   nargs = handle_version_option (argc, argv, "$Id: spherical_stats.c,v 1.8 2011/03/02 00:04:40 nicks Exp $", "$Name:  $");
@@ -544,7 +544,7 @@ int main(int argc, char *argv[]) {
 
   memset(ncollapses,0,50*sizeof(int));
 
-  //  TimerStart(&start) ;
+  //  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -911,7 +911,7 @@ int main(int argc, char *argv[]) {
   for (n=0; n<nlabels;n++)
     HISTOfree(&histos[n]);
 
-  // msec = TimerStop(&start) ;
+  // msec = start.milliseconds() ;
   //seconds = (int)((float)msec/1000.0f) ;
   //minutes = seconds / 60 ;
   //seconds = seconds % 60 ;

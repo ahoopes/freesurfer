@@ -79,7 +79,7 @@ main(int argc, char *argv[])
   int    nargs ;
   char   *subject, *out_fname, *hemi, *ohemi ;
   int    msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri, *mri_features, *mri_ribbon, *mri_aseg, *mri_aparc, *mri_flair ;
   MRI_SURFACE  *mris, *mris_contra ;
   LABEL        *cortex ;
@@ -94,7 +94,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   for ( ; argc > 1 && ISOPTION(*argv[1]) ; argc--, argv++) {
     nargs = get_option(argc, argv) ;
@@ -235,7 +235,7 @@ main(int argc, char *argv[])
 
   MRIwrite(mri_features, out_fname) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

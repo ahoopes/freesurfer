@@ -177,7 +177,6 @@ main(int argc, char *argv[]) {
   MHT                *mht ;
   VERTEX             *v ;
   int                msec, minutes, seconds ;
-  struct timeb       start ;
   MRI                *mri_smatrix = NULL ;
 
 
@@ -188,7 +187,8 @@ main(int argc, char *argv[]) {
   parms.l_var = 1.0 ;
   parms.energy_type = ENERGY_VARIANCE ;
   parms.l_eden = 1.0 ;
-  TimerStart(&start) ;
+  
+  Timer start;
 
   make_cmd_version_string
   (argc, argv,
@@ -461,7 +461,7 @@ main(int argc, char *argv[]) {
   if (Gdiag & DIAG_SHOW)
     fprintf(stderr, "writing annotation to %s\n", out_fname) ;
   MRISwriteAnnotation(mris, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

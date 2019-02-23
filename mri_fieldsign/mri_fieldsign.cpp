@@ -672,7 +672,7 @@ int RETcompute_fieldsign2(MRIS *mris)
   MATRIX *X, *y, *J;
   GLMMAT *glm;
   int msecTime, msecTot, nhit;
-  struct timeb  mytimer;
+  Timer mytimer;
   int annot, annotindex, ok;
   FILE *fp;
 
@@ -708,7 +708,7 @@ int RETcompute_fieldsign2(MRIS *mris)
   printf("shape = %d\n",shape);
   printf("nvertices = %d\n",mris->nvertices);
   msecTot = 0;
-  TimerStart(&mytimer) ;
+  mytimer.reset() ;
   nhit = 0;
   fp = NULL;
   fp = fopen("tmp.dat","w");
@@ -792,17 +792,17 @@ int RETcompute_fieldsign2(MRIS *mris)
     GLMfree(&glm); // Also frees X and y
 
     if(nhit%1000 == 0 || nhit == 0) {
-      msecTime = TimerStop(&mytimer) ;
+      msecTime = mytimer.milliseconds() ;
       msecTot += msecTime;
       printf("%5d %5d %3d %6.2f  %g\n",k,nhit,nlist,msecTot/1000.0,det);
-      TimerStart(&mytimer) ;
+      mytimer.reset() ;
     }
     nhit ++;
 
     //if(nhit > 10000) break;
 
   } // loop over vertices
-  msecTime = TimerStop(&mytimer) ;
+  msecTime = mytimer.milliseconds() ;
   msecTot += msecTime;
   printf("done: %5d %g\n",nhit,msecTot/1000.0);
 

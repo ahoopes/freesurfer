@@ -141,9 +141,9 @@
 
 #include "diag.h"
 #include "fsglm.h"
+#include "timer.h"
 #include "numerics.h"
 #include "randomfields.h"
-#include "timer.h"
 #include "utils.h"
 #undef X
 
@@ -655,9 +655,8 @@ int GLMprofile(int nrows, int ncols, int ncon, int niters)
 {
   int n, c, msec;
   GLMMAT *glm;
-  struct timeb then;
+  Timer then;
 
-  TimerStart(&then);
   for (n = 0; n < niters; n++) {
     glm = GLMalloc();
     glm->y = MatrixDRand48(nrows, 1, NULL);
@@ -673,7 +672,7 @@ int GLMprofile(int nrows, int ncols, int ncon, int niters)
     GLMtest(glm);
     GLMfree(&glm);
   }
-  msec = TimerStop(&then);
+  msec = then.milliseconds();
 
   printf(
       "GLMprofile: nrows=%d, ncols=%d, ncon=%d, "

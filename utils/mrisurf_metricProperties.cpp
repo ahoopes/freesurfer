@@ -10466,7 +10466,7 @@ int MRISaverageGradientsFastCheck(int num_avgs)
   char tmpstr[2000], *UFSS;
   MRIS *mrisA, *mrisB;
   int k, msec, nerrs;
-  struct timeb mytimer;
+  Timer mytimer;
   float e;
 
   // Make sure to turn off override (restored later)
@@ -10501,15 +10501,15 @@ int MRISaverageGradientsFastCheck(int num_avgs)
   mrisB->vertices[100].ripflag = 1;
 
   printf("Running Original Version\n");
-  TimerStart(&mytimer);
+  mytimer.reset();
   MRISaverageGradients(mrisA, num_avgs);
-  msec = TimerStop(&mytimer);
+  msec = mytimer.milliseconds();
   printf("Original %6.2f min\n", msec / (1000 * 60.0));
 
   printf("Running Fast Version\n");
-  TimerStart(&mytimer);
+  mytimer.reset();
   MRISaverageGradientsFast(mrisB, num_avgs);
-  msec = TimerStop(&mytimer);
+  msec = mytimer.milliseconds();
   printf("Fast %6.2f min\n", msec / (1000 * 60.0));
 
   printf("Checking for differences\n");
@@ -13279,7 +13279,7 @@ MRI *MRISsmoothKernel(MRIS *surf, MRI *src, MRI *mask, MRI *mrikern, MATRIX *glo
   double *kern;
   int n, nhops;
   SURFHOPLIST **shl;
-  struct timeb mytimer;
+  Timer mytimer;
   int msecTime;
 
   if (mrikern && globkern) {
@@ -13320,7 +13320,7 @@ MRI *MRISsmoothKernel(MRIS *surf, MRI *src, MRI *mask, MRI *mrikern, MATRIX *glo
   crslut = MRIScrsLUT(surf, src);
 
   if (*pshl == NULL) {
-    TimerStart(&mytimer);
+    mytimer.reset();
     printf("Allocating shl %d\n", surf->nvertices);
     shl = (SURFHOPLIST **)calloc(sizeof(SURFHOPLIST *), surf->nvertices);
     ROMP_PF_begin
@@ -13338,14 +13338,14 @@ MRI *MRISsmoothKernel(MRIS *surf, MRI *src, MRI *mask, MRI *mrikern, MATRIX *glo
     ROMP_PF_end
     
     *pshl = shl;
-    msecTime = TimerStop(&mytimer);
+    msecTime = mytimer.milliseconds();
     printf("Done allocating shl %d, %g sec\n", surf->nvertices, msecTime / 1000.0);
   }
   else
     shl = *pshl;
 
   printf("Starting loop over %d vertices\n", surf->nvertices);
-  TimerStart(&mytimer);
+  mytimer.reset();
   ROMP_PF_begin
 #ifdef _OPENMP
   #pragma omp parallel for if_ROMP(experimental)
@@ -13411,7 +13411,7 @@ MRI *MRISsmoothKernel(MRIS *surf, MRI *src, MRI *mask, MRI *mrikern, MATRIX *glo
   ROMP_PF_end
   
   printf("\n");
-  msecTime = TimerStop(&mytimer);
+  msecTime = mytimer.milliseconds();
   printf("Finished loop over %d vertices, %d hops, t=%g sec\n", surf->nvertices, nhops, msecTime / 1000.0);
 
   printf("vtxval %g\n", MRIFseq_vox(out, 1031, 0, 0, 0));

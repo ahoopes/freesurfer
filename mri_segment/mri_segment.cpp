@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
   MRI     *mri_src, *mri_dst, *mri_tmp=NULL, *mri_labeled, *mri_labels=NULL;
   char    *input_file_name, *output_file_name ;
   int     nargs, i, msec ;
-  struct timeb  then ;
+  Timer then ;
   float   white_mean, white_sigma, gray_mean, gray_sigma ;
 
   char cmdline[CMD_LINE_LEN] ;
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     usage_exit(1);
   }
 
-  TimerStart(&then) ;
+  then.reset() ;
   input_file_name = argv[1] ;
   output_file_name = argv[2] ;
 
@@ -391,7 +391,7 @@ int main(int argc, char *argv[])
 
 
   MRIfree(&mri_src) ;
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   printf("white matter segmentation took %2.1f minutes\n",
           (float)msec/(1000.0f*60.0f));
   fflush(stdout);

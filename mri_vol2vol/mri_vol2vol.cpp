@@ -2173,7 +2173,7 @@ MRI *MRIvol2volGCAM(MRI *src, LTA *srclta, GCA_MORPH *gcam, LTA *dstlta, MRI *vs
   double val,v;
   MRI_BSPLINE * bspline = NULL;
   float drvsm, *valvect;
-  struct timeb timer;
+  Timer timer;
 
   if(!vsm) printf("MRIvol2volGCAM(): VSM not used\n");
   if(!gcam) printf("MRIvol2volGCAM(): GCAM not used\n");
@@ -2240,7 +2240,7 @@ MRI *MRIvol2volGCAM(MRI *src, LTA *srclta, GCA_MORPH *gcam, LTA *dstlta, MRI *vs
   crsAnat = MatrixAlloc(4,1,MATRIX_REAL);
   crsAnat->rptr[4][1] = 1;
   // scroll thru the CRS in the output/dest volume
-  TimerStart(&timer);
+  timer.reset();
   for(c=0; c < dst->width; c++){
     for(r=0; r < dst->height; r++){
       for(s=0; s < dst->depth; s++){
@@ -2327,7 +2327,7 @@ MRI *MRIvol2volGCAM(MRI *src, LTA *srclta, GCA_MORPH *gcam, LTA *dstlta, MRI *vs
   if(bspline) MRIfreeBSpline(&bspline);
   free(valvect);
 
-  printf("MRIvol2volGCAM: t=%6.4f\n",TimerStop(&timer)/1000.0);
+  printf("MRIvol2volGCAM: t=%6.4f\n", timer.seconds());
   fflush(stdout);
 
   return(dst);

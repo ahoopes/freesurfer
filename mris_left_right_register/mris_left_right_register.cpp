@@ -127,7 +127,6 @@ main(int argc, char *argv[])
   float        *lh_coords[3], *rh_coords[3], **coords ;
 
   char cmdline[CMD_LINE_LEN] ;
-  struct  timeb start ;
 
   make_cmd_version_string
   (argc, argv,
@@ -146,7 +145,7 @@ main(int argc, char *argv[])
   }
   argc -= nargs;
 
-  TimerStart(&start) ;
+  Timer start;
   Progname = argv[0] ;
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
@@ -369,7 +368,7 @@ main(int argc, char *argv[])
     free(lh_coords[i]) ;
     free(rh_coords[i]) ;
   }
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   if (Gdiag & DIAG_SHOW)
     printf("registration took %2.2f hours\n",
            (float)msec/(1000.0f*60.0f*60.0f));

@@ -84,7 +84,7 @@ main(int argc, char *argv[])
   int    ac, nargs, i ;
   char   *subject, *reg_fname, *in_fname, *out_fname, *cp ;
   int    msec, minutes, seconds, nvox, float2int, layer, width, height, depth ;
-  struct timeb start ;
+  Timer start ;
   MRI_SURFACE *mris;
   MRI         *mri_aseg, *mri_layers, *mri_tmp, *mri_in,
     *mri_interior_bottom, *mri_interior_top, *mri_fractions ;
@@ -120,7 +120,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   printf("reading registration file %s\n", reg_fname) ;
   if (stricmp(reg_fname, "identity.nofile") == 0)
@@ -289,7 +289,7 @@ main(int argc, char *argv[])
   printf("writing layer labeling to %s\n", out_fname) ;
   MRIwrite(mri_fractions, out_fname) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

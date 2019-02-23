@@ -113,10 +113,10 @@ MRI *inputlist[100], *masklist[100], *outputlist[100];
 /*---------------------------------------------------------------*/
 int main(int argc, char *argv[]) {
   int nargs,err,n;
-  struct timeb timer;
+  Timer timer;
   double vthresh;
 
-  TimerStart(&timer);
+  timer.reset();
 
   cmdargs = (CMDARGS *)calloc(sizeof(CMDARGS),1);
   cmdargs->ninputs = 0;

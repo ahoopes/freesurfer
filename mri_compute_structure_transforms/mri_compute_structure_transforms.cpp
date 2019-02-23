@@ -59,7 +59,7 @@ main(int argc, char *argv[]) {
   int          ac, nargs, x, y, z, n, i, label ;
   char         *m3z_fname, *out_dir, fname[STRLEN] ;
   int          msec, minutes, seconds, label_counts[MAX_CMA_LABELS] ;
-  struct timeb start ;
+  Timer start ;
   GCA_MORPH      *gcam ;
   TRANSFORM      _transform, *transform = &_transform ;
   MATRIX         *mX, *mY, *m, *mXinv ;
@@ -77,7 +77,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -152,7 +152,7 @@ main(int argc, char *argv[]) {
     }
   }
   MRIfree(&mri_aseg) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

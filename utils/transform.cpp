@@ -603,7 +603,7 @@ int LTAwrite(LTA *lta, const char *fname)
   if (!user)
     user = "UNKNOWN" ;
   fprintf(fp, "# transform file %s\n# created by %s on %s\n",
-          fname, user, current_date_time()) ;
+          fname, user, currentDateTime().c_str()) ;
   fprintf(fp, "type      = %d ", lta->type) ;
   if(lta->type == LINEAR_VOX_TO_VOX) fprintf(fp, "# LINEAR_VOX_TO_VOX");
   if(lta->type == LINEAR_RAS_TO_RAS) fprintf(fp, "# LINEAR_RAS_TO_RAS");
@@ -3353,7 +3353,7 @@ LTAwriteEx(const LTA *lta, const char *fname)
   user = getenv("USER");
   if (!user) user = getenv("LOGNAME");
   if (!user) user = "UNKNOWN";
-  fprintf(fp, "# transform file %s\n# created by %s on %s\n", fname, user, current_date_time());
+  fprintf(fp, "# transform file %s\n# created by %s on %s\n", fname, user, currentDateTime().c_str());
   LTAprint(fp, lta);
   fclose(fp);
 

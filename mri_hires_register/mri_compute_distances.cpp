@@ -82,11 +82,11 @@ main(int argc, char *argv[]) {
   char         **av ;
   int          ac, nargs ;
   MRI          *mri1, *mri2 ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds, i, label ;
   double       dist, sigma = 0;
 
-  TimerStart(&start) ;
+  start.reset() ;
   setRandomSeed(-1L) ;
   DiagInit(NULL, NULL, NULL) ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -133,7 +133,7 @@ main(int argc, char *argv[]) {
             label, cma_label_to_name(label), dist,sigma) ;
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

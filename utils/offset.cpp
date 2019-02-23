@@ -72,18 +72,18 @@
 IMAGE *ImageCalculateOffset(IMAGE *Ix, IMAGE *Iy, int wsize, IMAGE *Ioffset)
 {
   static IMAGE *Iorient = NULL, *Idir = NULL;
-  struct timeb then;
+  Timer then;
   int msec;
 
-  if (Gdiag & DIAG_TIMER) TimerStart(&then);
+  if (Gdiag & DIAG_TIMER) then.reset();
   Iorient = ImageOffsetOrientation(Ix, Iy, wsize, Iorient);
 
   if ((Gdiag & DIAG_WRITE) && (Gdiag & DIAG_VERBOSE)) ImageWrite(Iorient, "orient.hipl");
 
   if (Gdiag & DIAG_TIMER) {
-    msec = TimerStop(&then);
+    msec = then.milliseconds();
     fprintf(stderr, "orientation took  %2.3f sec\n", (float)msec / 1000.0f);
-    TimerStart(&then);
+    then.reset();
   }
 
   Idir = ImageOffsetDirection(Ix, Iy, wsize, Iorient, Idir);
@@ -91,7 +91,7 @@ IMAGE *ImageCalculateOffset(IMAGE *Ix, IMAGE *Iy, int wsize, IMAGE *Ioffset)
   if ((Gdiag & DIAG_WRITE) && (Gdiag & DIAG_VERBOSE)) ImageWrite(Idir, "dir.hipl");
 
   if (Gdiag & DIAG_TIMER) {
-    msec = TimerStop(&then);
+    msec = then.milliseconds();
     fprintf(stderr, "direction took  %2.3f sec\n", (float)msec / 1000.0f);
   }
 

@@ -75,7 +75,7 @@ main(int argc, char *argv[])
   GCA          *gca ;
   int          ac, nargs, msec, minutes, seconds;
   int          input, ninputs ;
-  struct timeb start ;
+  Timer start ;
   TRANSFORM    *transform ;
   char         cmdline[CMD_LINE_LEN], line[STRLEN], *cp, sdir[STRLEN], base_name[STRLEN] ;
   FILE         *fp ;
@@ -130,7 +130,7 @@ main(int argc, char *argv[])
   if (transform == NULL)
     ErrorExit(ERROR_NOFILE, "%s: could not read transform from %s", Progname, xform_fname) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   FileNamePath(argv[1], sdir) ;
   cp = strrchr(sdir, '/') ; 
@@ -224,7 +224,7 @@ main(int argc, char *argv[])
   if (gca)
     GCAfree(&gca) ;
   printf("done.\n") ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

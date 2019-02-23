@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
   int csizen;
   int nClusters, cmax,rmax,smax;
   SURFCLUSTERSUM *SurfClustList;
-  struct timeb  mytimer;
+  Timer mytimer;
   LABEL *clabel;
   FILE *fp, *fpLog=NULL;
   float **ppVal, **ppSig, **ppVal0, **ppSig0, **ppZ, **ppZ0;
@@ -399,9 +399,9 @@ int main(int argc, char *argv[]) {
   // Start the simulation loop
   printf("\n\nStarting Simulation over %d Repetitions\n",nRepetitions);
   if(fpLog) fprintf(fpLog,"\n\nStarting Simulation over %d Repetitions\n",nRepetitions);
-  TimerStart(&mytimer) ;
+  mytimer.reset() ;
   for(nthRep = 0; nthRep < nRepetitions; nthRep++){
-    msecTime = TimerStop(&mytimer) ;
+    msecTime = mytimer.milliseconds() ;
     printf("%5d %7.2f ",nthRep,(msecTime/1000.0)/60);
     fflush(stdout);
     if(fpLog) {
@@ -505,7 +505,7 @@ int main(int argc, char *argv[]) {
 
   SaveOutput();
 
-  msecTime = TimerStop(&mytimer) ;
+  msecTime = mytimer.milliseconds() ;
   printf("Total Sim Time %g min (%g per rep)\n",
 	 msecTime/(1000*60.0),(msecTime/(1000*60.0))/nthRep);
   if(fpLog) fprintf(fpLog,"Total Sim Time %g min (%g per rep)\n",

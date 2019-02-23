@@ -143,7 +143,7 @@ main(int argc, char *argv[]) {
   int          ac, nargs, n, num_class1, num_class2, i, width, height, depth,
   awidth, aheight, adepth ;
   LABEL        *area ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds ;
   VL           ***voxel_labels_class1 = NULL, ***voxel_labels_class2=NULL,
                                         ***vls ;
@@ -168,7 +168,7 @@ main(int argc, char *argv[]) {
     argv += nargs ;
   }
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   /* subject_name hemi surface curvature */
   if (argc < 7)
@@ -390,7 +390,7 @@ main(int argc, char *argv[]) {
     VLwrite(vli2, vl2_name) ;
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

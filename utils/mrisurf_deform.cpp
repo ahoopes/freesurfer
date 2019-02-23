@@ -12623,8 +12623,7 @@ int MRISrigidBodyAlignGlobal(
   float const max_radians = RADIANS(max_degrees);
 
   printf("Starting MRISrigidBodyAlignGlobal()\n");
-  struct timeb mytimer;
-  TimerStart(&mytimer);
+  Timer mytimer;
 
   int const old_norm = parms->abs_norm;
   parms->abs_norm = 1;
@@ -12662,8 +12661,7 @@ int MRISrigidBodyAlignGlobal(
   if (use_new) {
   
     printf("Starting new MRISrigidBodyAlignGlobal_findMinSSE()\n");
-    struct timeb new_timer;
-    TimerStart(&new_timer);
+    Timer new_timer;
     
     // This does not modify either mris or params until after the old code has executed
     //
@@ -12680,7 +12678,7 @@ int MRISrigidBodyAlignGlobal(
     parms->start_t += 1.0f;
     parms->t       += 1.0f;
 
-    int msec = TimerStop(&new_timer);
+    int msec = new_timer.milliseconds();
     printf("  new MRISrigidBodyAlignGlobal_findMinSSE"
       " min @ (%2.2f, %2.2f, %2.2f) sse = %2.1f, elapsed since starting=%6.4f min\n",
       (float)DEGREES(new_mina), (float)DEGREES(new_minb), (float)DEGREES(new_ming), new_sse,
@@ -12691,8 +12689,7 @@ int MRISrigidBodyAlignGlobal(
   if (use_old) {
 
     printf("Starting old MRISrigidBodyAlignGlobal_findMinSSE()\n");
-    struct timeb old_timer;
-    TimerStart(&old_timer);
+    Timer old_timer;
  
     // Note: 
     //      This used to do a series of smaller and smaller rotations to mris_sphere, rotating the sphere to the minimum each time.
@@ -12783,7 +12780,7 @@ int MRISrigidBodyAlignGlobal(
         }
       }      // alpha
     
-      int msec = TimerStop(&old_timer);
+      int msec = old_timer.milliseconds();
       printf("  min @ (%2.2f, %2.2f, %2.2f) sse = %2.1f, elapsed since starting=%6.4f min\n",
         (float)DEGREES(mina), (float)DEGREES(minb), (float)DEGREES(ming),
         (float)(min_sse + ext_sse),
@@ -12812,7 +12809,7 @@ int MRISrigidBodyAlignGlobal(
 
     old_mina = center_a; old_minb = center_b, old_ming = center_g, old_sse = center_sse;
 
-    int msec = TimerStop(&old_timer);
+    int msec = old_timer.milliseconds();
     printf("  old MRISrigidBodyAlignGlobal_findMinSSE"
       " min @ (%2.2f, %2.2f, %2.2f) sse = %2.1f, elapsed since starting=%6.4f min\n",
       (float)DEGREES(old_mina), (float)DEGREES(old_minb), (float)DEGREES(old_ming), old_sse,
@@ -12850,7 +12847,7 @@ int MRISrigidBodyAlignGlobal(
   mris->status    = old_status;
   parms->abs_norm = old_norm;
 
-  int msec = TimerStop(&mytimer);
+  int msec = mytimer.milliseconds();
   printf("MRISrigidBodyAlignGlobal() done %6.2f min\n", msec / (1000 * 60.0));
 
   return (NO_ERROR);

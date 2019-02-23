@@ -107,7 +107,7 @@ main(int argc, char *argv[]) {
   MRI    *mri_flash[MAX_IMAGES], *mri_T1, *mri_PD ;
   char   *in_fname, *out_PD_fname, *out_T1_fname ;
   int          msec, minutes, seconds, nvolumes ;
-  struct timeb start ;
+  Timer start ;
 
   /* rkt: check for and handle version tag */
   nargs = handle_version_option (argc, argv, "$Id: mri_estimate_tissue_parms.c,v 1.10 2015/03/12 20:24:06 zkaufman Exp $", "$Name:  $");
@@ -119,7 +119,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   parms.dt = 1e-6 ;
   parms.tol = 1e-5 ;
   parms.momentum = 0.0 ;
@@ -201,13 +201,12 @@ main(int argc, char *argv[]) {
   {
     double   sse, last_T1, last_PD, total_rms, avg_rms ;
     int      x, y, z, width, height, depth, total_vox, ignored, nvox ;
-    struct timeb first_slice ;
 
     Progname = argv[0] ;
     ErrorInit(NULL, NULL, NULL) ;
     DiagInit(NULL, NULL, NULL) ;
 
-    TimerStart(&first_slice) ;
+    Timer first_slice;
 
     last_T1 = last_PD = 1000 ;
     sse = 0.0 ;
@@ -242,7 +241,7 @@ main(int argc, char *argv[]) {
       if (z > 0 && z*width*height - ignored > 0) {
         int processed = z*width*height - ignored, hours ;
 
-        msec = TimerStop(&first_slice) ;
+        msec = first_slice.milliseconds() ;
         seconds = nint((float)msec/1000.0f) ;
         minutes = seconds / 60 ;
         seconds = seconds % 60 ;
@@ -376,7 +375,7 @@ main(int argc, char *argv[]) {
   }
   MRIfree(&mri_T1) ;
   MRIfree(&mri_PD) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

@@ -198,7 +198,7 @@ main(int argc, char **argv)
   MRI           *mri_dist, *mri_src ;
   LABEL         *area, *ltmp ;
   int           msec, nargs ;
-  struct timeb  then ;
+  Timer then ;
 
   make_cmd_version_string(argc, argv,
                           "$Id: mris_register_to_label.c,v 1.3 2013/06/07 18:56:17 fischl Exp $",
@@ -217,7 +217,7 @@ main(int argc, char **argv)
   DiagInit(NULL, NULL, NULL) ;
   Gdiag |= DIAG_SHOW ;
 
-  TimerStart(&then) ;
+  then.reset() ;
   if(argc == 0) 
     usage_exit();
 
@@ -290,7 +290,7 @@ main(int argc, char **argv)
     regio_write_surfacexform_to_register_dat(R0, outregfile, mris, mri_src, subject, FLT2INT_ROUND) ;
   else
     write_lta(R0,  outregfile, mri_dist, mri_src) ;
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,
           "registration took %2.1f minutes\n", (float)msec/(60*1000.0f));
   exit(0) ;

@@ -58,7 +58,7 @@ main(int argc, char *argv[]) {
   int          ac, nargs;
   char         path[STRLEN], out_surf_fname[STRLEN], *cp ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI_SURFACE  *mris_in, *mris_out ;
 
   /* rkt: check for and handle version tag */
@@ -71,7 +71,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -137,7 +137,7 @@ main(int argc, char *argv[]) {
 
   printf("writing output to %s\n", out_patch_fname) ;
   MRISwritePatch(mris_out, out_patch_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

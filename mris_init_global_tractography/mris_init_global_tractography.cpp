@@ -132,7 +132,7 @@ main(int argc, char *argv[]) {
   char         fname[STRLEN], *subject, base_name[STRLEN] ;
   int          nargs, x, y, z, labels[MAX_LABELS], label_found[MAX_LABELS], nlabels ;
   int          msec, minutes, seconds, label, label2 ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri_aseg, *mri_wm, *mri_label1_dist, *mri_dist_grad, *mri_smooth, *mri_wm_dist ;
   VOXEL_LIST   **vl_splines[MAX_LABELS], *vl ;
   CMAT         *cmat ;
@@ -150,7 +150,7 @@ main(int argc, char *argv[]) {
   DiagInit(NULL, NULL, NULL) ;
 
   FSinit() ;
-  TimerStart(&start) ;
+  start.reset() ;
 
   for ( ; argc > 1 && ISOPTION(*argv[1]) ; argc--, argv++) {
     nargs = get_option(argc, argv) ;
@@ -459,7 +459,7 @@ main(int argc, char *argv[]) {
     }
 
   CMATwrite(cmat, argv[3]) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

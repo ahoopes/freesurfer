@@ -62,7 +62,7 @@ main(int argc, char *argv[])
   int           ac, nargs, eno, nv, nf, ne;
   MRI_SURFACE   *mris;
   int           msec, minutes, seconds;
-  struct timeb start ;
+  Timer start ;
   double        total_volume ;
   MRI           *mri_aseg ;
 
@@ -79,7 +79,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -124,7 +124,7 @@ main(int argc, char *argv[])
 
   total_volume = MRIScomputeWhiteVolume(mris, mri_aseg, resolution) ;
   printf("%g\n", total_volume);
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

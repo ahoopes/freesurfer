@@ -764,7 +764,6 @@ int MRISregister(MRI_SURFACE *mris,
   MRI_SP *mrisp;
   char fname[STRLEN], base_name[STRLEN], path[STRLEN];
   double base_dt;
-  struct timeb start;
   int first = 1;
   INTEGRATION_PARMS saved_parms;
 
@@ -781,7 +780,7 @@ int MRISregister(MRI_SURFACE *mris,
   if (IS_QUADRANGULAR(mris)) {
     MRISremoveTriangleLinks(mris);
   }
-  TimerStart(&start);
+  Timer start;
   FileNamePath(mris->fname, path);
   sprintf(base_name, "%s/%s.%s", path, mris->hemisphere == LEFT_HEMISPHERE ? "lh" : "rh", parms->base_name);
 
@@ -1149,7 +1148,7 @@ int MRISregister(MRI_SURFACE *mris,
   MRISPfree(&parms->mrisp) ;
   MRISPfree(&parms->mrisp_template) ;
 #endif
-  msec = TimerStop(&start);
+  msec = start.milliseconds();
   if (Gdiag & DIAG_SHOW) fprintf(stdout, "registration took %2.2f hours\n", (float)msec / (1000.0f * 60.0f * 60.0f));
   if (Gdiag & DIAG_WRITE) {
     fprintf(parms->fp, "registration took %2.2f hours\n", (float)msec / (1000.0f * 60.0f * 60.0f));
@@ -1179,7 +1178,6 @@ int MRISvectorRegister(MRI_SURFACE *mris,
   VERTEX *v;
   char fname[STRLEN], base_name[STRLEN], path[STRLEN];
   double base_dt;
-  struct timeb start;
   static int first = 1;
   int n, fno, ncorrs;
   int *frames, nframes, nf, *indices;
@@ -1189,7 +1187,7 @@ int MRISvectorRegister(MRI_SURFACE *mris,
   if (IS_QUADRANGULAR(mris)) {
     MRISremoveTriangleLinks(mris);
   }
-  TimerStart(&start);
+  Timer start;
   MRISsaveVertexPositions(mris, ORIGINAL_VERTICES);
   FileNamePath(mris->fname, path);
   sprintf(base_name, "%s/%s.%s", path, mris->hemisphere == LEFT_HEMISPHERE ? "lh" : "rh", parms->base_name);
@@ -1543,7 +1541,7 @@ int MRISvectorRegister(MRI_SURFACE *mris,
   free(frames);
   free(indices);
 
-  msec = TimerStop(&start);
+  msec = start.milliseconds();
   if (Gdiag & DIAG_SHOW) fprintf(stdout, "registration took %2.2f hours\n", (float)msec / (1000.0f * 60.0f * 60.0f));
   if (Gdiag & DIAG_WRITE)
     fprintf(parms->fp, "registration took %2.2f hours\n", (float)msec / (1000.0f * 60.0f * 60.0f));
@@ -2155,7 +2153,6 @@ MRI_SURFACE *MRISunfold(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int max_pas
 {
   int base_averages, i, nbrs[MAX_NBHD_SIZE], niter, passno, msec, use_nl_area;
   double starting_sse, ending_sse, l_area, pct_error;
-  struct timeb start;
 
   printf("MRISunfold() max_passes = %d -------\n", max_passes);
   mrisLogIntegrationParms(stdout, mris, parms);
@@ -2166,7 +2163,7 @@ MRI_SURFACE *MRISunfold(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int max_pas
   if (IS_QUADRANGULAR(mris)) {
     MRISremoveTriangleLinks(mris);
   }
-  TimerStart(&start);
+  Timer start;
   starting_sse = ending_sse = 0.0f; /* compiler warning */
   memset(nbrs, 0, MAX_NBHD_SIZE * sizeof(nbrs[0]));
 #if 0
@@ -2436,7 +2433,7 @@ MRI_SURFACE *MRISunfold(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int max_pas
   pct_error = MRISpercentDistanceError(mris);
   fprintf(stdout, "final distance error %%%2.2f\n", (float)pct_error);
   mrisProjectSurface(mris);
-  msec = TimerStop(&start);
+  msec = start.milliseconds();
   if (Gdiag & DIAG_SHOW) {
     mrisLogStatus(mris, parms, stderr, 0, -1);
     fprintf(stdout, "optimization complete.\n");
@@ -2465,11 +2462,10 @@ MRI_SURFACE *MRISquickSphere(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int ma
 {
   int niter, passno, msec, nbrs[MAX_NBHD_SIZE], i, use_dists, base_averages;
   double pct_error, orig_k, last_sse, sse, pct_change;
-  struct timeb start;
 
   orig_k = NEG_AREA_K;
 
-  TimerStart(&start);
+  Timer start;
 
   if (IS_QUADRANGULAR(mris)) {
     MRISremoveTriangleLinks(mris);
@@ -2569,7 +2565,7 @@ MRI_SURFACE *MRISquickSphere(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int ma
   pct_error = MRISpercentDistanceError(mris);
   fprintf(stdout, "final distance error %%%2.2f\n", (float)pct_error);
   mrisProjectSurface(mris);
-  msec = TimerStop(&start);
+  msec = start.milliseconds();
   if (Gdiag & DIAG_SHOW) {
     mrisLogStatus(mris, parms, stderr, 0, -1);
     fprintf(stdout, "optimization complete.\n");

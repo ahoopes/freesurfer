@@ -115,7 +115,7 @@ main(int argc, char *argv[]) {
   MRI           *mri_flash1, *mri_flash2, *mri_masked, *mri_masked_smooth, *mri_kernel,
   *mri_mean, *mri_dif, *mri_binary, *mri_distance ;
   MRI *mri_smooth, *mri_grad, *mri_inner ;
-  struct timeb  then ;
+  Timer then ;
   double        l_spring ;
   MRI_SEGMENTATION *mriseg ;
 
@@ -176,7 +176,7 @@ main(int argc, char *argv[]) {
   if (parms.momentum < 0.0)
     parms.momentum = 0.0 /*0.75*/ ;
 
-  TimerStart(&then) ;
+  then.reset() ;
   T1_fname = argv[1] ;
   PD_fname = argv[2] ;
   output_dir = argv[3] ;
@@ -252,7 +252,7 @@ main(int argc, char *argv[]) {
 
   MRISwrite(mris, "inner_skull.tri") ;
 
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,"positioning took %2.1f minutes\n", (float)msec/(60*1000.0f));
   exit(0) ;
   return(0) ;  /* for ansi */

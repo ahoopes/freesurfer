@@ -63,7 +63,7 @@ main(int argc, char *argv[]) {
   int    ac, nargs ;
   int    msec, minutes, seconds,  i  ;
   LABEL  *area ;
-  struct timeb start ;
+  Timer start ;
   MRI    *mri,  *mri_seg ;
   double xw, yw, zw, xv, yv, zv, val;
 
@@ -77,7 +77,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -257,7 +257,7 @@ main(int argc, char *argv[]) {
       }
     }
   }
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

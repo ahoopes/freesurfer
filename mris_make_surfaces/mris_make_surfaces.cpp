@@ -333,7 +333,7 @@ int main(int argc, char *argv[])
   float         max_len ;
   float         white_mean, white_std, gray_mean, gray_std ;
   double        current_sigma, thresh = 0, spring_scale = 1;
-  struct timeb  then ;
+  Timer then ;
   M3D           *m3d ;
   INTEGRATION_PARMS old_parms ;
   int memusage[5];
@@ -411,7 +411,7 @@ int main(int argc, char *argv[])
     parms.momentum = 0.0 /*0.75*/ ;
   }
 
-  TimerStart(&then) ;
+  then.reset() ;
   sname = argv[1] ;
   hemi = argv[2] ;
   if (!strlen(sdir))
@@ -1307,7 +1307,7 @@ int main(int argc, char *argv[])
   }
 
   if (white_only)  {
-    msec = TimerStop(&then) ;
+    msec = then.milliseconds() ;
     printf("refinement took %2.1f minutes\n", (float)msec/(60*1000.0f));
     MRIfree(&mri_T1);
     printf("#VMPC# mris_make_surfaces VmPeak  %d\n",GetVmPeak());
@@ -2162,7 +2162,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stdout,"positioning took %2.1f minutes\n", (float)msec/(60*1000.0f));
 
   printf("#VMPC# mris_make_surfaces VmPeak  %d\n",GetVmPeak());
@@ -4077,7 +4077,7 @@ compute_pial_target_locations(MRI_SURFACE *mris,
   double    last_white, dist_to_white, dist_to_pial, last_dist_to_pial  ;
 //  double last_pial ; 
   MRI       *mri_filled, *mri_filled_pial, *mri_tmp, *mri_dist_lh, *mri_dist_rh, *mri_dist_white, *mri_dist_pial ;
-  struct timeb then;
+  Timer then;
   
   printf("starting compute_pial_target_locations()\n");
   pix_size = (mri_T2->xsize+mri_T2->ysize + mri_T2->zsize)/3 ;
@@ -4090,7 +4090,7 @@ compute_pial_target_locations(MRI_SURFACE *mris,
 	 left_inside_peak_pct, right_inside_peak_pct, left_outside_peak_pct,  right_outside_peak_pct) ;
   printf("wm_weight = %g, nlabels=%d, contrast_type=%d\n",wm_weight,nlabels,contrast_type);
   fflush(stdout);
-  TimerStart(&then);
+  then.reset();
 
   if (mri_aseg)  {
     // Set the aseg to 0 if T1*1.1 > T2
@@ -4110,7 +4110,7 @@ compute_pial_target_locations(MRI_SURFACE *mris,
     }
     // I think these are volumes where the voxel value indicates the signed
     // distance from the voxel to the surface
-    printf("Creating lowres distance volumes t=%g\n", (float)TimerStop(&then)/(60*1000.0f)); fflush(stdout);
+    printf("Creating lowres distance volumes t=%g\n", then.minutes()); fflush(stdout);
     mri_dist_lh = MRIcloneDifferentType(mri_aseg, MRI_FLOAT) ;
     mri_dist_rh = MRIcloneDifferentType(mri_aseg, MRI_FLOAT) ;
     MRIdistanceTransform(mri_aseg, mri_dist_lh, Left_Cerebral_Cortex, 100, DTRANS_MODE_SIGNED, NULL) ;
@@ -4121,7 +4121,7 @@ compute_pial_target_locations(MRI_SURFACE *mris,
   MRISrestoreVertexPositions(mris, WHITE_VERTICES) ;
 
   // Create a distance volume at twice the size. This can be quite big
-  printf("Creating distance volumes t=%g\n", (float)TimerStop(&then)/(60*1000.0f)); fflush(stdout);
+  printf("Creating distance volumes t=%g\n", then.minutes()); fflush(stdout);
   mri_tmp = MRISfillInterior(mris, mri_T2->xsize/2, NULL) ;
   mri_filled = MRIextractRegionAndPad(mri_tmp, NULL, NULL, nint(30/mri_T2->xsize)) ; 
   MRIfree(&mri_tmp) ;
@@ -4148,7 +4148,7 @@ compute_pial_target_locations(MRI_SURFACE *mris,
 
   printf("locating cortical regions not in interior range [%2.1f --> %2.1f], and not in exterior range [%2.1f --> %2.1f]\n",
          min_gray_inside, max_gray_inside, min_gray_outside, max_gray_outside) ;fflush(stdout);
-  printf("t = %g\n",(float)TimerStop(&then)/(60*1000.0f));
+  printf("t = %g\n",then.minutes());
 
   for (n = 0 ; n < nlabels ; n++)
     LabelMarkSurface(labels[n], mris) ;
@@ -4170,7 +4170,7 @@ compute_pial_target_locations(MRI_SURFACE *mris,
       DiagBreak() ;
 
     if(vno%20000==0){
-      printf("   vno = %d, t = %g\n",vno,(float)TimerStop(&then)/(60*1000.0f));
+      printf("   vno = %d, t = %g\n",vno,then.minutes());
       fflush(stdout);
     }
 
@@ -4746,7 +4746,7 @@ compute_pial_target_locations(MRI_SURFACE *mris,
     } 
 
   } // end loop over vertices
-  printf("CPTL: t = %g\n",(float)TimerStop(&then)/(60*1000.0f));
+  printf("CPTL: t = %g\n",then.minutes());
   fflush(stdout);
 
   if (Gdiag & DIAG_WRITE)  {

@@ -69,7 +69,7 @@ main(int argc, char *argv[])
   int          nargs, a ;
   char         *subject, fname[STRLEN], *out_dir, fname_only[STRLEN] ;
   int          msec, minutes, seconds, n ;
-  struct timeb start ;
+  Timer start ;
   MRI_SURFACE  *mris, *mris_ohemi ;
   MRI          *mri_norm, *mri_patches, *mri_labels, *mri_onorm ;
   LABEL        *area_tmp, *area ;
@@ -96,7 +96,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   setRandomSeed(-1L) ;
 
   for ( ; argc > 1 && ISOPTION(*argv[1]) ; argc--, argv++)
@@ -337,7 +337,7 @@ main(int argc, char *argv[])
   printf("writing output file %s\n", fname) ;
   MRIwrite(mri_labels, fname) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

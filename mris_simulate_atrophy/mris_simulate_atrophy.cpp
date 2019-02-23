@@ -98,7 +98,7 @@ main(int argc, char *argv[])
 {
   char        **av, *out_fname, *subject, *hemi, buf[STRLEN], fname[STRLEN] ;
   int          ac, nargs, msec, minutes, seconds, nvox ;
-  struct timeb start ;
+  Timer start ;
   MRI         *mri_norm, *mri_norm_atrophy, *mri_noise, *mri_pial, *mri_seg, *mri_aseg, *mri_cortex,*mri_wm,
     *mri_csf, *mri_subcort_gm, *mri_ribbon, *mri_unpv_intensities, *mri_tmp, *mri_noisy_atrophy, *mri_cortex_atrophy, *mri_csf_atrophy ;
   LABEL       *area ;
@@ -121,7 +121,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -307,7 +307,7 @@ main(int argc, char *argv[])
     }
 #endif
   }
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

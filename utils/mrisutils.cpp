@@ -812,10 +812,10 @@ MRIS *MRISmatchSurfaceToLabel(
   double tol;
   MHT *mht = NULL;
   int avgs = AVERAGES_NBR;
-  struct timeb then;
+  Timer then;
   int msec;
 
-  TimerStart(&then);
+  then.reset();
 
   if (integration_parms == NULL) {
     parms = (INTEGRATION_PARMS *)calloc(1, sizeof(INTEGRATION_PARMS));
@@ -958,7 +958,7 @@ MRIS *MRISmatchSurfaceToLabel(
             last_rms);
   }
 
-  msec = TimerStop(&then);
+  msec = then.milliseconds();
   if (1)  // Gdiag & DIAG_SHOW)
     fprintf(stdout, "positioning took %2.2f minutes\n", (float)msec / (60 * 1000.0f));
 

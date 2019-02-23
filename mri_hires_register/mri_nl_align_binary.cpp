@@ -188,7 +188,7 @@ main(int argc, char *argv[])
 		*mri_dist_target_sup, *mri_dist_source = NULL ;
 #endif
 	MRI_REGION   box ;
-  struct timeb start ;
+  Timer start ;
   int          msec, hours, minutes, seconds, label ;
 	GCA_MORPH    *gcam ;
 	MATRIX       *m_L/*, *m_I*/ ;
@@ -222,7 +222,7 @@ main(int argc, char *argv[])
 	mp.niterations = 1000 ;
 	mp.scale_smoothness = 1 ;
 	
-  TimerStart(&start) ;
+  start.reset() ;
   setRandomSeed(-1L) ;
   DiagInit(NULL, NULL, NULL) ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -606,7 +606,7 @@ main(int argc, char *argv[])
 	if (find_label >= 0)
 		find_gcam_node(gcam, find_label, x_ras, y_ras, z_ras) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
 	hours = seconds / (60*60) ;
   minutes = (seconds/60) % 60 ;

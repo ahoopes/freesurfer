@@ -112,7 +112,7 @@ main(int argc, char *argv[]) {
   char       **av, *mosaic_input_fname, *out_fname ;
   int         ac, nargs, msec, minutes, seconds, nimages, i ;
   int          dx, dy, n, *image_numbers, frame, dx_best, dy_best, skip ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri[MAX_IMAGES], *mri_orig[MAX_IMAGES], *mri_mosaic, *mri_smooth[MAX_IMAGES],
                *mri_weights  ;
   FILE         *fp = NULL ;
@@ -136,7 +136,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   setRandomSeed(-1L) ;
   ac = argc ;
@@ -354,7 +354,7 @@ main(int argc, char *argv[]) {
 
   mri_mosaic = undistort_and_mosaic_images(mri, x0d, y0d, nimages, ax, ay, a, b, c, d, NULL) ;
   MRIwrite(mri_mosaic, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ; minutes = seconds / 60 ; seconds = seconds % 60 ;
   fprintf(stderr, "OCT mosaicing  took %d minutes and %d seconds.\n",  minutes, seconds) ;
   exit(0) ;
@@ -409,7 +409,7 @@ main(int argc, char *argv[]) {
   mri_mosaic = mosaic_images(mri,xbest, ybest, nimages, 0) ;
   MRIwrite(mri_mosaic, out_fname) ;
   
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ; minutes = seconds / 60 ; seconds = seconds % 60 ;
   fprintf(stderr, "OCT mosaicing  took %d minutes and %d seconds.\n",  minutes, seconds) ;
   exit(0) ;

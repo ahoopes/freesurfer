@@ -165,7 +165,7 @@ main(int argc, char *argv[]) {
   FILE         *fp = NULL ;
   double       snr, max_snr ;
   double       **c1_thickness, **c2_thickness ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds ;
 
   /* rkt: check for and handle version tag */
@@ -189,7 +189,7 @@ main(int argc, char *argv[]) {
     argv += nargs ;
   }
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   /* subject_name hemi surface curvature */
   if (argc < 7)
@@ -598,7 +598,7 @@ main(int argc, char *argv[]) {
   sprintf(fname, "./%s.%s_sigvar%d", hemi,prefix, cond_no2) ;
   MRISwriteValues(mris, fname) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

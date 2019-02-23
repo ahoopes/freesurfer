@@ -465,12 +465,11 @@ mrisRegister(MRI_SURFACE *mris, MRI_SP *mrisp_template,
   MRI_SP  *mrisp ;
   char    fname[STRLEN], base_name[STRLEN], path[STRLEN] ;
   double  base_dt ;
-  struct  timeb start ;
   static  int first = 1 ;
 
   if (IS_QUADRANGULAR(mris))
     MRISremoveTriangleLinks(mris) ;
-  TimerStart(&start) ;
+  Timer start;
   MRISsaveVertexPositions(mris, ORIGINAL_VERTICES) ;
   FileNamePath(mris->fname, path) ;
   sprintf(base_name, "%s/%s.%s", path,
@@ -667,7 +666,7 @@ mrisRegister(MRI_SURFACE *mris, MRI_SP *mrisp_template,
 #endif
   MRISPfree(&parms->mrisp) ;
   MRISPfree(&parms->mrisp_template) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   if (Gdiag & DIAG_SHOW)
     fprintf(stdout, "registration took %2.2f hours\n",
             (float)msec/(1000.0f*60.0f*60.0f));

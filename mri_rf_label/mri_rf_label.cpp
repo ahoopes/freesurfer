@@ -111,7 +111,7 @@ main(int argc, char *argv[])
   char         *in_fname, *out_fname,  *rfa_fname, *xform_fname ;
   MRI          *mri_inputs, *mri_labeled, *mri_tmp, *mri_pvals ;
   int          msec, minutes, seconds, ninputs, input ;
-  struct timeb start ;
+  Timer start ;
   TRANSFORM     *transform ;
   RFA          *rfa = NULL ;
   RANDOM_FOREST *rf = NULL ;  // if single_classifier_flag is true
@@ -139,7 +139,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -326,7 +326,7 @@ main(int argc, char *argv[])
     ErrorExit(Gerror, "%s: MRIwrite(%s) failed", Progname, out_fname) ;
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

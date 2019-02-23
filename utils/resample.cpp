@@ -1912,7 +1912,6 @@ MRI *MRIseg2SegPVF(
   float **nperfth, npervox;  // need float for nperf for consistency
   int nhits, segidmax, nthvox, ndc, ndr, nds, nthreads;
   int c, r, s, f, nframesout = 0, outtype = 0, DoSeg;
-  struct timeb timer;
   static int InitNeeded = 1, nvox = 0, *clist = NULL, *rlist = NULL, *slist = NULL, *seg2frame, nthcall = 0;
 
   if (ReInit < 0) {
@@ -1926,7 +1925,7 @@ MRI *MRIseg2SegPVF(
     return (NULL);
   }
 
-  TimerStart(&timer);
+  Timer timer;
 
   if (ct)
     DoSeg = 1;
@@ -2097,7 +2096,7 @@ MRI *MRIseg2SegPVF(
            dsstart,
            ds);
     printf("delta %g %g %g, npervox = %g\n", vg->xsize / ndc, vg->ysize / ndr, vg->zsize / nds, npervox);
-    printf("MRIseg2SegPVF(): starting fill t = %g, nvox=%d\n", TimerStop(&timer) / 1000.0, nvox);
+    printf("MRIseg2SegPVF(): starting fill t = %g, nvox=%d\n", timer.seconds(), nvox);
     fflush(stdout);
   }
 
@@ -2190,7 +2189,7 @@ MRI *MRIseg2SegPVF(
   free(nperfth);
 
   if (nthcall < 4 || Gdiag_no > 0) {
-    printf("MRIseg2SegPVF(): done t = %g, nhits=%d, nthreads=%d\n", TimerStop(&timer) / 1000.0, nhits, nthreads);
+    printf("MRIseg2SegPVF(): done t = %g, nhits=%d, nthreads=%d\n", timer.seconds(), nhits, nthreads);
     fflush(stdout);
   }
   nthcall++;

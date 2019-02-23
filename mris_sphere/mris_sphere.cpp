@@ -116,7 +116,7 @@ main(int argc, char *argv[])
   char         **av, *in_surf_fname, *out_fname, fname[STRLEN], *cp ;
   int          ac, nargs, msec, err ;
   MRI_SURFACE  *mris ;
-  struct timeb then ;
+  Timer then ;
   float        max_dim ;
 
   char cmdline[CMD_LINE_LEN] ;
@@ -137,7 +137,7 @@ main(int argc, char *argv[])
   }
   argc -= nargs;
 
-  TimerStart(&then) ;
+  then.reset() ;
   Progname = argv[0] ;
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
@@ -457,7 +457,7 @@ main(int argc, char *argv[])
   PrintRUsage(RUSAGE_SELF, "mris_sphere ", stdout);
   if(rusage_file) WriteRUsage(RUSAGE_SELF, "", rusage_file);
 
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fflush(stdout); fflush(stderr);
   fprintf(stderr, "spherical transformation took %2.4f hours\n",
           (float)msec/(1000.0f*60.0f*60.0f));

@@ -170,7 +170,7 @@ main(int argc, char *argv[]) {
   char         **av, fname[STRLEN], *cp, *subject_name, subjects_dir[STRLEN],
                *out_fname ;
   int          ac, nargs, n, nsubjects ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds ;
   VOXEL_LIST   *vl_dif, *vl_total ;
 #if 0
@@ -245,7 +245,7 @@ main(int argc, char *argv[]) {
     argv += nargs ;
   }
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   /* subject_name $class1 : $class2 output*/
   if (argc < 3)
@@ -365,7 +365,7 @@ main(int argc, char *argv[]) {
   }
   printf("writing trained classifier to %s...\n", out_fname) ;
   CAwrite(ca, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

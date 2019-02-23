@@ -98,7 +98,7 @@ main(int argc, char *argv[]) {
   char         **av, fname[STRLEN], *out_fname, *subject_name, *cp ;
   int          ac, nargs, i, n, noint = 0, options ;
   int          msec, minutes, seconds, nsubjects, input ;
-  struct timeb start ;
+  Timer start ;
   GCA          *gca ;
   MRI          *mri_seg, *mri_tmp, *mri_inputs ;
   TRANSFORM    *transform ;
@@ -110,7 +110,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   parms.use_gradient = 0 ;
   spacing = 8 ;
@@ -424,7 +424,7 @@ main(int argc, char *argv[]) {
   }
 
   GCAfree(&gca) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

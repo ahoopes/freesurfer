@@ -107,7 +107,7 @@ main(int argc, char *argv[]) {
   MRI          *mri_ref, *mri_in, *mri_orig, *mri_in_red, *mri_ref_red,
   *mri_in_tmp, *mri_ref_tmp, *mri_ref_orig, *mri_in_orig ;
   int          ac, nargs, i, msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MATRIX       *m_L ;
 
   /* rkt: check for and handle version tag */
@@ -192,7 +192,7 @@ main(int argc, char *argv[]) {
   strcpy(parms.base_name, fname) ;
   fprintf(stderr, "logging results to %s.log\n", parms.base_name) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   fprintf(stderr, "reading '%s'...\n", ref_fname) ;
   fflush(stderr) ;
   mri_ref = MRIread(ref_fname) ;
@@ -423,7 +423,7 @@ main(int argc, char *argv[]) {
     MRIfree(&mri_ref) ;
   if (mri_in)
     MRIfree(&mri_in) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

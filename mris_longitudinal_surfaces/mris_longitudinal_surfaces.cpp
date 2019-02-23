@@ -184,7 +184,7 @@ main(int argc, char *argv[])
   float         max_len ;
   float         white_mean, white_std, gray_mean, gray_std ;
   double        l_intensity, current_sigma ;
-  struct timeb  then ;
+  Timer then ;
   M3D           *m3d ;
 
   char cmdline[CMD_LINE_LEN] ;
@@ -250,7 +250,7 @@ main(int argc, char *argv[])
     parms.momentum = 0.0 /*0.75*/ ;
   }
 
-  TimerStart(&then) ;
+  then.reset() ;
   sname = argv[1] ;
   hemi = argv[2] ;
   if (!strlen(sdir))
@@ -728,7 +728,7 @@ main(int argc, char *argv[])
 
   if (white_only)
   {
-    msec = TimerStop(&then) ;
+    msec = then.milliseconds() ;
     fprintf(stderr,
             "refinement took %2.1f minutes\n", (float)msec/(60*1000.0f));
     MRIfree(&mri_T1);
@@ -990,7 +990,7 @@ main(int argc, char *argv[])
       MRISrestoreVertexPositions(mris, TMP_VERTICES) ;
     }
   }
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,"positioning took %2.1f minutes\n", (float)msec/(60*1000.0f));
   exit(0) ;
   return(0) ;  /* for ansi */

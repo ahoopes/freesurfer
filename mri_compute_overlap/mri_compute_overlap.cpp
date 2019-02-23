@@ -72,7 +72,7 @@ main(int argc, char *argv[]) {
   int    ac, nargs, lno, nshared, nvox1, nvox2, total_nvox1, total_nvox2,
     total_nshared, nlabels, i ;
   int          msec, minutes, seconds/*, wrong, total, correct*/ ;
-  struct timeb start ;
+  Timer start ;
   MRI    *mri1, *mri2 ;
   FILE   *log_fp ;
   float  nvox_mean, nunion, total_nunion ;
@@ -91,7 +91,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -303,7 +303,7 @@ main(int argc, char *argv[]) {
     }
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

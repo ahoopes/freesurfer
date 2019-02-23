@@ -180,7 +180,7 @@ main(int argc, char *argv[])
   MRI    *mri_src, *mri_avg = NULL, *mri_tmp ;
   char   *in_fname, *out_fname, *list_fname ;
   int          msec, minutes, seconds, skipped = 0 ;
-  struct timeb start ;
+  Timer start ;
 
   /* rkt: check for and handle version tag */
   nargs = handle_version_option
@@ -195,7 +195,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   parms.dt = 1e-6 ;
   parms.tol = 1e-5 ;
   parms.momentum = 0.0 ;
@@ -546,7 +546,7 @@ main(int argc, char *argv[])
   fprintf(stderr, "writing to %s...\n", out_fname) ;
   MRIwrite(mri_avg, out_fname) ;
   MRIfree(&mri_avg) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

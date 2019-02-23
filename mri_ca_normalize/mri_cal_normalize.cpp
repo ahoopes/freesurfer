@@ -137,7 +137,7 @@ main(int argc, char *argv[])
   GCA          *gca ;
   int          ac, nargs, nsamples, msec, minutes, seconds;
   int          i, struct_samples, norm_samples = 0, n, input, ninputs ;
-  struct timeb start ;
+  Timer start ;
   GCA_SAMPLE   *gcas, *gcas_norm = NULL, *gcas_struct ;
   TRANSFORM    *transform = NULL ;
   char         cmdline[CMD_LINE_LEN], line[STRLEN], *cp, sdir[STRLEN], base_name[STRLEN] ;
@@ -192,7 +192,7 @@ main(int argc, char *argv[])
       ErrorExit(ERROR_NOFILE, "%s: could not read precomputed control points from %s", 
                 Progname, read_ctrl_point_fname) ;
   }
-  TimerStart(&start) ;
+  start.reset() ;
   printf("reading atlas from '%s'...\n", gca_fname) ;
   fflush(stdout) ;
 
@@ -438,7 +438,7 @@ if (0)
   if (gca)
     GCAfree(&gca) ;
   printf("done.\n") ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

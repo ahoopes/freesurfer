@@ -74,7 +74,7 @@ main(int argc, char *argv[])
   GCA          *gca ;
   int          ac, nargs ;
   int          msec, minutes, seconds,err ;
-  struct timeb start ;
+  Timer start ;
   TRANSFORM    *transform ;
 
   Progname = argv[0] ;
@@ -108,7 +108,7 @@ main(int argc, char *argv[])
   gca_fname = argv[3] ;
   out_fname = argv[4] ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   printf("reading atlas '%s'...\n", gca_fname) ;
   fflush(stdout) ;
   gca = GCAread(gca_fname) ;
@@ -150,7 +150,7 @@ main(int argc, char *argv[])
   }
 
   MRIfree(&mri_out)  ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

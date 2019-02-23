@@ -57,7 +57,7 @@ main(int argc, char *argv[]) {
   char         **av, fname[STRLEN], *out_fname, *subject_name, *cp ;
   int          ac, nargs ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri_seg, *mri_dst ;
 
   /* rkt: check for and handle version tag */
@@ -70,7 +70,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -106,7 +106,7 @@ main(int argc, char *argv[]) {
   printf("writing labeled temporal lobe to %s...\n", fname) ;
   MRIwrite(mri_dst, fname) ;
   MRIfree(&mri_dst) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

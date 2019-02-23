@@ -92,7 +92,7 @@ int
 main(int argc, char *argv[])
 {
   MRI    *mri_wm, *mri_aseg, *mri_T1 ;
-  struct timeb  then ;
+  Timer then ;
   int    msec, nargs ;
   char cmdline[CMD_LINE_LEN], *output_file_name,*input_file_name, *edits_file_name ;
 
@@ -105,7 +105,7 @@ main(int argc, char *argv[])
     exit (0);
   }
 
-  TimerStart(&then) ;
+  then.reset() ;
   DiagInit(NULL, NULL, NULL) ;
   ErrorInit(NULL, NULL, NULL) ;
 
@@ -191,7 +191,7 @@ main(int argc, char *argv[])
   printf("writing edited volume to %s....\n", output_file_name) ;
   MRIwrite(mri_wm, output_file_name) ;
 
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr, "auto filling took %2.2f minutes\n",
           (float)msec/(1000.0f*60.0f));
   exit(0) ;

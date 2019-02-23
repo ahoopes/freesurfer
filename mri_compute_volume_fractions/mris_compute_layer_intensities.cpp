@@ -80,7 +80,7 @@ main(int argc, char *argv[])
   char   **av ;
   int    ac, nargs ;
   int    msec, minutes, seconds, i ;
-  struct timeb start ;
+  Timer start ;
   MRI_SURFACE *mris[MAX_LAYERS];
   char        fname[STRLEN] ;
   MRI         *mri_intensities, *mri_volume_fractions, *mri_layer_intensities ;
@@ -106,7 +106,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   if (hemi == NULL)
     ErrorExit(ERROR_BADPARM, "%s: must specify -rh or -lh", Progname) ;
@@ -159,7 +159,7 @@ main(int argc, char *argv[])
   printf("writing layer intensities to %s\n", argv[4]) ;
   MRIwrite(mri_layer_intensities, argv[4]) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

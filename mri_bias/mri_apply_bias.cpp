@@ -55,7 +55,7 @@ main(int argc, char *argv[]) {
   int          ac, nargs ;
   MRI          *mri_orig, *mri_norm, *mri_bias ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
 
   /* rkt: check for and handle version tag */
   nargs = handle_version_option
@@ -70,7 +70,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -108,7 +108,7 @@ main(int argc, char *argv[]) {
   fprintf(stderr, "writing to %s...\n", argv[3]) ;
   MRIwrite(mri_norm, argv[3]) ;
   MRIfree(&mri_norm) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

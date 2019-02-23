@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <utility>
 
-#include "argparse.hpp"
-#include "pointset.hpp"
+#include "argparse.h"
+#include "pointset.h"
 
  
 #include "mri.h"

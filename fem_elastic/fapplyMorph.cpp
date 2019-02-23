@@ -17,7 +17,7 @@
 #include "morph_utils.h"
 
 // FreeSurfer
-#include "argparse.hpp"
+#include "argparse.h"
  
 #include "mri.h"
 

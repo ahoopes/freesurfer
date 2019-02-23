@@ -6,10 +6,10 @@
 #include <map>
 
 #include "mri_seg_overlap.help.xml.h"
-#include "argparse.hpp"
-#include "lut.hpp"
-#include "json.hpp"
-#include "log.hpp"
+#include "argparse.h"
+#include "lut.h"
+#include "json.h"
+#include "log.h"
 
  
 #include "mri.h"

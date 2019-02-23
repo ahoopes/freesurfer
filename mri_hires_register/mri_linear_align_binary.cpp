@@ -195,7 +195,7 @@ main(int argc, char *argv[]) {
       *mri_dist_target = NULL, *mri_whole_source, *mri_whole_target ;
   VOXEL_LIST *vl_target, *vl_source ;
   MRI_REGION  box ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds, label ;
   MATRIX       *m_L ;
 
@@ -203,7 +203,7 @@ main(int argc, char *argv[]) {
   parms.start_t = 0 ;
 
 
-  TimerStart(&start) ;
+  start.reset() ;
   setRandomSeed(-1L) ;
   DiagInit(NULL, NULL, NULL) ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -471,7 +471,7 @@ main(int argc, char *argv[]) {
   LTAsetVolGeom((LTA *)(transform->xform), mri_whole_source, mri_whole_target);
   TransformWrite(transform, out_fname) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

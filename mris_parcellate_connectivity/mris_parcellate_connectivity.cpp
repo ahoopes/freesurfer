@@ -59,7 +59,7 @@ main(int argc, char *argv[]) {
   char         **av, *surf_fname, *parcellation_fname, *cmatrix_fname ;
   int          ac, nargs;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI_SURFACE  *mris, *mris_ico ;
   MRI          *mri_cmatrix ;
   char         fname[STRLEN], *cp ;
@@ -78,7 +78,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -249,7 +249,7 @@ main(int argc, char *argv[]) {
 #endif
 
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

@@ -58,7 +58,7 @@ main(int argc, char *argv[])
   char   **av ;
   int    ac, nargs ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI       *mri_in, *mri_out ;
   LTA *tal_xform ;
 
@@ -75,7 +75,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -100,7 +100,7 @@ main(int argc, char *argv[])
 
   mri_out = MRIconvertToUchar(mri_in, tal_xform, NULL) ;
   MRIwrite(mri_out, argv[3]) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

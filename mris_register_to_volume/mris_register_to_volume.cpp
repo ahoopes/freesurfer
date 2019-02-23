@@ -265,7 +265,7 @@ main(int argc, char **argv)
   HISTOGRAM     *h ;
 #endif
   MATRIX        *m_save = NULL ;
-  struct timeb  then ;
+  Timer then ;
 
   make_cmd_version_string(argc, argv,
                           "$Id: mris_register_to_volume.c,v 1.10 2011/03/02 00:04:33 nicks Exp $",
@@ -283,7 +283,7 @@ main(int argc, char **argv)
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&then) ;
+  then.reset() ;
   if(argc == 0) 
     usage_exit();
 
@@ -616,7 +616,7 @@ main(int argc, char **argv)
 
   printf("\n");
   printf("mris_register_to_volume done\n");
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,
           "registration took %2.1f minutes\n", (float)msec/(60*1000.0f));
 

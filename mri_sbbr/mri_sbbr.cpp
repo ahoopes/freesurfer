@@ -784,9 +784,9 @@ int SBBRMinPowell()
   extern SBBR *sbbr;
   float *pPowel, **xi;
   int    r, c, n,dof;
-  struct timeb timer;
+  Timer timer;
 
-  TimerStart(&timer);
+  timer.reset();
   dof = sbbr->nparams;
 
   printf("\n\n---------------------------------\n");
@@ -803,9 +803,8 @@ int SBBRMinPowell()
   OpenPowell2(pPowel, xi, dof, sbbr->ftol, sbbr->linmintol, sbbr->nitersmax, 
 	      &sbbr->niters, &sbbr->fret, SBBRcostPowell);
   printf("Powell done niters total = %d\n",sbbr->niters);
-  printf("PowellOptTimeSec %4.1f sec\n",TimerStop(&timer)/1000.0);
-  printf("PowellOptTimeMin %5.2f min\n",(TimerStop(&timer)/1000.0)/60);
-  //printf("EvalTimeSec %4.1f sec\n",(TimerStop(&timer)/1000.0)/sbbr->nCostEvaluations);
+  printf("PowellOptTimeSec %4.1f sec\n", timer.seconds());
+  printf("PowellOptTimeMin %5.2f min\n", timer.minutes());
   fflush(stdout);
 
   printf("Final parameters ");
@@ -1239,9 +1238,9 @@ int SBBRbruteSearch(SBBR *sbbr)
   double p[12],mincost,popt[12];
   long totiter,iter;
   int newmin,nthp;
-  struct timeb timer;
+  Timer timer;
 
-  TimerStart(&timer);
+  timer.reset();
 
   totiter = pow(sbbr->searchnper,sbbr->nparams);
   printf("Starting search over %ld iterations (%d,%d)\n",totiter,sbbr->nparams,sbbr->searchnper);
@@ -1262,7 +1261,7 @@ int SBBRbruteSearch(SBBR *sbbr)
 		  printf("%6ld %6.7f ",iter,mincost);
 		  for(nthp = 0; nthp < sbbr->nparams; nthp++)  printf("%7.4f ",popt[nthp]);
 		  // Time (min) remaining
-		  printf("%7.2f \n",(((totiter-iter)*TimerStop(&timer)/(iter+1))/1000.0)/60.0);
+		  printf("%7.2f \n",(((totiter-iter)*timer.milliseconds()/(iter+1))/1000.0)/60.0);
 		  fflush(stdout);
 		}
 		iter++;
@@ -1277,7 +1276,7 @@ int SBBRbruteSearch(SBBR *sbbr)
 		    if(newmin || iter == 0){
 		      printf("%6ld %6.7f ",iter,mincost);
 		      for(nthp = 0; nthp < sbbr->nparams; nthp++)  printf("%7.4f ",popt[nthp]);
-		      printf("%7.2f \n",(((totiter-iter)*TimerStop(&timer)/(iter+1))/1000.0)/60.0);
+		      printf("%7.2f \n",(((totiter-iter)*timer.milliseconds()/(iter+1))/1000.0)/60.0);
 		      fflush(stdout);
 		    }
 		    iter++;
@@ -1292,7 +1291,7 @@ int SBBRbruteSearch(SBBR *sbbr)
 			if(newmin || iter == 0){
 			  printf("%6ld %6.7f ",iter,mincost);
 			  for(nthp = 0; nthp < sbbr->nparams; nthp++)  printf("%7.4f ",popt[nthp]);
-			  printf("%7.2f \n",(((totiter-iter)*TimerStop(&timer)/(iter+1))/1000.0)/60.0);
+			  printf("%7.2f \n",(((totiter-iter)*timer.milliseconds()/(iter+1))/1000.0)/60.0);
 			  fflush(stdout);
 			}
 			iter++;
@@ -1315,8 +1314,8 @@ int SBBRbruteSearch(SBBR *sbbr)
   // update params
   for(nthp = 0; nthp < sbbr->nparams; nthp++)  sbbr->params[nthp] = popt[nthp];
 
-  printf("SearchTimeSec %4.1f sec\n",TimerStop(&timer)/1000.0);
-  printf("SearchTimeMin %5.2f min\n",(TimerStop(&timer)/1000.0)/60);
+  printf("SearchTimeSec %4.1f sec\n", timer.seconds());
+  printf("SearchTimeMin %5.2f min\n", timer.minutes());
   printf("SearchParams %6ld %6.7f ",iter,mincost);
   for(nthp = 0; nthp < sbbr->nparams; nthp++)  printf("%7.4f ",popt[nthp]);
   printf("\n");

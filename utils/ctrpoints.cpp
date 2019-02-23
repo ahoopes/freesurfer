@@ -172,7 +172,7 @@ int MRIwriteControlPoints(const MPoint *pointArray, int count, int useRealRAS, c
   } else {
     strcpy(user, "unknown user");
   }
-  res = fprintf(fp, "written by %s on %s\n", user, current_date_time());
+  res = fprintf(fp, "written by %s on %s\n", user, currentDateTime().c_str());
   res = fclose(fp);
 
   return (NO_ERROR);

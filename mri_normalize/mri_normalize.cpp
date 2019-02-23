@@ -169,7 +169,7 @@ main(int argc, char *argv[])
   MRI    *mri_src, *mri_dst = NULL, *mri_bias, *mri_orig, *mri_aseg = NULL ;
   char   *in_fname, *out_fname ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
 
   char cmdline[CMD_LINE_LEN] ;
 
@@ -690,7 +690,7 @@ main(int argc, char *argv[])
   fflush(stdout);
   fflush(stderr);
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   if (control_point_fname)
   {
@@ -969,7 +969,7 @@ main(int argc, char *argv[])
     printf("writing output to %s\n", out_fname) ;
   }
   MRIwrite(mri_dst, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
 
   MRIfree(&mri_src);
   MRIfree(&mri_dst);

@@ -3,9 +3,9 @@
 #include <fstream>
 
 #include "mris_defects_pointset.help.xml.h"
-#include "argparse.hpp"
-#include "pointset.hpp"
-#include "log.hpp"
+#include "argparse.h"
+#include "pointset.h"
+#include "log.h"
 
  
 #include "utils.h"

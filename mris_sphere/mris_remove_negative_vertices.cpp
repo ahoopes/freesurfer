@@ -63,7 +63,7 @@ main(int argc, char *argv[])
   fname[STRLEN], *cp ;
   int          ac, nargs, msec ;
   MRI_SURFACE  *mris ;
-  struct timeb  then ;
+  Timer then ;
 
   char cmdline[CMD_LINE_LEN] ;
 
@@ -83,7 +83,7 @@ main(int argc, char *argv[])
 
   Gdiag = DIAG_SHOW ;
 
-  TimerStart(&then) ;
+  then.reset() ;
   Progname = argv[0] ;
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
@@ -142,7 +142,7 @@ main(int argc, char *argv[])
 
   printf("writing output to %s\n", out_fname) ;
   MRISwrite(mris, out_fname) ;
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr, 
           "regularization of spherical transformation took %2.2f hours\n",
           (float)msec/(1000.0f*60.0f*60.0f));

@@ -63,7 +63,7 @@ main(int argc, char *argv[])
   int           ac, nargs, msec, mode = HDIST_MODE_SYMMETRIC_MEAN, a1, a2 ;
   LABEL         *area1, *area2 ;
   MRI_SURFACE   *mris ;
-  struct timeb  then ;
+  Timer then ;
   double        hdist ;
 
   /* rkt: check for and handle version tag */
@@ -93,7 +93,7 @@ main(int argc, char *argv[])
   if (argc < 2)
     usage_exit() ;
 
-  TimerStart(&then) ;
+  then.reset() ;
   mris = MRISread(argv[1]) ;
   if (mris == NULL)
     ErrorExit(ERROR_NOFILE, "%s: could not read surface %s",
@@ -211,7 +211,7 @@ main(int argc, char *argv[])
     printf("%2.3f\n", hdist) ;
   }
 
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,"hausdorff transform took %2.1f minutes\n", (float)msec/(60*1000.0f));
 
   exit(0) ;

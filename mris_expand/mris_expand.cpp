@@ -62,7 +62,7 @@ main(int argc, char *argv[])
   int          nargs ;
   char         *in_fname, *out_fname, fname[STRLEN], *cp ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   float        mm_out ;
   MRI_SURFACE  *mris ;
 
@@ -90,7 +90,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   for ( ; argc > 1 && ISOPTION(*argv[1]) ; argc--, argv++)
   {
@@ -173,7 +173,7 @@ main(int argc, char *argv[])
     MRISwrite(mris, out_fname) ;
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

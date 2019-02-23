@@ -62,7 +62,7 @@ main(int argc, char *argv[]) {
   const char *name ;
   int    ac, nargs, msec, minutes, label, seconds, i ;
   double area, total_area ;
-  struct timeb start ;
+  Timer start ;
   MRIS   *mris ;
   FILE   *log_fp ;
 
@@ -79,7 +79,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -168,7 +168,7 @@ main(int argc, char *argv[]) {
     }
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

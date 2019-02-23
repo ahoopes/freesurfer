@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
   int    ac, nargs;
   MRIS    *mris;
   int    msec, minutes, seconds, nv, nf, ne, eno ;
-  struct timeb start ;
+  Timer start ;
   double total_volume;
 
   /* rkt: check for and handle version tag */
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 
   total_volume = MRISvolumeInSurf(mris);
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

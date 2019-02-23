@@ -1215,7 +1215,7 @@ static void insertCommonMetaData(giiMetaData *md)
     gifti_add_to_meta(md, "UserName", pw->pw_name, 1);
   }
 
-  gifti_add_to_meta(md, "Date", current_date_time(), 1);
+  gifti_add_to_meta(md, "Date", currentDateTime().c_str(), 1);
 }
 
 /*-------------------------------------------------------------------------

@@ -56,7 +56,7 @@ main(int argc, char *argv[]) {
   char         **av ;
   int          ac, nargs, i, j, nbins ;
   int          msec, minutes, seconds, x, y, z, **joint_density ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri1, *mri2, *mri_nonbrain, *mri_tmp ;
   FILE         *fp ;
   float        fmin1, fmax1, fmin2, fmax2 ;
@@ -75,7 +75,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -155,7 +155,7 @@ main(int argc, char *argv[]) {
   fprintf(fp, "];\n") ;
   fclose(fp) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

@@ -68,11 +68,6 @@ int ImageDiffuse(IMAGE *inImage, IMAGE *outImage, double k, int niter, int which
 
   ImageCopy(inImage, fSrcImage);
 
-#if 0
-  if (Gdiag & DIAG_TIMER)
-    DebugTimerStart() ;
-#endif
-
   switch (which) {
     case DIFFUSE_PERONA:
       ImageDiffusePerona(fSrcImage, fDstImage, k, niter, slope, kimage);
@@ -87,17 +82,6 @@ int ImageDiffuse(IMAGE *inImage, IMAGE *outImage, double k, int niter, int which
       fprintf(stderr, "ImageDiffuse: unknown diffusion type %d\n", which);
       break;
   }
-
-#if 0
-  if (Gdiag & DIAG_TIMER)
-  {
-    char str[100] ;
-
-    DebugTimerStop() ;
-    sprintf(str, "ImageDiffuse for %d iterations: ", niter) ;
-    DebugTimerShow(str);
-  }
-#endif
 
   ImageCopy(fDstImage, outImage);
   ImageFree(&fSrcImage);

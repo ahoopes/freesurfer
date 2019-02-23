@@ -83,7 +83,7 @@ COLOR_TABLE *ctMaster, *ctMerge=NULL;
 int main(int argc, char *argv[]) {
   int nargs,err;
   char tmpstr[5000],*stem;
-  struct timeb  mytimer;
+  Timer mytimer;
   COLOR_TABLE *ct;
   MRI *mritmp;
   LTA *seg2new, *ltatmp;
@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
   //err = CTABwriteFileASCIItt(ctMaster,"master.ctab");
   //if(err) exit(1);
 
-  TimerStart(&mytimer);
+  mytimer.reset();
   printf("Starting MRIgtmSeg()\n"); fflush(stdout);
   err = MRIgtmSeg(gtmseg);
   if(err) exit(1);
@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
 
 
 
-  printf("mri_gtmseg finished in %g minutes\n",TimerStop(&mytimer)/60000.0);
+  printf("mri_gtmseg finished in %g minutes\n", mytimer.minutes());
   printf("mri_gtmseg done\n");fflush(stdout);
 
   exit(0);  return 0;

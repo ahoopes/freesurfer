@@ -132,7 +132,7 @@ main(int argc, char *argv[])
   char         s1_name[STRLEN], s2_name[STRLEN], *sname ;
   int          ac, nargs, i, n, options, max_index ;
   int          msec, minutes, seconds, nsubjects, input ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri_seg, *mri_tmp, *mri_in ;
   TRANSFORM    *transform ;
 //  int          counts ;
@@ -145,7 +145,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   parms.width = parms.height = parms.depth = DEFAULT_VOLUME_SIZE ;
   parms.ntrees = 10 ;
@@ -488,7 +488,7 @@ main(int argc, char *argv[])
     ErrorExit
       (ERROR_BADFILE, "%s: could not write rf to %s", Progname, out_fname) ;
   
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

@@ -195,7 +195,6 @@ int main(int argc, char *argv[])
 {
   int nargs,err,c,f,n;
   double vrfmin,vrfmax,vrfmean;
-  struct timeb  mytimer, timer;
   MRI *gtmres,*nopvc;
   FILE *logfp,*fp;
   char *stem;
@@ -276,10 +275,9 @@ int main(int argc, char *argv[])
   }
   gtm->AuxDir = AuxDir;
 
-  TimerStart(&timer);
+  Timer timer, mytimer;
 
   // Load seg
-  TimerStart(&mytimer);
   printf("Loading seg for gtm %s\n",SegVolFile);fflush(stdout);
   if(Gdiag_no > 0) PrintMemUsage(stdout);
   fprintf(logfp,"Loading seg for gtm %s\n",SegVolFile);fflush(logfp);
@@ -484,8 +482,8 @@ int main(int argc, char *argv[])
     MRIwrite(gtm->mask,tmpstr);
   }
 
-  printf("Data load time %4.1f sec\n",TimerStop(&mytimer)/1000.0);
-  fprintf(logfp,"Data load time %4.1f sec\n",TimerStop(&mytimer)/1000.0);
+  printf("Data load time %4.1f sec\n",mytimer.seconds());
+  fprintf(logfp,"Data load time %4.1f sec\n",mytimer.seconds());
   fflush(stdout);fflush(logfp);
 
   GTMsetNMask(gtm);
@@ -594,11 +592,11 @@ int main(int argc, char *argv[])
   printf("Building GTM DoVoxFracCor=%d\n",gtm->DoVoxFracCor);fflush(stdout); 
   if(Gdiag_no > 0) PrintMemUsage(stdout);
   PrintMemUsage(logfp);
-  TimerStart(&mytimer) ;
+  mytimer.reset();
   GTMbuildX(gtm);
   if(gtm->X==NULL) exit(1);
-  printf(" gtm build time %4.1f sec\n",TimerStop(&mytimer)/1000.0);fflush(stdout);
-  fprintf(logfp,"GTM-Build-time %4.1f sec\n",TimerStop(&mytimer)/1000.0);fflush(logfp);
+  printf(" gtm build time %4.1f sec\n",mytimer.seconds());fflush(stdout);
+  fprintf(logfp,"GTM-Build-time %4.1f sec\n",mytimer.seconds());fflush(logfp);
   if(Gdiag_no > 0) PrintMemUsage(stdout);
   PrintMemUsage(logfp);
 
@@ -687,10 +685,10 @@ int main(int argc, char *argv[])
     if(SynthOnly){
       printf("SynthOnly requested so exiting now\n");
       printf("#VMPC# mris_make_surfaces VmPeak  %d\n",GetVmPeak());
-      printf("mri_gtmpvc-runtime %5.2f min\n",TimerStop(&timer)/60000.0);
+      printf("mri_gtmpvc-runtime %5.2f min\n",timer.minutes());
       fprintf(logfp,"SynthOnly requested so exiting now\n");
       fprintf(logfp,"#VMPC# mris_make_surfaces VmPeak  %d\n",GetVmPeak());
-      fprintf(logfp,"mri_gtmpvc-runtime %5.2f min\n",TimerStop(&timer)/60000.0);
+      fprintf(logfp,"mri_gtmpvc-runtime %5.2f min\n",timer.minutes());
       exit(0);
     }
     MRIfree(&gtm->yvol);
@@ -707,13 +705,13 @@ int main(int argc, char *argv[])
       fprintf(logfp,"Rebuilding GTM DoVoxFracCor=%d\n",gtm->DoVoxFracCor);
       if(Gdiag_no > 0) PrintMemUsage(stdout);
       PrintMemUsage(logfp);
-      TimerStart(&mytimer);
+      mytimer.reset();
       MatrixFree(&gtm->X);
       MatrixFree(&gtm->X0);
       GTMbuildX(gtm);
       if(gtm->X==NULL) exit(1);
-      printf(" gtm build time %4.1f sec\n",TimerStop(&mytimer)/1000.0);fflush(stdout);
-      fprintf(logfp,"GTM-rebuild-time %4.1f sec\n",TimerStop(&mytimer)/1000.0);fflush(logfp);
+      printf(" gtm build time %4.1f sec\n", mytimer.seconds()); fflush(stdout);
+      fprintf(logfp,"GTM-rebuild-time %4.1f sec\n", mytimer.seconds()); fflush(logfp);
       if(Gdiag_no > 0) PrintMemUsage(stdout);
       PrintMemUsage(logfp);
       // Create GTM pvf in pet space (why?)
@@ -737,13 +735,13 @@ int main(int argc, char *argv[])
 
   printf("Solving ...\n");
   GTMmatrixY(gtm);
-  TimerStart(&mytimer) ; 
+  mytimer.reset();
   if(Gdiag_no > 0) PrintMemUsage(stdout);
   PrintMemUsage(logfp);
   err=GTMsolve(gtm); // also rescales everything if desired
   if(err) exit(1);
-  printf("Time to solve %4.1f sec\n",TimerStop(&mytimer)/1000.0);fflush(stdout);
-  fprintf(logfp,"GTM-Solve-Time %4.1f sec\n",TimerStop(&mytimer)/1000.0);fflush(logfp);
+  printf("Time to solve %4.1f sec\n", mytimer.seconds()); fflush(stdout);
+  fprintf(logfp,"GTM-Solve-Time %4.1f sec\n", mytimer.seconds()); fflush(logfp);
   if(Gdiag_no > 0) PrintMemUsage(stdout);
   PrintMemUsage(logfp);
 
@@ -927,9 +925,9 @@ int main(int argc, char *argv[])
   fprintf(logfp,"XtX  Condition     %8.3f \n",gtm->XtXcond);
 
   if(yhat0File || yhatFile || yhatFullFoVFile){
-    printf("Synthesizing ... ");fflush(stdout); TimerStart(&mytimer) ;
+    printf("Synthesizing ... ");fflush(stdout); mytimer.reset() ;
     GTMsynth(gtm,GTMSynthSeed,GTMSynthReps);
-    printf(" %4.1f sec\n",TimerStop(&mytimer)/1000.0);fflush(stdout);
+    printf(" %4.1f sec\n",mytimer.seconds());fflush(stdout);
     fprintf(logfp,"GTMSynth: Seed=%d, Reps=%d\n",GTMSynthSeed,GTMSynthReps);
   }
   if(yhat0File) MRIwrite(gtm->ysynth,yhat0File);
@@ -939,9 +937,9 @@ int main(int argc, char *argv[])
 
 
   if(yhatFile|| yhatFullFoVFile){
-    printf("Smoothing synthesized ... ");fflush(stdout); TimerStart(&mytimer) ;
+    printf("Smoothing synthesized ... ");fflush(stdout); mytimer.reset() ;
     GTMsmoothSynth(gtm);
-    printf(" %4.1f sec\n",TimerStop(&mytimer)/1000.0);fflush(stdout);
+    printf(" %4.1f sec\n",mytimer.seconds());fflush(stdout);
     if(yhatFile) MRIwrite(gtm->ysynthsm,yhatFile);
   }
 
@@ -971,7 +969,7 @@ int main(int argc, char *argv[])
   if(RVarOnly){
     printf("rvar-only requested so exiting now\n");
     printf("#VMPC# mris_make_surfaces VmPeak  %d\n",GetVmPeak());
-    printf("mri_gtmpvc-runtime %5.2f min\n",TimerStop(&timer)/60000.0);
+    printf("mri_gtmpvc-runtime %5.2f min\n",timer.minutes());
     exit(0);
   }
   if(DoGMRvar) GTMrvarGM(gtm);
@@ -1077,13 +1075,13 @@ int main(int argc, char *argv[])
     printf("Computing RBV\n");
     if(Gdiag_no > 0) PrintMemUsage(stdout);
     GTMrbv(gtm);
-    printf("Writing output to %s ...",RBVVolFile);fflush(stdout); TimerStart(&mytimer) ;
+    printf("Writing output to %s ...",RBVVolFile);fflush(stdout); mytimer.reset() ;
     err = MRIwrite(gtm->rbv,RBVVolFile);
     if(err){
       printf("ERROR: writing to %s\n",RBVVolFile);
       exit(1);
     }
-    printf(" %4.1f sec\n",TimerStop(&mytimer)/1000.0);fflush(stdout);
+    printf(" %4.1f sec\n",mytimer.seconds());fflush(stdout);
     sprintf(tmpstr,"%s/aux/anat2rbv.lta",OutDir);
     LTAwrite(gtm->anat2rbv,tmpstr);
     sprintf(tmpstr,"%s/aux/anat2rbv.lta",OutDir);
@@ -1120,11 +1118,11 @@ int main(int argc, char *argv[])
   PrintMemUsage(logfp);
 
   fprintf(logfp,"#VMPC# mris_make_surfaces VmPeak  %d\n",GetVmPeak());
-  fprintf(logfp,"mri_gtmpvc-runtime %5.2f min\n",TimerStop(&timer)/60000.0);
+  fprintf(logfp,"mri_gtmpvc-runtime %5.2f min\n",timer.minutes());
   fprintf(logfp,"mri_gtmpvc done\n");
   fclose(logfp);
   printf("#VMPC# mris_make_surfaces VmPeak  %d\n",GetVmPeak());
-  printf("mri_gtmpvc-runtime %5.2f min\n",TimerStop(&timer)/60000.0);
+  printf("mri_gtmpvc-runtime %5.2f min\n",timer.minutes());
   printf("mri_gtmpvc done\n");
   return(0);
   exit(0);
@@ -2007,8 +2005,7 @@ int GTMOPTsetup(GTMOPT *gtmopt)
 double GTMcostPSF(GTM *gtm)
 {
   int err;
-  struct timeb timer;
-  TimerStart(&timer);
+  Timer timer;
 
   GTMpsfStd(gtm);
 
@@ -2022,7 +2019,6 @@ double GTMcostPSF(GTM *gtm)
     gtm->rvarUnscaled->rptr[1][1] = 10e10;
     return(10e10);
   }
-  //printf("   Build-and-Solve Time %4.1f sec\n",TimerStop(&timer)/1000.0);fflush(stdout);
   if(gtmopt->optmask == 1) return(gtm->rvargm->rptr[1][1]);
   if(gtmopt->optmask == 2) return(gtm->rvarbrain->rptr[1][1]);
   return(gtm->rvarUnscaled->rptr[1][1]);
@@ -2094,10 +2090,9 @@ int MinPowell()
   GTMOPT *gtmopt = gtmopt_powell;
   float *pPowel, **xi;
   int    r, c, n,dof;
-  struct timeb timer;
   GTM *gtm = gtmopt_powell->gtm;
 
-  TimerStart(&timer);
+  Timer timer;
   dof = gtmopt->nparams;
 
   printf("\n\n---------------------------------\n");
@@ -2115,10 +2110,10 @@ int MinPowell()
   OpenPowell2(pPowel, xi, dof, gtmopt->ftol, gtmopt->linmintol, gtmopt->nitersmax, 
 	      &gtmopt->niters, &gtmopt->fret, compute_powell_cost);
   printf("Powell done niters = %d\n",gtmopt->niters);
-  printf("OptTimeSec %4.1f sec\n",TimerStop(&timer)/1000.0);
-  printf("OptTimeMin %5.2f min\n",(TimerStop(&timer)/1000.0)/60);
+  printf("OptTimeSec %4.1f sec\n", timer.seconds());
+  printf("OptTimeMin %5.2f min\n", timer.minutes());
   printf("nEvals %d\n",gtmopt->nCostEvaluations);
-  printf("EvalTimeSec %4.1f sec\n",(TimerStop(&timer)/1000.0)/gtmopt->nCostEvaluations);
+  printf("EvalTimeSec %4.1f sec\n", timer.seconds() / gtmopt->nCostEvaluations);
   fflush(stdout);
   fprintf(gtm->logfp,"Optimum parameters: ");
   printf("Optimum parameters: ");

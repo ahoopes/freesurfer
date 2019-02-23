@@ -55,7 +55,7 @@ main(int argc, char *argv[]) {
   char   **av ;
   int    label, ac, nargs ;
   int          msec, minutes, seconds/*, wrong, total, correct*/ ;
-  struct timeb start ;
+  Timer start ;
   MRI    *mri_T1, *mri_labeled ;
   FILE   *log_fp ;
   HISTOGRAM *histo ;
@@ -70,7 +70,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -108,7 +108,7 @@ main(int argc, char *argv[]) {
 
   HISTOplot(histo, argv[4]) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

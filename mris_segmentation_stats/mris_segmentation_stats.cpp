@@ -69,7 +69,7 @@ main(int argc, char *argv[]) {
   const char *hemi;
   char         *out_fname, *cp, *true_label_name, *segmentation_name ;
   int          msec, minutes, seconds, nsubjects ;
-  struct timeb start ;
+  Timer start ;
   LABEL        *labels[MAX_SUBJECTS] ;
   MRI          *mri_overlays[MAX_SUBJECTS] ;
   MRI_SURFACE  *mris[MAX_SUBJECTS] ;
@@ -83,7 +83,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -137,7 +137,7 @@ main(int argc, char *argv[]) {
   write_roc_curve(mris, labels, mri_overlays, min_area, dilate, erode,out_fname,nsubjects);
   printf("writing outputs to %s\n", out_fname) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

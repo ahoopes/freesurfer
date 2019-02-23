@@ -58,7 +58,7 @@ main(int argc, char *argv[]) {
   char   **av ;
   int    ac, nargs, segno, indices[MAX_DIVISIONS] ;
   int          msec, minutes, seconds, nparts, i, num, label, mx, my, mz, x, y, z ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri ;
   double       cx, cy, cz, min_dist, dist, dx, dy, dz ;
   float        evalues[3], zf, zf_low, zf_high, ez_x, ez_y, ez_z ;
@@ -75,7 +75,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -232,7 +232,7 @@ main(int argc, char *argv[]) {
   MRIwrite(mri, argv[4]) ;
 
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

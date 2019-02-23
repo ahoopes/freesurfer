@@ -242,7 +242,7 @@ main(int argc, char *argv[]) {
   LABEL        *area, **labels = NULL ;
   FILE         *fp = NULL ;
   double       snr, max_snr ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds ;
 #if 0
   double       **c1_label_thickness, **c2_label_thickness ;
@@ -272,7 +272,7 @@ main(int argc, char *argv[]) {
     argv += nargs ;
   }
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   /* subject_name hemi surface curvature */
   if (argc < 8)
@@ -1193,7 +1193,7 @@ main(int argc, char *argv[]) {
     }
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   free(total_mean);
   free(c1_mean) ;
   free(c2_mean) ;

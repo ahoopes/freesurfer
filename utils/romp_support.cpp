@@ -24,6 +24,7 @@ static const int debug = 0;
  *
  */
 #include "romp_support.h"
+#include "base.h"
 
 #ifdef HAVE_MALLOC_H
 #include <malloc.h>
@@ -72,19 +73,19 @@ typedef struct PerThreadScopeTreeData {
     struct PerThreadScopeTreeData* parent;
     struct PerThreadScopeTreeData* next_sibling;
     struct PerThreadScopeTreeData* first_child;
-    Nanosecs in_scope;
-    Nanosecs in_child_threads[ROMP_maxWatchedThreadNum];    
+    long in_scope;
+    long in_child_threads[ROMP_maxWatchedThreadNum];    
         // threads may be running in a different scope tree!
 } PerThreadScopeTreeData;
 
 static PerThreadScopeTreeData  scopeTreeRoots[ROMP_maxWatchedThreadNum];
 static PerThreadScopeTreeData* scopeTreeToS  [ROMP_maxWatchedThreadNum];
 
-static struct { NanosecsTimer timer; int inited; } tidStartTime[ROMP_maxWatchedThreadNum];
+static struct { Timer timer; bool inited = false; } tidStartTime[ROMP_maxWatchedThreadNum];
 static void maybeInitTidStartTime(int tid) {
     if (tidStartTime[tid].inited) return;
     tidStartTime[tid].timer.reset();
-    tidStartTime[tid].inited = 1;
+    tidStartTime[tid].inited = true;
 }
 
 static PerThreadScopeTreeData* enterScope(PerThreadScopeTreeData* parent, ROMP_pf_static_struct* key) {
@@ -102,14 +103,14 @@ static PerThreadScopeTreeData* enterScope(PerThreadScopeTreeData* parent, ROMP_p
 typedef struct StaticData {
     ROMP_pf_static_struct* next;
     int skip_pflb_timing;
-    Nanosecs in_pf_sum, in_pfThread_sum, in_pflb_sum;
+    long in_pf_sum, in_pfThread_sum, in_pflb_sum;
     ROMP_level level;
 } StaticData;
 
 ROMP_pf_static_struct* known_ROMP_pf;
 
 
-static Nanosecs cpuTimeUsed() {
+static long cpuTimeUsed() {
     clockid_t clockid = clockid_t();
     int s = pthread_getcpuclockid(pthread_self(), &clockid);
     if (s != 0) {
@@ -127,7 +128,7 @@ static Nanosecs cpuTimeUsed() {
 	fprintf(stderr, "%s:%d gettime failed", __FILE__, __LINE__);
         exit(1);
     }
-    Nanosecs t; t.ns = timespec.tv_sec * 1000000000L + timespec.tv_nsec;
+    long t = timespec.tv_sec * 1000000000L + timespec.tv_nsec;
     return t;
 }
 
@@ -221,7 +222,7 @@ static Timer mainTimer;
 static void initMainTimer() {
     static int once;
     if (once++ == 0) {
-        mainTimer.reset()
+        mainTimer.reset();
         atexit(rompExitHandler);
     }
 }
@@ -291,7 +292,7 @@ void ROMP_pf_begin(
     
     int i;
     for (i = 0; i < ROMP_maxWatchedThreadNum; i++) {
-        pf_stack->watchedThreadBeginCPUTimes[i].ns = 0;
+        pf_stack->watchedThreadBeginCPUTimes[i] = 0;
     }
 
     if (romp_level >= ROMP_level__size) {
@@ -321,8 +322,7 @@ void ROMP_pf_begin(
         }
     
         for (i = 0; i < ROMP_maxWatchedThreadNum; i++) {
-            Nanosecs* startCPUTime = &pf_stack->watchedThreadBeginCPUTimes[i];
-            if (startCPUTime->ns == 0) {
+            if (pf_stack->watchedThreadBeginCPUTimes[i] == 0) {
                 if (debug) fprintf(stderr, "%s:%d no start time for %d\n", __FILE__, __LINE__, i);
             }
         }
@@ -341,22 +341,22 @@ static void pf_end_one_thread(int tid, ROMP_pf_stack_struct * pf_stack, PerThrea
 	0;
 #endif
     if (childTid >= ROMP_maxWatchedThreadNum) return;
-	
-    Nanosecs* startCPUTime = &pf_stack->watchedThreadBeginCPUTimes[childTid];
-    if (startCPUTime->ns == -1) {
+
+    long &startCPUTime = pf_stack->watchedThreadBeginCPUTimes[childTid];
+    if (startCPUTime == -1) {
         return;
     }
-    if (startCPUTime->ns == 0) {
+    if (startCPUTime == 0) {
         if (debug) fprintf(stderr, "%s:%d no corresponding start time for tid:%d pf_stack:%p\n", __FILE__, __LINE__, tid, pf_stack);
         return;
     }
         
-    Nanosecs threadCpuTime;
-    threadCpuTime.ns = cpuTimeUsed().ns - startCPUTime->ns;
-    startCPUTime->ns = -1;  // copes when another iteration of this loop is executed on the same thread
+    long threadCpuTime;
+    threadCpuTime = cpuTimeUsed() - startCPUTime;
+    startCPUTime = -1;  // copes when another iteration of this loop is executed on the same thread
     
-    if (debug) fprintf(stderr, "Adding to tid:%d childTid:%d ns:%ld\n", tid, childTid, threadCpuTime.ns);
-    tos->in_child_threads[childTid].ns += threadCpuTime.ns;
+    if (debug) fprintf(stderr, "Adding to tid:%d childTid:%d ns:%ld\n", tid, childTid, threadCpuTime);
+    tos->in_child_threads[childTid] += threadCpuTime;
 }
 
 
@@ -377,8 +377,8 @@ void ROMP_pf_end(
         PerThreadScopeTreeData* tos = scopeTreeToS[tid];
         if (tos) {
 
-            Nanosecs delta = pf_stack->timer.nanoseconds();
-            tos->in_scope.ns += delta.ns;
+            long delta = pf_stack->timer.nanoseconds();
+            tos->in_scope += delta;
 
             if (pf_stack->gone_parallel)
                 if (debug) fprintf(stderr, "ROMP_pf_end tid:%d pf_stack:%p getting other thread times\n",
@@ -399,8 +399,8 @@ void ROMP_pf_end(
             if (romp_level < ROMP_level__size) {
                 int i;
                 for (i = 0; i < ROMP_maxWatchedThreadNum; i++) {
-                    Nanosecs* startCPUTime = &pf_stack->watchedThreadBeginCPUTimes[i];
-                    if (startCPUTime->ns != 0 && startCPUTime->ns != -1) {
+                    long startCPUTime = pf_stack->watchedThreadBeginCPUTimes[i];
+                    if (startCPUTime != 0 && startCPUTime != -1) {
                         if (debug) fprintf(stderr, "%s:%d no end time for %d\n", __FILE__, __LINE__, tid);
                     }
                 } 
@@ -430,10 +430,10 @@ static void node_show_stats(FILE* file, PerThreadScopeTreeData* node, unsigned i
     ROMP_pf_static_struct* pf = node->key;
     StaticData* sd = pf ? (StaticData*)(pf->ptr) : (StaticData*)(NULL);
     
-    Nanosecs inAllThreads; inAllThreads.ns = 0;
+    long inAllThreads; inAllThreads = 0;
     int tid;
     for (tid = 0; tid < ROMP_maxWatchedThreadNum; tid++) {
-        inAllThreads.ns += node->in_child_threads[tid].ns;
+        inAllThreads += node->in_child_threads[tid];
     }
     
     {
@@ -445,8 +445,8 @@ static void node_show_stats(FILE* file, PerThreadScopeTreeData* node, unsigned i
         pf ? pf->func : "<func>", 
         pf ? pf->line : 0,
         sd ? sd->level : 0,
-	node->in_scope.ns, 0L, inAllThreads.ns, 
-        0.0, (double)inAllThreads.ns/(double)node->in_scope.ns);
+	node->in_scope, 0L, inAllThreads, 
+        0.0, (double)inAllThreads/(double)node->in_scope);
 
     PerThreadScopeTreeData* child;
     for (child = node->first_child; child; child = child->next_sibling) {
@@ -456,13 +456,13 @@ static void node_show_stats(FILE* file, PerThreadScopeTreeData* node, unsigned i
 
 void ROMP_show_stats(FILE* file)
 {
-    fprintf(file, "ROMP_show_stats %s\n", currentDateTime(false));
+    fprintf(file, "ROMP_show_stats %s\n", currentDateTime(false).c_str());
     fprintf(file, "file, line, level, in pf, in pflb, in_pfThread, pflb/elapsed, pft/elapsed\n");
 
     if (getMainFile())  {
-        Nanosecs mainDuration = mainTimer.nanoseconds();
+        long mainDuration = mainTimer.nanoseconds();
         fprintf(file, "%s, %d, 0, %12ld, %12ld, %12ld, %6.3g, %6.3g\n", mainFile, mainLine, 
-            mainDuration.ns, 0L, 0L, 1.0, 1.0);
+            mainDuration, 0L, 0L, 1.0, 1.0);
     }
         
     int tid;

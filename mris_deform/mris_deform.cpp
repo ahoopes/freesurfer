@@ -259,7 +259,7 @@ main(int argc, char *argv[]) {
   int          ac, nargs, max_averages ;
   double       current_sigma, mean_dist ;
   int          msec, minutes, seconds, n_averages, i, j, piter, witer, l4iter, skip ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri, *mri_dist ;
   MRI_SURFACE  *mris ;
   TRANSFORM    *transform ;
@@ -323,7 +323,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -795,7 +795,7 @@ main(int argc, char *argv[]) {
   }
 
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

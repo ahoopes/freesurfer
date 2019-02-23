@@ -64,7 +64,6 @@ int MRISpositionSurfaces(MRI_SURFACE *mris, MRI **mri_flash, int nvolumes, INTEG
   double pial_sse, sse, wm_sse, delta_t = 0.0, dt, l_intensity, base_dt, last_sse, rms, mle_sse, last_mle_sse,
                                 pct_sse_decrease, l_repulse, l_surf_repulse, last_wm_sse, last_pial_sse;
   MHT *mht = NULL;
-  struct timeb then;
   int msec;
   MRI *mri_brain = mri_flash[0];
 
@@ -72,7 +71,7 @@ int MRISpositionSurfaces(MRI_SURFACE *mris, MRI **mri_flash, int nvolumes, INTEG
   if (IS_QUADRANGULAR(mris)) {
     MRISremoveTriangleLinks(mris);
   }
-  TimerStart(&then);
+  Timer then;
   parms->mri_smooth = parms->mri_brain = mri_brain;
   niterations = parms->niterations;
   write_iterations = parms->write_iterations;
@@ -380,7 +379,7 @@ int MRISpositionSurfaces(MRI_SURFACE *mris, MRI **mri_flash, int nvolumes, INTEG
   parms->start_t = n;
   parms->dt = base_dt;
   if (Gdiag & DIAG_SHOW) {
-    msec = TimerStop(&then);
+    msec = then.milliseconds();
     fprintf(stdout, "positioning took %2.1f minutes\n", (float)msec / (60 * 1000.0f));
   }
   if (Gdiag & DIAG_WRITE) {
@@ -400,7 +399,6 @@ int MRISpositionSurface(MRI_SURFACE *mris, MRI *mri_brain, MRI *mri_smooth, INTE
   int avgs, niterations, n, write_iterations, nreductions = 0, done;
   double sse, delta_t = 0.0, rms, dt, l_intensity, base_dt, last_sse, last_rms, max_mm;
   MHT *mht = NULL, *mht_v_orig = NULL, *mht_v_current = NULL, *mht_f_current = NULL, *mht_pial = NULL;
-  struct timeb then;
   int msec;
 
   printf("Entering MRISpositionSurface()\n");
@@ -421,7 +419,7 @@ int MRISpositionSurface(MRI_SURFACE *mris, MRI *mri_brain, MRI *mri_smooth, INTE
   if (IS_QUADRANGULAR(mris)) {
     MRISremoveTriangleLinks(mris);
   }
-  TimerStart(&then);
+  Timer then;
   parms->mri_brain = mri_brain;
   parms->mri_smooth = mri_smooth;
   niterations = parms->niterations;
@@ -769,7 +767,7 @@ int MRISpositionSurface(MRI_SURFACE *mris, MRI *mri_brain, MRI *mri_smooth, INTE
   parms->start_t = n;
   parms->dt = base_dt;
   if (Gdiag & DIAG_SHOW) {
-    msec = TimerStop(&then);
+    msec = then.milliseconds();
     fprintf(stdout, "positioning took %2.1f minutes\n", (float)msec / (60 * 1000.0f));
   }
   if (Gdiag & DIAG_WRITE) {
@@ -800,7 +798,6 @@ int MRISpositionSurface_mef(
   int avgs, niterations, n, write_iterations, nreductions = 0, done;
   double delta_t = 0.0, rms, dt, l_intensity, base_dt, last_rms, max_mm, sse, last_sse, delta_rms;
   MHT *mht = NULL, *mht_v_orig = NULL, *mht_v_current = NULL, *mht_f_current = NULL;
-  struct timeb then;
   int msec;
 
   max_mm = MIN(MAX_ASYNCH_MM, MIN(mri_30->xsize, MIN(mri_30->ysize, mri_30->zsize)) / 2);
@@ -814,7 +811,7 @@ int MRISpositionSurface_mef(
   if (IS_QUADRANGULAR(mris)) {
     MRISremoveTriangleLinks(mris);
   }
-  TimerStart(&then);
+  Timer then;
   // the following are used in mrisComputeIntensityError() and computeSSE()
   parms->mri_brain = NULL;          // mri_30 ;
   parms->mri_smooth = NULL;         // mri_5 ;
@@ -976,7 +973,7 @@ int MRISpositionSurface_mef(
   parms->start_t = n;
   parms->dt = base_dt;
   if (Gdiag & DIAG_SHOW) {
-    msec = TimerStop(&then);
+    msec = then.milliseconds();
     fprintf(stdout, "positioning took %2.1f minutes\n", (float)msec / (60 * 1000.0f));
   }
   if (Gdiag & DIAG_WRITE) {
@@ -5074,7 +5071,6 @@ MRI *MRISsmoothMRI(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *BinMask, MRI *Ta
   int nnbrs_actual;
   float val, m;
   MRI *SrcTmp;
-  struct timeb mytimer;
   int msecTime;
   const char *UFSS;
 
@@ -5121,11 +5117,11 @@ MRI *MRISsmoothMRI(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *BinMask, MRI *Ta
   }
 
   /*------------------------------------------------------------*/
-  TimerStart(&mytimer);
+  Timer mytimer;
   SrcTmp = MRIcopy(Src, NULL);
   for (nthstep = 0; nthstep < nSmoothSteps; nthstep++) {
     if (Gdiag_no > 1) {
-      msecTime = TimerStop(&mytimer);
+      msecTime = mytimer.milliseconds();
       printf("Step = %d, tsec = %g\n", nthstep, msecTime / 1000.0);
       fflush(stdout);
     }
@@ -5172,7 +5168,7 @@ MRI *MRISsmoothMRI(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *BinMask, MRI *Ta
     MRIcopy(Targ, SrcTmp);
   } /* end loop over smooth step */
 
-  msecTime = TimerStop(&mytimer);
+  msecTime = mytimer.milliseconds();
   if (Gdiag_no > 0) {
     printf("Smoothing done, nsteps = %d, tsec = %g\n", nthstep, msecTime / 1000.0);
   }
@@ -5200,7 +5196,6 @@ MRI *MRISsmoothMRIFast(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *IncMask, MRI
 {
   int nnbrs, nthstep, frame, vno, nthnbr, num, nvox, nbrvno, reshape;
   MRI *SrcTmp, *mritmp, *IncMaskTmp = NULL;
-  struct timeb mytimer;
   int msecTime;
   int *nNbrs, *nNbrs0, *rip, *rip0, nNbrsMax;
   float **pF, **pF0, *tF, *tF0, sumF;
@@ -5257,7 +5252,7 @@ MRI *MRISsmoothMRIFast(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *IncMask, MRI
   rip0 = rip;
   nNbrs0 = nNbrs;
 
-  TimerStart(&mytimer);
+  Timer mytimer;
 
   // Loop through frames
   for (frame = 0; frame < Src->nframes; frame++) {
@@ -5335,7 +5330,7 @@ MRI *MRISsmoothMRIFast(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *IncMask, MRI
   else
     Targ = MRIcopy(SrcTmp, Targ);
 
-  msecTime = TimerStop(&mytimer);
+  msecTime = mytimer.milliseconds();
   if (Gdiag_no > 0) {
     printf("MRISsmoothFast() nsteps = %d, tsec = %g\n", nSmoothSteps, msecTime / 1000.0);
     fflush(stdout);
@@ -5362,7 +5357,6 @@ MRI *MRISsmoothMRIFastD(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *IncMask, MR
 {
   int nnbrs, nthstep, frame, vno, nthnbr, num, nvox, nbrvno, c, r, s;
   MRI *IncMaskTmp = NULL;
-  struct timeb mytimer;
   int msecTime;
   int *nNbrs, *nNbrs0, *rip, *rip0, nNbrsMax;
   double **pF, **pF0, *tF, *tF0, sumF;
@@ -5418,7 +5412,7 @@ MRI *MRISsmoothMRIFastD(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *IncMask, MR
   nNbrs0 = nNbrs;
   pD0 = pD;
 
-  TimerStart(&mytimer);
+  Timer mytimer;
 
   // Loop through frames
   for (frame = 0; frame < Src->nframes; frame++) {
@@ -5489,7 +5483,7 @@ MRI *MRISsmoothMRIFastD(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *IncMask, MR
 
   } /* end loop over frame */
 
-  msecTime = TimerStop(&mytimer);
+  msecTime = mytimer.milliseconds();
   if (Gdiag_no > 0) {
     printf("MRISsmoothFastD() nsteps = %d, tsec = %g\n", nSmoothSteps, msecTime / 1000.0);
     fflush(stdout);
@@ -5514,7 +5508,6 @@ MRI *MRISsmoothMRIFastD(MRIS *Surf, MRI *Src, int nSmoothSteps, MRI *IncMask, MR
 int MRISsmoothMRIFastFrame(MRIS *Surf, MRI *Src, int frame, int nSmoothSteps, MRI *IncMask)
 {
   int nnbrs, nthstep, vno, nthnbr, num, nvox, nbrvno;
-  struct timeb mytimer;
   int msecTime;
   float sumF;
   VERTEX *v, *vn;
@@ -5563,7 +5556,7 @@ int MRISsmoothMRIFastFrame(MRIS *Surf, MRI *Src, int frame, int nSmoothSteps, MR
     exit(1);
   }
 
-  TimerStart(&mytimer);
+  Timer mytimer;
 
   // Set up pointers for this call
   pF = pF0;
@@ -5627,7 +5620,7 @@ int MRISsmoothMRIFastFrame(MRIS *Surf, MRI *Src, int frame, int nSmoothSteps, MR
     }
   }
 
-  msecTime = TimerStop(&mytimer);
+  msecTime = mytimer.milliseconds();
   if (Gdiag_no > 0) {
     printf("MRISsmoothFast2() nsteps = %d, tsec = %g\n", nSmoothSteps, msecTime / 1000.0);
     fflush(stdout);

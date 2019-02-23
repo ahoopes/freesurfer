@@ -2008,7 +2008,7 @@ main(int argc, char *argv[])
            *mri_saved_labels, *mri_seg ;
   int     x_pons, y_pons, z_pons, x_cc, y_cc, z_cc, xi, yi, zi ;
   MORPH_3D  *m3d ;
-  struct timeb  then ;
+  Timer then ;
   int seed_search_size;
   double voxsize;
   int badRH, badLH;
@@ -2039,7 +2039,7 @@ main(int argc, char *argv[])
   }
   argc -= nargs;
 
-  TimerStart(&then) ;
+  then.reset() ;
   DiagInit(NULL, NULL, NULL) ;
   ErrorInit(NULL, NULL, NULL) ;
 
@@ -3350,7 +3350,7 @@ main(int argc, char *argv[])
 
   fprintf(stderr, "writing output to %s...\n", out_fname) ;
   MRIwrite(mri_fill, out_fname) ;
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,"filling took %2.1f minutes\n", (float)msec/(60*1000.0f));
 
   if (lta && !lhonly && !rhonly)

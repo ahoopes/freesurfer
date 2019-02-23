@@ -96,7 +96,7 @@ main(int argc, char *argv[]) {
   char         **av ;
   int          ac, nargs ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI_SURFACE  *mris ;
   MRI          *mri, *mri_aseg, *mri_pvals ;
   TRANSFORM    *xform ;
@@ -111,7 +111,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   setRandomSeed(0L) ;
   ac = argc ;
@@ -156,7 +156,7 @@ main(int argc, char *argv[]) {
 
   printf("writing path log probabilities to %s\n", argv[5]) ;
   MRIwrite(mri_pvals, argv[5]) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

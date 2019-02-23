@@ -84,7 +84,7 @@ main(int argc, char *argv[])
   int          ac, nargs ;
   MRI_SURFACE  *mris ;
   int           msec ;
-  struct timeb  then ;
+  Timer then ;
   float         radius ;
 
   char cmdline[CMD_LINE_LEN] ;
@@ -105,7 +105,7 @@ main(int argc, char *argv[])
   }
   argc -= nargs;
 
-  TimerStart(&then) ;
+  then.reset() ;
   //Gdiag |= DIAG_SHOW ;
   Progname = argv[0] ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -258,7 +258,7 @@ main(int argc, char *argv[])
   PrintRUsage(RUSAGE_SELF, "mris_inflate ", stdout);
   if(rusage_file) WriteRUsage(RUSAGE_SELF, "", rusage_file);
 
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr, "inflation took %2.1f minutes\n", (float)msec/(60*1000.0f));
 
   exit(0) ;

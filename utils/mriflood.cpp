@@ -1437,11 +1437,7 @@ MRI *MRISfillInterior(MRI_SURFACE *mris, double resolution, MRI *mri_dst)
   MATRIX *crs, *xyz = NULL, *vox2sras = NULL, *m_vox2ras;
   MRI *mri_cosa, *mri_vlen, *mri_shell, *shellbb, *outsidebb;
   MRI_REGION *region;
-  struct timeb start;
-
-  // printf("Using New MRISfillInterior()\n");fflush(stdout);
-
-  TimerStart(&start);
+  Timer start;
 
   MRIScomputeMetricProperties(mris);
 
@@ -1576,7 +1572,6 @@ MRI *MRISfillInterior(MRI_SURFACE *mris, double resolution, MRI *mri_dst)
       }
     }
   }
-  // printf("  shell done  t = %g\n",TimerStop(&start)/1000.0) ;
   MRIS_freeRAS2VoxelMap(&map);
   MatrixFree(&crs);
   MatrixFree(&xyz);
@@ -1606,10 +1601,8 @@ MRI *MRISfillInterior(MRI_SURFACE *mris, double resolution, MRI *mri_dst)
   MRIfree(&mri_shell);
 
   // Flood the outside (outside includes shell). This is the part that takes the longest.
-  // printf("  t = %g\n",TimerStop(&start)/1000.0) ;
   // printf("  flooding outside  ");fflush(stdout);
   outsidebb = MRISfloodoutside(shellbb, NULL);
-  // printf("  t = %g\n",TimerStop(&start)/1000.0) ; fflush(stdout);
 
   /* Note: it is possible that there are voxels outside of the shell
      that do not get flooded because they form a hole and the flood
@@ -1648,7 +1641,7 @@ MRI *MRISfillInterior(MRI_SURFACE *mris, double resolution, MRI *mri_dst)
   MRIfree(&outsidebb);
   // printf("  Found %d voxels in interior, volume = %g\n",nhits,
   // nhits*mri_dst->xsize*mri_dst->ysize*mri_dst->zsize);
-  if (Gdiag_no > 0) printf("  MRISfillInterior t = %g\n", TimerStop(&start) / 1000.0);
+  if (Gdiag_no > 0) printf("  MRISfillInterior t = %g\n", start.seconds());
 
   return (mri_dst);
 }

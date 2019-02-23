@@ -352,7 +352,7 @@ int main(int argc, char **argv) {
   double tx, ty, tz, ax, ay, az;
   int nth, n, vno;
   MATRIX *R=NULL, *R00=NULL, *Rdiff=NULL;
-  struct timeb  mytimer;
+  Timer mytimer;
   double secCostTime;
   FILE *fp, *fpMinCost, *fpInitCost, *fpRMSDiff, *fpPreOpt=NULL, *fpRelCost, *fpParam;
   double rmsDiffSum, rmsDiffSum2, rmsDiffMean=0, rmsDiffMax=0, d, rmsDiffStd=0;
@@ -560,9 +560,9 @@ int main(int argc, char **argv) {
 
   if(DoProfile){
     printf("Profiling over 100 iterations, nsubsamp = %d\n",nsubsamp);
-    TimerStart(&mytimer) ;
+    mytimer.reset() ;
     for(n=0; n < 100; n++) GetSurfCosts(mov, NULL, R0, R, p, dof, costs);
-    secCostTime = TimerStop(&mytimer)/1000.0;
+    secCostTime = mytimer.seconds();
     printf("ttot = %g\n",secCostTime);
     printf("tper = %g\n",secCostTime/100);
     exit(0);
@@ -671,7 +671,7 @@ int main(int argc, char **argv) {
     fflush(stdout); fflush(fp);
     mincost = 10e10;
     PreOptAtMin = 0;
-    TimerStart(&mytimer) ;
+    mytimer.reset() ;
     nth = 0;
     if (PreOptDeltaTrans < 0)  // no separate range specified for translations
     {
@@ -698,7 +698,7 @@ int main(int argc, char **argv) {
                 if(costs[7] < mincost) {
                   mincost = costs[7];
                   for(n=0; n < 6; n++) pmin[n] = p[n];
-                  secCostTime = TimerStop(&mytimer)/1000.0 ;
+                  secCostTime = mytimer.seconds() ;
                   printf("%6d %8.4lf %8.4lf %8.4lf %8.4lf %8.4lf %8.4lf    %8.4lf %8.4lf %4.1f\n",
                          nth,tx,ty,tz,ax,ay,az,costs[7],mincost,secCostTime/60);
                   fprintf(fp,"%6d %8.4lf %8.4lf %8.4lf %8.4lf %8.4lf %8.4lf    %8.4lf %8.4lf %4.1f\n",
@@ -707,7 +707,7 @@ int main(int argc, char **argv) {
                   
                 } else {
                   if(nth == 0 || nth%1000 == 0 || debug){
-                    secCostTime = TimerStop(&mytimer)/1000.0 ;
+                    secCostTime = mytimer.seconds() ;
                     printf("%6d %8.4lf %8.4lf %8.4lf %8.4lf %8.4lf %8.4lf    %8.4lf %8.4lf %4.1f\n",
                            nth,tx,ty,tz,ax,ay,az,costs[7],mincost,secCostTime/60);
                     fprintf(fp,"%6d %8.4lf %8.4lf %8.4lf %8.4lf %8.4lf %8.4lf    %8.4lf %8.4lf %4.1f\n",
@@ -732,7 +732,7 @@ int main(int argc, char **argv) {
     printf("Brute Force --------------------------\n");
     printf("Min cost was %lf\n",mincost);
     printf("Number of iterations %5d\n",nth);
-    secCostTime = TimerStop(&mytimer)/1000.0 ;
+    secCostTime = mytimer.seconds() ;
     printf("Search time %lf sec\n",secCostTime);
     printf("Parameters at best (transmm, rotdeg)\n");
     printf("%7.3lf %7.3lf %7.3lf %6.3lf %6.3lf %6.3lf \n",
@@ -752,11 +752,11 @@ int main(int argc, char **argv) {
     nsubsamp = nsubsampsave;
   }
 
-  TimerStart(&mytimer) ;
+  mytimer.reset() ;
   printf("Starting Powell Minimization\n");
   MinPowell(mov, NULL, R, p, dof, TolPowell, LinMinTolPowell,
 	    nMaxItersPowell,SegRegCostFile, costs, &nth);
-  secCostTime = TimerStop(&mytimer)/1000.0 ;
+  secCostTime = mytimer.seconds() ;
 
   // Compute relative final cost 
   rcost = RelativeSurfCost(mov, R);

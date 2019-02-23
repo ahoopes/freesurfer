@@ -100,7 +100,7 @@ int
 main(int argc, char *argv[]) {
   char       **av, *int_fname, *label_fname, *out_fname ;
   int        x, y, z, f, ac, nargs, msec, minutes, seconds, nfeatures, nc, label, i, wsize ;
-  struct timeb start ;
+  Timer start ;
   MRI       *mri_inputs, *mri_labels, *mri_tmp, *mri_out ;
   float     min_label, max_label ;
   double    pval ;
@@ -120,7 +120,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   setRandomSeed(-1L) ;
   ac = argc ;
@@ -321,7 +321,7 @@ main(int argc, char *argv[]) {
     free(training_data[i]) ;
   free(feature) ; free(training_data) ; free(training_classes) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ; minutes = seconds / 60 ; seconds = seconds % 60 ;
   fprintf(stderr, "OCT segmentation  took %d minutes and %d seconds.\n",  minutes, seconds) ;
   exit(0) ;

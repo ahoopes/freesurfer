@@ -101,7 +101,7 @@ main(int argc, char *argv[])
   VERTEX *v;
 
   int    msec, minutes, seconds, nsurfaces, nsurfaces_total ;
-  struct timeb start ;
+  Timer start ;
 
   /* rkt: check for and handle version tag */
   nargs = handle_version_option
@@ -116,7 +116,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -502,7 +502,7 @@ main(int argc, char *argv[])
     }
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

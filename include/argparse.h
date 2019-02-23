@@ -17,7 +17,7 @@ typedef std::map<std::string, size_t> IndexMap;
 #include <typeinfo>
 #include <stdexcept>
 
-#include "log.hpp"
+#include "log.h"
 
 /*!
 

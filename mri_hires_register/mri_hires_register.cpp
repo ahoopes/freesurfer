@@ -179,7 +179,7 @@ main(int argc, char *argv[]) {
                                          *mri_dist_dst = NULL ;
   VOXEL_LIST *vl_lowres, *vl_hires ;
   MRI_REGION  box ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds, label ;
 
   parms.write_iterations = 0 ;
@@ -206,7 +206,7 @@ main(int argc, char *argv[]) {
   mp.tol = 0.1 ;
   mp.niterations = 1000 ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   setRandomSeed(-1L) ;
   DiagInit(NULL, NULL, NULL) ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -631,7 +631,7 @@ main(int argc, char *argv[]) {
     }
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

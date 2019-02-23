@@ -186,7 +186,7 @@ main(int argc, char *argv[])
 	MRI          *mri_target, *mri_source, *mri_tmp, *mri_orig_source, *mri_orig_target ;
 	MRI          *mri_dist_target = NULL, *mri_dist_source = NULL ;
 	MRI_REGION   box ;
-  struct timeb start ;
+  Timer start ;
   int          msec, hours, minutes, seconds, label, j ;
 	MATRIX       *m_L/*, *m_I*/ ;
 	LTA          *lta ;
@@ -196,7 +196,7 @@ main(int argc, char *argv[])
 
   mp.npasses = 2 ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   setRandomSeed(-1L) ;
   DiagInit(NULL, NULL, NULL) ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -474,7 +474,7 @@ main(int argc, char *argv[])
 	}
   DCTfree(&dct) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
 	hours = seconds / (60*60) ;
   minutes = (seconds/60) % 60 ;

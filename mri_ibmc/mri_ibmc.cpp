@@ -1136,7 +1136,7 @@ float compute_powell_cost(float *params)
   static double copt = 10e10;
   static int first=1;
   static float *paramsprev, *beta, cost0;
-  static struct timeb timer;
+  static Timer timer;
   double secCostTime=0;
   float cost;
   int newopt,k,kbeta=0,n,r,c,r0;
@@ -1144,7 +1144,7 @@ float compute_powell_cost(float *params)
   if(first){
     paramsprev = vector(1,ibmc->dof);
     beta = (float *) calloc(ibmc->dof,sizeof(float));
-    TimerStart(&timer);
+    timer.reset();
     kbeta=1;
   }
   else {
@@ -1181,7 +1181,7 @@ float compute_powell_cost(float *params)
   }
 
   if(newopt && kbeta != 0){
-    secCostTime = TimerStop(&timer)/1000.0;
+    secCostTime = timer.seconds();
     printf("%4d %3d  %9.6f    %9.6f %9.6f   t=%7.3f\n",
 	   nCostEvaluations,kbeta-1,params[kbeta],cost,copt,
 	   secCostTime/60.0);

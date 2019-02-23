@@ -52,7 +52,7 @@ main(int argc, char *argv[]) {
   char         **av ;
   int          ac, nargs ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   GCA          *gca ;
   MRI          *mri_norm, *mri_aseg ;
 
@@ -66,7 +66,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -86,7 +86,7 @@ main(int argc, char *argv[]) {
   printf("writing updated gca to %s...\n", argv[4]) ;
   GCAwrite(gca, argv[4]) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

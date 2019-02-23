@@ -73,7 +73,7 @@ main(int argc, char *argv[]) {
   int    ac, nargs, niter, operation, i ;
   MRI    *mri_src, *mri_dst, *mri_saved_src = NULL ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
 
   /* rkt: check for and handle version tag */
   nargs = handle_version_option (argc, argv, "$Id: mri_morphology.c,v 1.15 2012/03/15 18:31:07 lzollei Exp $", "$Name:  $");
@@ -85,7 +85,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -270,7 +270,7 @@ main(int argc, char *argv[]) {
   fprintf(stderr, "writing to %s...\n", out_fname) ;
   MRIwrite(mri_dst, out_fname) ;
   MRIfree(&mri_dst) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

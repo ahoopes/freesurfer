@@ -157,7 +157,7 @@ main(int argc, char *argv[]) {
   float        **cv_thickness, *cv_outputs, **cv_avg_thickness ;
   MRI_SP       *mrisp ;
   LABEL        *area ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds ;
 
 
@@ -239,7 +239,7 @@ main(int argc, char *argv[]) {
     argv += nargs ;
   }
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   /* subject_name hemi surface curvature */
   if (argc < 7)
@@ -450,7 +450,7 @@ main(int argc, char *argv[]) {
   
   printf("writing trained SVM to %s...\n", out_fname) ;
   SVMwrite(svm, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

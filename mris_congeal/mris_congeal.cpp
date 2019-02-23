@@ -144,7 +144,6 @@ main(int argc, char *argv[])
   MRI_SP       *mrisp_template ;
 
   char cmdline[CMD_LINE_LEN] ;
-  struct  timeb start ;
 
   make_cmd_version_string 
     (argc, argv, 
@@ -161,7 +160,7 @@ main(int argc, char *argv[])
     exit (0);
   argc -= nargs;
 
-  TimerStart(&start) ;
+  Timer start;
   Gdiag = DIAG_SHOW ;
   Progname = argv[0] ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -264,7 +263,7 @@ main(int argc, char *argv[])
   }
   mrisp_template = MRIScongeal(mris_ico, mris_array, nsubjects, NULL, &parms) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   if (Gdiag & DIAG_SHOW)
     printf("registration took %2.2f hours\n",
            (float)msec/(1000.0f*60.0f*60.0f));

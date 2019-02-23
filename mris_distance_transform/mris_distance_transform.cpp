@@ -69,7 +69,7 @@ main(int argc, char *argv[])
   int           ac, nargs, msec, mode=-1 ;
   LABEL         *area = NULL ;
   MRI_SURFACE   *mris ;
-  struct timeb  then ;
+  Timer then ;
   MRI           *mri_dist ;
 
   /* rkt: check for and handle version tag */
@@ -99,7 +99,7 @@ main(int argc, char *argv[])
   if (argc < 4)
     usage_exit() ;
 
-  TimerStart(&then) ;
+  then.reset() ;
   mris = MRISread(argv[1]) ;
   if (mris == NULL)
     ErrorExit(ERROR_NOFILE, "%s: could not read surface %s",
@@ -251,7 +251,7 @@ main(int argc, char *argv[])
     }
   }
 
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,"distance transform took %2.1f minutes\n", (float)msec/(60*1000.0f));
 
   exit(0) ;

@@ -191,9 +191,9 @@ FSENV *fsenv;
 int main(int argc, char *argv[]) {
   int nargs,err,n;
   LTA *lta;
-  struct timeb timer;
+  Timer timer;
 
-  TimerStart(&timer);
+  timer.reset();
 
   cmdargs = (CMDARGS *)calloc(sizeof(CMDARGS),1);
   cmdargs->mov = NULL;
@@ -454,7 +454,7 @@ int main(int argc, char *argv[]) {
     fclose(fp);
   }
   printf("nhits = %d out of %d, Percent Overlap: %5.1f\n",coreg->nhits,coreg->nvoxref,coreg->pcthits);
-  printf("mri_coreg RunTimeSec %4.1f sec\n",TimerStop(&timer)/1000.0);
+  printf("mri_coreg RunTimeSec %4.1f sec\n",timer.seconds());
 
   if(! cmdargs->refconf){
     printf("To check run:\n");
@@ -1631,9 +1631,9 @@ int COREGMinPowell()
   extern COREG *coreg;
   float *pPowel, **xi;
   int    r, c, n,dof;
-  struct timeb timer;
+  Timer timer;
 
-  TimerStart(&timer);
+  timer.reset();
   dof = coreg->nparams;
 
   printf("\n\n---------------------------------\n");
@@ -1651,10 +1651,10 @@ int COREGMinPowell()
   OpenPowell2(pPowel, xi, dof, coreg->ftol, coreg->linmintol, coreg->nitersmax, 
 	      &coreg->niters, &coreg->fret, COREGcostPowell);
   printf("Powell done niters total = %d\n",coreg->niters);
-  printf("OptTimeSec %4.1f sec\n",TimerStop(&timer)/1000.0);
-  printf("OptTimeMin %5.2f min\n",(TimerStop(&timer)/1000.0)/60);
+  printf("OptTimeSec %4.1f sec\n",timer.seconds());
+  printf("OptTimeMin %5.2f min\n", timer.minutes());
   printf("nEvals %d\n",coreg->nCostEvaluations);
-  //printf("EvalTimeSec %4.1f sec\n",(TimerStop(&timer)/1000.0)/coreg->nCostEvaluations);
+  //printf("EvalTimeSec %4.1f sec\n",(timer.seconds())/coreg->nCostEvaluations);
   fflush(stdout);
 
   printf("Final parameters ");

@@ -644,7 +644,7 @@ MRI *WholeBrainCon(WBC *wbc)
   int threadno;
   long npairs,ia,ib;
   int k1; // note: these are redefined in loop
-  struct timeb timer;
+  Timer timer;
   double **pf, val;
   int *k1a,*k1b,*k2a,*k2b;
 
@@ -723,7 +723,7 @@ MRI *WholeBrainCon(WBC *wbc)
   printf("\n");
   
   printf("Starting WBC loop\n"); fflush(stdout);
-  TimerStart(&timer);
+  timer.reset();
   ROMP_PF_begin
   #ifdef HAVE_OPENMP
   #pragma omp parallel for if_ROMP(experimental) 
@@ -755,8 +755,7 @@ MRI *WholeBrainCon(WBC *wbc)
       for(k2=k2min; k2<=k2max; k2++){
 	nthpair ++;
 	if(thno == 0 && (nthpair == 1 || (nthpair % (long)1e8 == 0))){
-	  printf("%4.1f%%, t=%5.1f min\n",nthreads*100.0*nthpair/npairs,
-		 TimerStop(&timer)/60000.0);
+	  printf("%4.1f%%, t=%5.1f min\n",nthreads*100.0*nthpair/npairs, timer.minutes());
 	  fflush(stdout);
 	}
 
@@ -886,7 +885,7 @@ MRI *WholeBrainCon(WBC *wbc)
   for(k1 = 0; k1 < wbc->ntot; k1++) free(pf[k1]);
   free(pf);
 
-  printf(" t = %6.4f, ntot = %d\n",TimerStop(&timer)/1000.0,wbc->ntot);fflush(stdout);
+  printf(" t = %6.4f, ntot = %d\n", timer.seconds(), wbc->ntot);fflush(stdout);
   return(wbc->con);
 }
 

@@ -60,7 +60,7 @@ main(int argc, char *argv[]) {
   char         **av ;
   int          ac, nargs ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri_wm, *mri_hires ;
   TRANSFORM    *transform ;
   MRI_SURFACE  *mris ;
@@ -75,7 +75,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -131,7 +131,7 @@ main(int argc, char *argv[]) {
     MRIclose(mri_wm, mri_wm) ;
       
   MRIwrite(mri_wm, argv[4]) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

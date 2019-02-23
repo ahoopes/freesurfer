@@ -101,7 +101,7 @@ main(int argc, char *argv[])
   MRI           *mri, *mri_wm ;
   int           msec, nvert, nfaces, nedges, eno ;
   float         max_len ;
-  struct timeb  then ;
+  Timer then ;
 
   char cmdline[CMD_LINE_LEN] ;
 
@@ -191,7 +191,7 @@ main(int argc, char *argv[])
   printf("  %s\n",MRISurfSrcVersion());
   fflush(stdout);
 
-  TimerStart(&then) ;
+  then.reset() ;
   sname = argv[1] ;
   hemi = argv[2] ;
   if (strlen(sdir) == 0)
@@ -320,7 +320,7 @@ main(int argc, char *argv[])
     MRISwrite(mris_corrected, fname) ;
   */
 
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   printf("topology fixing took %2.1f minutes\n", (float)msec/(60*1000.0f));
 
   // Output formatted so it can be easily grepped

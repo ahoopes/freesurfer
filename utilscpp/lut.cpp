@@ -1,7 +1,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "lut.hpp"
+#include "lut.h"
 
 
 LookupTable::LookupTable(std::string filename)

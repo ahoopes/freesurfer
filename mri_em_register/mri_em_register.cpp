@@ -247,7 +247,7 @@ main(int argc, char *argv[])
   int          ac, nargs, i, ninputs, scale, spacing;
   int          exclude_list[MAX_CMA_LABEL+1] ;
   int          msec, minutes, seconds, min_left_cbm, min_right_cbm ;
-  struct timeb start ;
+  Timer start ;
   float        old_log_p, log_p ;
 
   FSinit() ;
@@ -325,16 +325,16 @@ main(int argc, char *argv[])
         exclude_list[l] = 1 ;
       }
   }
-  TimerStart(&start) ;
+  start.reset() ;
   ///////////  read GCA //////////////////////////////////////////////////
   printf("reading '%s'...\n", gca_fname) ;
   fflush(stdout) ;
 
   {
-      struct timeb start ;
-      TimerStart(&start) ;
+      Timer start ;
+      start.reset() ;
       gca = GCAread(gca_fname) ;
-      int msec = TimerStop(&start) ;
+      int msec = start.milliseconds() ;
       int seconds = nint((float)msec/1000.0f) ;
       printf("GCAread took %d minutes and %d seconds.\n",
          seconds / 60, seconds % 60) ;    
@@ -1172,7 +1172,7 @@ main(int argc, char *argv[])
   printf("#VMPC# mri_em_register VmPeak  %d\n",GetVmPeak());
 
   ///////////////////////////////////////////////////////////////
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   printf("FSRUNTIME@ mri_ca_register %7.4f hours %d threads\n",msec/(1000.0*60.0*60.0),n_omp_threads);
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
@@ -1565,8 +1565,8 @@ find_optimal_transform
   done = 0 ;
   do
   {
-    struct timeb start ;
-    TimerStart(&start) ;
+    Timer start ;
+    start.reset() ;
 
     old_max = max_log_p ;
     printf("****************************************\n");
@@ -1643,10 +1643,9 @@ find_optimal_transform
       good_step = 1 ;  /* took at least one good step at this scale */
     }
 
-    int msec    = TimerStop(&start) ;
+    int msec = start.milliseconds();
     int seconds = nint((float)msec/1000.0f) ;
-    printf("iteration took %d minutes and %d seconds.\n", 
-    	seconds / 60, seconds % 60) ;
+    printf("iteration took %d minutes and %d seconds.\n", seconds / 60, seconds % 60) ;
 	    
     niter++ ;
   }

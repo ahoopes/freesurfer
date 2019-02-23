@@ -111,7 +111,7 @@ main(int argc, char *argv[]) {
   MRI_SURFACE *mris ;
   int         msec, minutes, seconds, n_averages ;
   float        current_sigma ;
-  struct timeb start ;
+  Timer start ;
   char         cmdline[CMD_LINE_LEN], *cp ;
   HISTOGRAM   *histos[MAX_LABEL+1] ;
   VERTEX_INFO *vi ;
@@ -153,7 +153,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -316,7 +316,7 @@ main(int argc, char *argv[]) {
   MRISaddCommandLine(mris, cmdline) ;
   printf("writing output surface to %s\n", out_fname) ;
   MRISwrite(mris, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

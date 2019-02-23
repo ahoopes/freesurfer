@@ -198,7 +198,7 @@ main(int argc, char *argv[])
   MRI    *mri_T1 = NULL, *mri_PD = NULL, *mri_sse, *mri_T2star ;
   char   *in_fname, *out_dir ;
   int    msec, minutes, seconds, nvolumes, nvolumes_total ;
-  struct timeb start ;
+  Timer start ;
   double rms ;
   float TR=0;
   float TE=0;
@@ -241,7 +241,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -901,7 +901,7 @@ main(int argc, char *argv[])
     }
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

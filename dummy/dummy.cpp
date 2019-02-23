@@ -1,3 +1,7 @@
+#include <iostream>
+#include "timer.h"
+
 int main(int argc, const char **argv) {
-  return 0;
+    std::cout << currentDateTime() << std::endl;
+    return 0;
 }

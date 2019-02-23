@@ -92,8 +92,7 @@ int MRIgtmSeg(GTMSEG *gtmseg)
   int err, *segidlist, nsegs, n;
   char *SUBJECTS_DIR, tmpstr[5000];
   MRI *apas, *aseg, *hrseg, *ctxseg;
-  struct timeb timer;
-  TimerStart(&timer);
+  Timer timer;
 
   printf("Starting MRIgtmSeg() USF=%d\n", gtmseg->USF);
 
@@ -111,7 +110,7 @@ int MRIgtmSeg(GTMSEG *gtmseg)
   MRIfree(&apas);
 
   printf("Loading surfaces ");
-  printf(" t = %6.4f\n", TimerStop(&timer) / 1000.0);
+  printf(" t = %6.4f\n", timer.seconds());
   fflush(stdout);
   sprintf(tmpstr, "%s/%s/surf/lh.white", SUBJECTS_DIR, gtmseg->subject);
   gtmseg->lhw = MRISread(tmpstr);
@@ -130,7 +129,7 @@ int MRIgtmSeg(GTMSEG *gtmseg)
   if (gtmseg->rhp == NULL) return (1);
 
   printf("Loading annotations ");
-  printf(" t = %6.4f\n", TimerStop(&timer) / 1000.0);
+  printf(" t = %6.4f\n", timer.seconds());
   fflush(stdout);
   if (gtmseg->wmannotfile != NULL) {
     sprintf(tmpstr, "%s/%s/label/lh.%s", SUBJECTS_DIR, gtmseg->subject, gtmseg->wmannotfile);
@@ -203,7 +202,7 @@ int MRIgtmSeg(GTMSEG *gtmseg)
   // Upsample the segmentation
   printf("Upsampling segmentation USF = %d", gtmseg->USF);
   fflush(stdout);
-  printf(" t = %6.4f\n", TimerStop(&timer) / 1000.0);
+  printf(" t = %6.4f\n", timer.seconds());
   fflush(stdout);
   hrseg = MRIhiresSeg(aseg, gtmseg->lhw, gtmseg->lhp, gtmseg->rhw, gtmseg->rhp, gtmseg->USF, &gtmseg->anat2seg);
   if (hrseg == NULL) return (1);
@@ -213,7 +212,7 @@ int MRIgtmSeg(GTMSEG *gtmseg)
   // Label cortex (like aparc+aseg)
   printf("Beginning cortical segmentation using %s", gtmseg->ctxannotfile);
   fflush(stdout);
-  printf(" t = %6.4f\n", TimerStop(&timer) / 1000.0);
+  printf(" t = %6.4f\n", timer.seconds());
   fflush(stdout);
   ctxseg = MRIannot2CorticalSeg(hrseg, gtmseg->lhw, gtmseg->lhp, gtmseg->rhw, gtmseg->rhp, NULL, NULL);
   MRIfree(&hrseg);
@@ -222,7 +221,7 @@ int MRIgtmSeg(GTMSEG *gtmseg)
   if (gtmseg->wmannotfile != NULL) {
     printf("Beginning WM segmentation using %s", gtmseg->wmannotfile);
     fflush(stdout);
-    printf(" t = %6.4f\n", TimerStop(&timer) / 1000.0);
+    printf(" t = %6.4f\n", timer.seconds());
     fflush(stdout);
     ctxseg = MRIannot2CerebralWMSeg(ctxseg, gtmseg->lhw, gtmseg->rhw, gtmseg->dmax, NULL, ctxseg);
   }
@@ -263,7 +262,7 @@ int MRIgtmSeg(GTMSEG *gtmseg)
   gtmseg->segidlist = segidlist;
   gtmseg->nsegs = nsegs;
 
-  printf("MRIgtmSeg() done, t = %6.4f\n", TimerStop(&timer) / 1000.0);
+  printf("MRIgtmSeg() done, t = %6.4f\n", timer.seconds());
   fflush(stdout);
   return (0);
 }
@@ -975,7 +974,6 @@ int GTMnPad(GTM *gtm)
 */
 int GTMsolve(GTM *gtm)
 {
-  struct timeb timer;
   int n, f;
   double sum;
 
@@ -986,9 +984,9 @@ int GTMsolve(GTM *gtm)
 
   if (!gtm->Optimizing) printf("Computing  XtX ... ");
   fflush(stdout);
-  TimerStart(&timer);
+  Timer timer;
   gtm->XtX = MatrixMtM(gtm->X, gtm->XtX);
-  if (!gtm->Optimizing) printf(" %4.1f sec\n", TimerStop(&timer) / 1000.0);
+  if (!gtm->Optimizing) printf(" %4.1f sec\n", timer.seconds());
   fflush(stdout);
 
   gtm->iXtX = MatrixInverse(gtm->XtX, gtm->iXtX);
@@ -1162,7 +1160,6 @@ int GTMrbv(GTM *gtm)
   int c, r, s, f, nthseg, segid;
   double val, v, vhat0, vhat, v2;
   LTA *lta;
-  struct timeb mytimer;
   MATRIX *nhits;
   MRI *yframe = NULL;
   MRI_REGION *region = NULL;
@@ -1172,7 +1169,7 @@ int GTMrbv(GTM *gtm)
 
   if (gtm->rbv) MRIfree(&gtm->rbv);
 
-  TimerStart(&mytimer);
+  Timer mytimer;
   PrintMemUsage(stdout);
 
   if (gtm->mask_rbv_to_brain) {
@@ -1235,14 +1232,14 @@ int GTMrbv(GTM *gtm)
   // Keep track of segmeans in RBV for QA
   gtm->rbvsegmean = MRIallocSequence(gtm->nsegs, 1, 1, MRI_FLOAT, gtm->nframes);
 
-  printf("RBV looping over %d frames, t = %4.2f min \n", gtm->nframes, TimerStop(&mytimer) / 60000.0);
+  printf("RBV looping over %d frames, t = %4.2f min \n", gtm->nframes, mytimer.minutes());
   fflush(stdout);
   for (f = 0; f < gtm->nframes; f++) {
-    printf("   f=%d t = %4.2f\n", f, TimerStop(&mytimer) / 60000.0);
+    printf("   f=%d t = %4.2f\n", f, mytimer.minutes());
     fflush(stdout);
     yframe = fMRIframe(gtm->yvol, f, yframe);
 
-    printf("   Synthesizing unsmoothed input in seg space %4.2f \n", TimerStop(&mytimer) / 60000.0);
+    printf("   Synthesizing unsmoothed input in seg space %4.2f \n", mytimer.minutes());
     fflush(stdout);
     if (Gdiag_no > 0) PrintMemUsage(stdout);
     yhat0seg = GTMsegSynth(gtm, f, yhat0seg);
@@ -1251,7 +1248,7 @@ int GTMrbv(GTM *gtm)
       return (1);
     }
 
-    printf("   Smoothing synthesized in seg space %4.2f \n", TimerStop(&mytimer) / 60000.0);
+    printf("   Smoothing synthesized in seg space %4.2f \n", mytimer.minutes());
     fflush(stdout);
     if (Gdiag_no > 0) PrintMemUsage(stdout);
     yhatseg = MRIgaussianSmoothNI(yhat0seg, gtm->cStd, gtm->rStd, gtm->sStd, yhatseg);
@@ -1260,7 +1257,7 @@ int GTMrbv(GTM *gtm)
       return (1);
     }
 
-    printf("   Sampling input to seg space with trilin %4.2f \n", TimerStop(&mytimer) / 60000.0);
+    printf("   Sampling input to seg space with trilin %4.2f \n", mytimer.minutes());
     fflush(stdout);
     if (Gdiag_no > 0) PrintMemUsage(stdout);
     lta = LTAcopy(gtm->rbvseg2pet, NULL);
@@ -1268,7 +1265,7 @@ int GTMrbv(GTM *gtm)
     MRIvol2Vol(yframe, yseg, (lta->xforms[0].m_L), SAMPLE_TRILINEAR, 0.0);
     LTAfree(&lta);
 
-    printf("   Computing RBV %4.2f \n", TimerStop(&mytimer) / 60000.0);
+    printf("   Computing RBV %4.2f \n", mytimer.minutes());
     fflush(stdout);
     if (Gdiag_no > 0) PrintMemUsage(stdout);
     nhits = MatrixAlloc(gtm->beta->rows, 1, MATRIX_REAL);
@@ -1305,7 +1302,7 @@ int GTMrbv(GTM *gtm)
     }
   }
   if (Gdiag_no > 0) PrintMemUsage(stdout);
-  printf("  t = %4.2f min\n", TimerStop(&mytimer) / 60000.0);
+  printf("  t = %4.2f min\n", mytimer.minutes());
   fflush(stdout);
   MRIfree(&yseg);
   MRIfree(&yhat0seg);
@@ -1323,7 +1320,7 @@ int GTMrbv(GTM *gtm)
   MatrixFree(&nhits);
 
   PrintMemUsage(stdout);
-  printf("  RBV took %4.2f min\n", TimerStop(&mytimer) / 60000.0);
+  printf("  RBV took %4.2f min\n", mytimer.minutes());
 
   return (0);
 }
@@ -1375,13 +1372,12 @@ int GTMrbv0(GTM *gtm)
   int c, r, s, f, nthseg, segid;
   double val, v, vhat0, vhat, v2;
   LTA *lta;
-  struct timeb mytimer;
   MATRIX *nhits;
   MRI *yseg;      // source volume trilin resampled to seg space (used with RBV)
   MRI *yhat0seg;  // unsmoothed yhat created in seg space (used with RBV)
   MRI *yhatseg;   // smoothed yhat in seg space (used with RBV)
 
-  TimerStart(&mytimer);
+  Timer mytimer;
 
   printf("   Synthesizing unsmoothed input in seg space... ");
   fflush(stdout);
@@ -1391,7 +1387,7 @@ int GTMrbv0(GTM *gtm)
     printf("ERROR: GTMrbv0() could not synthesize yhat0seg\n");
     return (1);
   }
-  printf("  t = %4.2f min\n", TimerStop(&mytimer) / 60000.0);
+  printf("  t = %4.2f min\n", mytimer.minutes());
   fflush(stdout);
 
   printf("   Smoothing synthesized in seg space... ");
@@ -1402,7 +1398,7 @@ int GTMrbv0(GTM *gtm)
     printf("ERROR: GTMrbv0() could not smooth yhatseg\n");
     return (1);
   }
-  printf("  t = %4.2f min\n", TimerStop(&mytimer) / 60000.0);
+  printf("  t = %4.2f min\n", mytimer.minutes());
   fflush(stdout);
 
   printf("   Sampling input to seg space with trilin... ");
@@ -1416,7 +1412,7 @@ int GTMrbv0(GTM *gtm)
   }
   MRIcopyHeader(gtm->anatseg, yseg);
   MRIcopyPulseParameters(gtm->yvol, yseg);
-  printf("  t = %4.2f min\n", TimerStop(&mytimer) / 60000.0);
+  printf("  t = %4.2f min\n", mytimer.minutes());
   fflush(stdout);
 
   lta = LTAcopy(gtm->rbvseg2pet, NULL);
@@ -1464,7 +1460,7 @@ int GTMrbv0(GTM *gtm)
   MRIfree(&yseg);
   MRIfree(&yhat0seg);
   MRIfree(&yhatseg);
-  printf("  t = %4.2f min\n", TimerStop(&mytimer) / 60000.0);
+  printf("  t = %4.2f min\n", mytimer.minutes());
   fflush(stdout);
 
   // track seg means for QA
@@ -1507,7 +1503,7 @@ int GTMrbv0(GTM *gtm)
     gtm->rbv = rbvtmp;
   }
   PrintMemUsage(stdout);
-  printf("  RBV took %4.2f min\n", TimerStop(&mytimer) / 60000.0);
+  printf("  RBV took %4.2f min\n", mytimer.minutes());
 
   return (0);
 }
@@ -1867,7 +1863,6 @@ int GTMcheckX(MATRIX *X)
 int GTMbuildX(GTM *gtm)
 {
   int nthseg, err;
-  struct timeb timer;
 
   if (gtm->X == NULL || gtm->X->rows != gtm->nmask || gtm->X->cols != gtm->nsegs) {
     // Alloc or realloc X
@@ -1888,7 +1883,7 @@ int GTMbuildX(GTM *gtm)
   }
   gtm->dof = gtm->X->rows - gtm->X->cols;
 
-  TimerStart(&timer);
+  Timer timer;
 
   err = 0;
   ROMP_PF_begin
@@ -1903,7 +1898,6 @@ int GTMbuildX(GTM *gtm)
     MRI_REGION *region;
     MB2D *mb;
     segid = gtm->segidlist[nthseg];
-    // printf("nthseg = %d, %d %6.4f\n",nthseg,segid,TimerStop(&timer)/1000.0);fflush(stdout);
     if (gtm->DoVoxFracCor)
       nthsegpvf = fMRIframe(gtm->segpvf, nthseg, NULL);  // extract PVF for this seg
     else
@@ -1978,7 +1972,7 @@ int GTMbuildX(GTM *gtm)
   }
   ROMP_PF_end
   
-  if (!gtm->Optimizing) printf(" Build time %6.4f, err = %d\n", TimerStop(&timer) / 1000.0, err);
+  if (!gtm->Optimizing) printf(" Build time %6.4f, err = %d\n", timer.seconds(), err);
   fflush(stdout);
   if (err) gtm->X = NULL;
 
@@ -2594,7 +2588,6 @@ int GTMrvarGM(GTM *gtm)
 */
 MRI **GTMlocal(GTM *gtm, MRI **pvc)
 {
-  struct timeb timer;
   int const nTT = gtm->ttpvf->nframes;
 
   MRI * const pvfpsf = MRIgaussianSmoothNI(gtm->ttpvf, gtm->cStd, gtm->rStd, gtm->sStd, NULL);
@@ -2642,7 +2635,7 @@ MRI **GTMlocal(GTM *gtm, MRI **pvc)
 
   int const nvmax = (2 * gtm->lgtm->nrad + 1) * (2 * gtm->lgtm->nrad + 1) * (2 * gtm->lgtm->nrad + 1);
   printf("GTMlocal(): nrad = %d, nvmax = %d, nTT=%d, Xthresh %f\n", gtm->lgtm->nrad, nvmax, nTT, gtm->lgtm->Xthresh);
-  TimerStart(&timer);
+  Timer timer;
 
   int c;
   ROMP_PF_begin
@@ -2782,7 +2775,7 @@ MRI **GTMlocal(GTM *gtm, MRI **pvc)
   
   printf("\n");
   // printf("nNull=%d\n",nNull);
-  printf("t=%6.4f\n", TimerStop(&timer) / 1000.0);
+  printf("t=%6.4f\n", timer.seconds());
   printf("GTMlocal(); done\n");
   fflush(stdout);
 

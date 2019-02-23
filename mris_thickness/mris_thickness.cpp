@@ -84,7 +84,7 @@ main(int argc, char *argv[]) {
   char          *out_fname, *sname, *cp, fname[STRLEN], *hemi ;
   int           nargs, msec ;
   MRI_SURFACE   *mris ;
-  struct timeb  then ;
+  Timer then ;
 
   /* rkt: check for and handle version tag */
   nargs = handle_version_option (argc, argv, "$Id: mris_thickness.c,v 1.28 2012/11/27 17:41:26 fischl Exp $", "$Name:  $");
@@ -92,7 +92,7 @@ main(int argc, char *argv[]) {
     exit (0);
   argc -= nargs;
 
-  TimerStart(&then) ;
+  then.reset() ;
   Progname = argv[0] ;
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
@@ -418,7 +418,7 @@ main(int argc, char *argv[]) {
           write_vertices ? "vertex correspondence" :
           "thickness", out_fname) ;
   MRISwriteCurvature(mris, out_fname) ;
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,"thickness measurement took %2.1f minutes\n", (float)msec/(60*1000.0f));
   exit(0) ;
   return(0) ;  /* for ansi */

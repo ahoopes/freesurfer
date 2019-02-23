@@ -100,7 +100,7 @@ main(int argc, char *argv[]) {
   LABEL        *l_damaged_wm ;
   GCA          *gca ;
   TRANSFORM    *transform ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds ;
   char         *PD_fname, *T2_fname, *T1_fname, *aseg_fname, *gca_fname, *xform_fname, *label_fname, *out_fname ;
   MATRIX       *m_inv_covariances[MAX_CMA_LABELS] ;
@@ -108,7 +108,7 @@ main(int argc, char *argv[]) {
 
   memset(v_means, 0, sizeof(v_means)) ;
   memset(m_inv_covariances, 0, sizeof(m_inv_covariances)) ;
-  TimerStart(&start) ;
+  start.reset() ;
   setRandomSeed(-1L) ;
   DiagInit(NULL, NULL, NULL) ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -196,7 +196,7 @@ main(int argc, char *argv[]) {
   printf("writing output to %s...\n", out_fname) ;
   MRIwrite(mri_damaged_wm, out_fname) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

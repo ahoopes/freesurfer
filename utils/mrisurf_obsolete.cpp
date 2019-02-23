@@ -3372,7 +3372,7 @@ MRISunfoldOnSphere(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int max_passes)
     }
 
     /* first time through only - use big ratio to remove folds */
-    TimerStart(&start) ;
+    start.reset() ;
     for (i = 0 ; i < NSCOEFS ; i++)
     {
       if (mris->nsize < parms->nbhd_size)  /* resample distances on surface */
@@ -3420,7 +3420,7 @@ MRISunfoldOnSphere(MRI_SURFACE *mris, INTEGRATION_PARMS *parms, int max_passes)
                 (starting_sse-ending_sse)/starting_sse) ;
 #endif
     }
-    msec = TimerStop(&start) ;
+    msec = start.milliseconds() ;
     if (Gdiag & DIAG_SHOW)
     {
       fprintf(stdout,

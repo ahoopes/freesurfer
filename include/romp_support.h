@@ -120,7 +120,7 @@ typedef struct ROMP_pf_static_struct {
 typedef struct ROMP_pf_stack_struct  { 
     struct ROMP_pf_static_struct * staticInfo; 
     Timer timer;
-    Nanosecs      watchedThreadBeginCPUTimes[ROMP_maxWatchedThreadNum];
+    long      watchedThreadBeginCPUTimes[ROMP_maxWatchedThreadNum];
     int 	  gone_parallel;
     ROMP_level    entry_level;
 } ROMP_pf_stack_struct;

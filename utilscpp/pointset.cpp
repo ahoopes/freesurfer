@@ -1,11 +1,11 @@
 #include <fstream>
 
-#include "pointset.hpp"
+#include "pointset.h"
 
 
 /// Writes pointset to a JSON file
-/// todo\ support the .dat output format as well and
-/// use json.hpp instead of hard-coding this stuff
+/// TODO: support the .dat output format as well and
+/// use json.h instead of hard-coding this stuff
 
 bool PointSet::save(std::string filename)
 {

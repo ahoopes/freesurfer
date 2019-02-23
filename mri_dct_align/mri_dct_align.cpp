@@ -122,7 +122,7 @@ main(int argc, char *argv[])
   int          ac, nargs, i, new_transform = 0, orig_skip ;
 	MRI          *mri_target, *mri_source, *mri_kernel, *mri_smooth_source,
                *mri_smooth_target ;
-  struct timeb start ;
+  Timer start ;
   int          msec, hours, minutes, seconds ;
 	MATRIX       *m_L/*, *m_I*/ ;
 	LTA          *lta ;
@@ -130,7 +130,7 @@ main(int argc, char *argv[])
 
   mp.npasses = skip+1 ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   setRandomSeed(-1L) ;
   DiagInit(NULL, NULL, NULL) ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -289,7 +289,7 @@ main(int argc, char *argv[])
 	}
   DCTfree(&dct) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
 	hours = seconds / (60*60) ;
   minutes = (seconds/60) % 60 ;

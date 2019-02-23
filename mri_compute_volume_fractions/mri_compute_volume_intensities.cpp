@@ -86,7 +86,7 @@ main(int argc, char *argv[])
   char   **av ;
   int    ac, nargs ;
   int    msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   char        fname[STRLEN], *stem ;
   MRI         *mri_src, *mri_vfrac_wm, *mri_vfrac_cortex, *mri_vfrac_subcort, *mri_vfrac_csf, *mri_unpv_intensities ;
 
@@ -111,7 +111,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   
   mri_src = MRIread(argv[1]) ;
   if (mri_src == NULL)
@@ -142,7 +142,7 @@ main(int argc, char *argv[])
   printf("writing unpartial-volumed intensities to %s\n", argv[3]) ;
   MRIwrite(mri_unpv_intensities, argv[3]) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

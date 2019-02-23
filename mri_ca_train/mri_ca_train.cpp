@@ -121,7 +121,7 @@ main(int argc, char *argv[])
   int          ac, nargs, i, n, noint = 0, options ;
   int          msec, minutes, seconds, nsubjects, input,
   ordering[MAX_GCA_INPUTS], o ;
-  struct timeb start ;
+  Timer start ;
   GCA          *gca, *gca_prune = NULL ;
   MRI          *mri_seg, *mri_tmp, *mri_eq = NULL, *mri_inputs ;
   TRANSFORM    *transform ;
@@ -136,7 +136,7 @@ main(int argc, char *argv[])
   cmdline = argv2cmdline(argc,argv);
   getcwd(cwd,2000);
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   parms.use_gradient = 0 ;
   parms.node_spacing = 4.0f ;
@@ -1023,7 +1023,7 @@ main(int argc, char *argv[])
   }
 
   GCAfree(&gca) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

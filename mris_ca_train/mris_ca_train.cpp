@@ -110,7 +110,7 @@ main(int argc, char *argv[])
   int          ac, nargs, i, train_type ;
   int          msec, minutes, seconds, nsubjects, input1_flags;
   int          input2_flags, input3_flags ;
-  struct timeb start ;
+  Timer start ;
   MRI_SURFACE  *mris ;
   GCSA         *gcsa ;
   int          unknown_index = -1 ;
@@ -125,7 +125,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -349,7 +349,7 @@ main(int argc, char *argv[])
   gcsa->ptable_fname = ptable_fname ;
   GCSAwrite(gcsa, out_fname) ;
   GCSAfree(&gcsa) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

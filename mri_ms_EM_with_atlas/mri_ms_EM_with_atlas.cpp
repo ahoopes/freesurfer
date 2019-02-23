@@ -216,7 +216,7 @@ main(int argc, char *argv[])
   MRI *mri_tmp2 = NULL;
   char   *out_prefx ;
   int    msec, minutes, seconds, nvolumes, nvolumes_total, label, clabel ;
-  struct timeb start ;
+  Timer start ;
   MATRIX *F[MAX_CLASSES];
   float *centroids[MAX_CLASSES];
   float centroids1D[MAX_CLASSES];
@@ -274,7 +274,7 @@ main(int argc, char *argv[])
 
   }
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -1872,7 +1872,7 @@ main(int argc, char *argv[])
     MRIfree(&mri_tmp);
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

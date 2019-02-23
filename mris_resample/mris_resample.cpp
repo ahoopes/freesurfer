@@ -46,7 +46,7 @@
 #include <ANN/ANN.h>
 
 // FS includes
-#include "argparse.hpp"
+#include "argparse.h"
  
 #include "error.h"
 #include "mrisurf.h"

@@ -68,7 +68,7 @@ int
 main(int argc, char *argv[]) {
   char          **av, *cp, fname[STRLEN], *subject, *out_fname ;
   int           ac, nargs, msec, minutes, seconds, i, nfeatures, vno ;
-  struct timeb  start ;
+  Timer start ;
   LABEL         *cortex_label, *training_label ;
   RANDOM_FOREST *rf ;
   double        *feature, pval ;
@@ -87,7 +87,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ; setRandomSeed(0L);
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -187,7 +187,7 @@ main(int argc, char *argv[]) {
   out_fname = argv[argc-1] ;
   printf("writing output to %s\n", out_fname) ;
   MRIwrite(mri_labels, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

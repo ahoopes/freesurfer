@@ -192,7 +192,7 @@ main(int argc, char *argv[]) {
   float         max_len ;
   float         white_mean, white_std, gray_mean, gray_std ;
   double        current_sigma ;
-  struct timeb  then ;
+  Timer then ;
   MATRIX        *m_reg = NULL ;
   /*  LT            *lt =0;*/
 
@@ -403,7 +403,7 @@ main(int argc, char *argv[]) {
   //////////////////////////////////////////////////////////////////////////
   // timer starts here
   //////////////////////////////////////////////////////////////////////////
-  TimerStart(&then) ;
+  then.reset() ;
 
   ////////////////////////////////////////////////////////////////////////////
   // move the vertex positions to the lh(rh).white positions (low res)
@@ -740,7 +740,7 @@ main(int argc, char *argv[]) {
   }
 
   if (white_only) {
-    msec = TimerStop(&then) ;
+    msec = then.milliseconds() ;
     fprintf(stderr,
             "refinement took %2.1f minutes\n", (float)msec/(60*1000.0f));
     MRIfree(&mri_hires);
@@ -906,7 +906,7 @@ main(int argc, char *argv[]) {
     }
   }
   MRISfree(&mris);
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,"positioning took %2.1f minutes\n", (float)msec/(60*1000.0f));
 
   return(0) ;  /* for ansi */

@@ -61,7 +61,7 @@ main(int argc, char *argv[])
   char          **av, *parc1, *parc2, *oname, surf_name[STRLEN], path[STRLEN],hemi[STRLEN],*cp,fname[STRLEN];
   int           ac, nargs, msec ;
   MRI_SURFACE   *mris1, *mris2 ;
-  struct timeb  then ;
+  Timer then ;
   COLOR_TABLE   *ct ;
 
   /* rkt: check for and handle version tag */
@@ -90,7 +90,7 @@ main(int argc, char *argv[])
 
   if (argc < 4)
     usage_exit() ;
-  TimerStart(&then) ;
+  then.reset() ;
 
   if (strlen(fsdir) == 0)
   {
@@ -134,7 +134,7 @@ main(int argc, char *argv[])
 
   printf("writing output parcellation to %s\n", oname) ;
   MRISwriteAnnotation(mris2, oname) ;
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   printf("parcellation merging took %2.1f minutes\n", (float)msec/(60*1000.0f));
 
   exit(0) ;

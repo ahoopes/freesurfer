@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
   MRI          *mri   = NULL;
 
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
 
   float ipr, bpr, intensity;
 
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   argc--;
   argv++;
@@ -475,7 +475,7 @@ int main(int argc, char *argv[])
   MRIfree(&mri);
   MRISfree(&mris);
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

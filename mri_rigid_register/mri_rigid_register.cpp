@@ -167,7 +167,7 @@ main(int argc, char *argv[]) {
   MRI    *mri_src, *mri_target, *mri_B1 ;
   char   *src_fname, *out_fname, *target_fname ;
   int    msec, minutes, seconds;
-  struct timeb start ;
+  Timer start ;
   LTA    *lta ;
   MATRIX *M_reg, *vox_s2vox_t; // *m_coronalras_src2trg;
 
@@ -181,7 +181,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ; //not used
   av = argv ; //not used
@@ -351,7 +351,7 @@ main(int argc, char *argv[]) {
   MRIfree(&mri_src) ;
   MRIfree(&mri_target) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

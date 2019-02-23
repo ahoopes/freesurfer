@@ -66,7 +66,7 @@ main(int argc, char *argv[]) {
   char         **av, fname[STRLEN], *gca_fname, *subject_name, *cp ;
   int          ac, nargs, i, n ;
   int          msec, minutes, seconds, nsubjects ;
-  struct timeb start ;
+  Timer start ;
   GCA          *gca ;
   MRI          *mri_parc, *mri_T1, *mri_PD ;
   FILE         *fp ;
@@ -81,7 +81,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -203,7 +203,7 @@ main(int argc, char *argv[]) {
   if (write_flag)
     GCAwrite(gca, gca_fname) ;
   GCAfree(&gca) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

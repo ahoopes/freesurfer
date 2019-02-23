@@ -143,7 +143,6 @@ main(int argc, char *argv[])
   MRI_SP       *mrisp_template ;
 
   char cmdline[CMD_LINE_LEN],cwd[2000],*cmdline2 ;
-  struct  timeb start ;
 
   make_cmd_version_string
   (argc, argv,
@@ -162,7 +161,7 @@ main(int argc, char *argv[])
   }
   argc -= nargs;
 
-  TimerStart(&start) ;
+  Timer start;
   Progname = argv[0] ;
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
@@ -604,7 +603,7 @@ main(int argc, char *argv[])
   MRISPfree(&mrisp_template) ;
   MRISfree(&mris) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   printf("registration took %2.2f hours\n",(float)msec/(1000.0f*60.0f*60.0f));
 
   printf("#VMPC# mris_register VmPeak  %d\n",GetVmPeak());

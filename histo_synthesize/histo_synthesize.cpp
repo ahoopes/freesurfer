@@ -100,7 +100,7 @@ main(int argc, char *argv[]) {
   char   **av ;
   int    ac, nargs ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri, *histo, *hsynth, *mri_train_src = NULL, *mri_train_dst = NULL ;
 
   setRandomSeed(-1L) ;
@@ -115,7 +115,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -172,7 +172,7 @@ main(int argc, char *argv[]) {
   hsynth = HISTOsynthesize(mri, histo, test_slice, train_slice, NULL, wsize, flags, argv[3], mri_train_src, mri_train_dst) ;
   printf("writing output to %s\n", argv[3]) ;
   MRIwrite(hsynth, argv[3]) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

@@ -249,7 +249,7 @@ int main(int argc, char *argv[])
   char         *in_fname, *out_fname,  *gca_fname, *xform_fname;
   MRI          *mri_inputs, *mri_labeled, *mri_fixed = NULL, *mri_tmp, *mri_independent_posterior = NULL ;
   int          msec, minutes, seconds, ninputs, input ;
-  struct timeb start ;
+  Timer start ;
   GCA          *gca ;
   TRANSFORM     *transform ;
 
@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -1438,7 +1438,7 @@ int main(int argc, char *argv[])
   PrintRUsage(RUSAGE_SELF, "mri_ca_label ", stdout);
   if(rusage_file) WriteRUsage(RUSAGE_SELF, "", rusage_file);
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

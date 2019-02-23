@@ -281,7 +281,7 @@ main(int argc, char *argv[]) {
   GCA          *gca /*, *gca_tmp, *gca_reduced*/ ;
   int          ac, nargs, ninputs, input, extra = 0 ;
   int          msec, hours, minutes, seconds, round, done, nvox, reductions ;
-  struct timeb start ;
+  Timer start ;
   GCA_MORPH    *gcam ;
   GCAM_MS      *gcam_ms ;
   double       log_posterior, last_log_posterior, mean_scale, last_mean_scale,
@@ -399,7 +399,7 @@ main(int argc, char *argv[]) {
   //  Gdiag |= DIAG_WRITE ;
   printf("logging results to %s.log\n", parms.base_name) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   // build frames from ninputs ////////////////////////////////
   for (input = 0 ; input < ninputs ; input++) {
@@ -1431,7 +1431,7 @@ main(int argc, char *argv[]) {
     MRIfree(&mri_inputs) ;
   if (diag_fp)
     fclose(diag_fp) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   hours = minutes / (60) ;

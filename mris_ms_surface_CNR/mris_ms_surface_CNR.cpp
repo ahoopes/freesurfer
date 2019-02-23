@@ -103,7 +103,7 @@ main(int argc, char *argv[]) {
   MRI *mri_tmp ;
   MRI *mri_weight[MAX_IMAGES]; //this is the relative weighting for each component
   int    msec, minutes, seconds;
-  struct timeb start ;
+  Timer start ;
   int nvolumes, nvolumes_total;
   VERTEX *vertex;
   int index, i, j, vno;
@@ -124,7 +124,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -401,7 +401,7 @@ main(int argc, char *argv[]) {
     MRISwriteCurvatureToWFile(mris,filename);
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

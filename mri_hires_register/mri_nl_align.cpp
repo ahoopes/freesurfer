@@ -125,7 +125,7 @@ main(int argc, char *argv[])
   int          ac, nargs, new_transform = 0, pad ;
   MRI          *mri_target, *mri_source, *mri_orig_source ;
   MRI_REGION   box ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds ;
   GCA_MORPH    *gcam ;
   MATRIX       *m_L/*, *m_I*/ ;
@@ -170,7 +170,7 @@ main(int argc, char *argv[])
   mp.tol = 0.1 ;
   mp.niterations = 1000 ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   setRandomSeed(-1L) ;
   DiagInit(NULL, NULL, NULL) ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -652,7 +652,7 @@ main(int argc, char *argv[])
   GCAMwrite(gcam, out_fname) ;
   //GCAMrasToVox(gcam, mri_source) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

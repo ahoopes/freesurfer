@@ -43,7 +43,6 @@
 #include "proto.h"
 #include "region.h"
 #include "talairachex.h"
-#include "timer.h"
 #include "cma.h"
 
 #include "romp_support.h"
@@ -6971,7 +6970,6 @@ MRI *MRInbrThresholdLabel(MRI *mri_src, MRI *mri_dst, int label, int out_label, 
 MRI *MRImotionBlur2D(MRI *src, MB2D *mb, MRI *out)
 {
   int c;
-  struct timeb timer;
 
   if (src == out) {
     printf("ERROR: MRImotionBlur2D(): cannot be done in-place\n");
@@ -7019,8 +7017,6 @@ MRI *MRImotionBlur2D(MRI *src, MB2D *mb, MRI *out)
   MRIcopyHeader(src, mb->fwhm);
   MRIcopyHeader(src, mb->nd);
   MRIcopyHeader(src, mb->d0);
-
-  TimerStart(&timer);
 
 // Fill the slice-based parameters
   ROMP_PF_begin
@@ -7172,8 +7168,6 @@ MRI *MRImotionBlur2D(MRI *src, MB2D *mb, MRI *out)
     ROMP_PFLB_end
   }    // col
   ROMP_PF_end
-  
-  // printf("  motion blur took %6.4f sec\n",TimerStop(&timer)/1000.0);fflush(stdout);
 
   return (out);
 }

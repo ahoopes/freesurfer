@@ -104,7 +104,7 @@ main(int argc, char *argv[])
   MRI_SURFACE   *mris ;
   MRI           *mri_labeled, *mri_masked, *mri_masked_smooth, *mri_tmp;
   MRI           *mri_kernel, *mri_dist ;
-  struct timeb  then ;
+  Timer then ;
   double        l_spring ;
 
   /* rkt: check for and handle version tag */
@@ -163,7 +163,7 @@ main(int argc, char *argv[])
   if (parms.momentum < 0.0)
     parms.momentum = 0.0 /*0.75*/ ;
 
-  TimerStart(&then) ;
+  then.reset() ;
   vol_name = argv[1] ;
   output_dir = argv[2] ;
   fprintf(stderr, "reading volume %s...\n", vol_name) ;
@@ -339,7 +339,7 @@ main(int argc, char *argv[])
   MRISwrite(mris, "outer_skin.tri") ;
 
  done:
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,"positioning took %2.1f minutes\n", (float)msec/(60*1000.0f));
 
   exit(0) ;

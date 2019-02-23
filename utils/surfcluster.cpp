@@ -398,14 +398,13 @@ SCS *SurfClusterSummaryFast(MRI_SURFACE *Surf, MATRIX *T, int *nClusters)
   SURFCLUSTERSUM *scs;
   MATRIX *xyz, *xyzxfm;
   float vtxarea, vtxval;
-  struct timeb mytimer;
   int msecTime;
   double *weightvtx, *weightarea;  // to be consistent with orig code
   VERTEX *v;
 
   if (Gdiag_no > 0) printf("SurfClusterSummaryFast()\n");
 
-  TimerStart(&mytimer);
+  Timer mytimer;
 
   *nClusters = sclustCountClusters(Surf);
   if (*nClusters == 0) return (NULL);
@@ -488,7 +487,7 @@ SCS *SurfClusterSummaryFast(MRI_SURFACE *Surf, MATRIX *T, int *nClusters)
   MatrixFree(&xyzxfm);
   free(weightvtx);
   free(weightarea);
-  msecTime = TimerStop(&mytimer);
+  msecTime = mytimer.milliseconds();
   if (Gdiag_no > 0) printf("SurfClusterSumFast: n=%d, t = %g\n", *nClusters, msecTime / 1000.0);
 
   return (scs);
@@ -501,7 +500,6 @@ SCS *SurfClusterSummary(MRI_SURFACE *Surf, MATRIX *T, int *nClusters)
   SURFCLUSTERSUM *scs;
   MATRIX *xyz, *xyzxfm;
   double centroidxyz[3];
-  struct timeb mytimer;
   int msecTime;
   const char *UFSS;
 
@@ -514,7 +512,7 @@ SCS *SurfClusterSummary(MRI_SURFACE *Surf, MATRIX *T, int *nClusters)
   }
   if (Gdiag_no > 0) printf("SurfClusterSummary()\n");
 
-  TimerStart(&mytimer);
+  Timer mytimer;
 
   *nClusters = sclustCountClusters(Surf);
   if (*nClusters == 0) return (NULL);
@@ -559,7 +557,7 @@ SCS *SurfClusterSummary(MRI_SURFACE *Surf, MATRIX *T, int *nClusters)
 
   MatrixFree(&xyz);
   MatrixFree(&xyzxfm);
-  msecTime = TimerStop(&mytimer);
+  msecTime = mytimer.milliseconds();
   if (Gdiag_no > 0) printf("SurfClusterSum: n=%d, t = %g\n", *nClusters, msecTime / 1000.0);
 
   return (scs);

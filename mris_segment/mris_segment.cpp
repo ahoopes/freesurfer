@@ -590,7 +590,7 @@ main(int argc, char *argv[])
   char         **av, *out_fname, *subject, fname[STRLEN], *cp ;
   int          ac, nargs, sno ;
   int          msec, minutes, seconds, nsubjects ;
-  struct timeb start ;
+  Timer start ;
   MRI_SURFACE  *mris ;
   MRI          *mri_frame, *mri, *mri_out, *mri_prior ;
   LABEL        *labels[MAX_SUBJECTS], *area ;
@@ -610,7 +610,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -712,7 +712,7 @@ main(int argc, char *argv[])
   LabelErode(area, mris, nclose) ;
   FileNameRemoveExtension(out_fname, out_fname) ;
   LabelWrite(area, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

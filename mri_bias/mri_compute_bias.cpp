@@ -67,7 +67,7 @@ main(int argc, char *argv[])
   MRI          *mri_orig, *mri_T1, *mri_bias, *mri_counts, *mri_kernel, *mri_smooth, *mri_brain ;
   char         *out_fname ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
 	double       c_r, c_a, c_s ;
   MATRIX       *m_vox2vox ;
 
@@ -84,7 +84,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -317,7 +317,7 @@ main(int argc, char *argv[])
   fprintf(stderr, "writing to %s...\n", out_fname) ;
   MRIwrite(mri_smooth, out_fname) ;
   MRIfree(&mri_smooth) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

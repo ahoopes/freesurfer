@@ -79,7 +79,7 @@ main(int argc, char *argv[])
   MRI          *mri_in, *mri_tmp ;
   int          ac, nargs, msec, minutes, seconds;
   int          input, ninputs ;
-  struct timeb start ;
+  Timer start ;
   TRANSFORM    *transform = NULL ;
   char         cmdline[CMD_LINE_LEN], line[STRLEN], *cp, subject[STRLEN], sdir[STRLEN], base_name[STRLEN] ;
   FILE         *fp ;
@@ -125,7 +125,7 @@ main(int argc, char *argv[])
   transform = TransformRead(xform_fname) ;
   if (transform == NULL)
     ErrorExit(ERROR_NOFILE, "%s: could not read transform from %s", Progname, xform_fname) ;
-  TimerStart(&start) ;
+  start.reset() ;
 
   FileNamePath(argv[1], sdir) ;
   cp = strrchr(sdir, '/') ; 
@@ -226,7 +226,7 @@ main(int argc, char *argv[])
   MRIfree(&mri_in) ;
 
   printf("done.\n") ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

@@ -84,7 +84,7 @@ int
 main(int argc, char *argv[]) {
   char       **av, *int_fname, *label_fname, *out_fname ;
   int        ac, nargs, msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI       *mri_inputs, *mri_labels, *mri_tmp  ;
   RBM       *rbm ;
   DBN       *dbn ;
@@ -101,7 +101,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   setRandomSeed(-1L) ;
   parms.nlayers = 1 ;
@@ -268,7 +268,7 @@ main(int argc, char *argv[]) {
 //    DBNfree(&dbn) ;
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

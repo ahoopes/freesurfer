@@ -326,7 +326,7 @@ main(int argc, char *argv[]) {
   MRI           *mri_template = NULL, *mri_filled,
                                 /* *mri_labeled ,*/ *mri_flash[MAX_FLASH_VOLUMES] ;
   float         max_len ;
-  struct timeb  then ;
+  Timer then ;
   LTA           *lta ;
   EXTRA_PARMS   ep ;
 
@@ -383,7 +383,7 @@ main(int argc, char *argv[]) {
   gMRISexternalTimestep = ms_errfunc_timestep ;
   gMRISexternalRipVertices = ms_errfunc_rip_vertices ;
 
-  TimerStart(&then) ;
+  then.reset() ;
   sname = argv[1] ;
   hemi = argv[2] ;
 
@@ -741,7 +741,7 @@ main(int argc, char *argv[]) {
   smooth_maps(mris, &ep, smooth_parms) ;
 
   write_maps(mris, &ep, -1, output_suffix) ;
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   fprintf(stderr,"positioning took %2.1f minutes\n", (float)msec/(60*1000.0f));
   MRISrestoreVertexPositions(mris, ORIGINAL_VERTICES) ;
   sprintf(fname, "%s/%s/surf/%s.%s%s%s", sdir, sname, hemi,

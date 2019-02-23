@@ -85,7 +85,6 @@ main(int argc, char *argv[])
   *T1_fname ;
   M3D    *m3d ;
   GCAM   *gcam;
-  struct  timeb start ;
   int     msec ;
 
   /* rkt: check for and handle version tag */
@@ -97,7 +96,7 @@ main(int argc, char *argv[])
     exit (0);
   argc -= nargs;
 
-  TimerStart(&start) ;
+  Timer start;
 
   Progname = argv[0] ;
   ErrorInit(NULL, NULL, NULL) ;
@@ -367,7 +366,7 @@ main(int argc, char *argv[])
     ErrorExit(ERROR_NOFILE, "%s: could not write output volume to %s.\n",
               Progname, out_fname) ;
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   fprintf(stderr, "auto filling took %2.2f minutes\n",
           (float)msec/(1000.0f*60.0f));
   exit(0) ;

@@ -68,7 +68,7 @@ main(int argc, char *argv[])
 {
   char        **av, *out_fname ;
   int          ac, nargs, msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI         *mri_aseg, *mri_norm, *mri_norm_atrophy, *mri_noise ;
 
   /* rkt: check for and handle version tag */
@@ -85,7 +85,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   memset(border_labels, -1, sizeof(border_labels)) ;
   border_labels[0][0] = Left_Lateral_Ventricle ;
@@ -122,7 +122,7 @@ main(int argc, char *argv[])
   MRIadd(mri_norm_atrophy, mri_noise, mri_norm_atrophy) ;
   printf("writing simulated atrophy image to %s\n", out_fname) ;
   MRIwrite(mri_norm_atrophy, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

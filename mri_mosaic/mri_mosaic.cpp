@@ -58,7 +58,7 @@ main(int argc, char *argv[]) {
   int    ac, nargs, i ;
   char   *in_fname, *out_fname ;
   int          msec, minutes, seconds, nimages ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri[MAX_INPUT_IMAGES], *mri_mosaic ;
 
   /* rkt: check for and handle version tag */
@@ -71,7 +71,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -100,7 +100,7 @@ main(int argc, char *argv[]) {
   mri_mosaic = MRImakeMosaic(mri, nimages, rectify) ;
 
   MRIwrite(mri_mosaic, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

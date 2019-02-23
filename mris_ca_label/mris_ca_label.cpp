@@ -96,7 +96,7 @@ main(int argc, char *argv[])
                *canon_surf_name ;
   int          ac, nargs, i ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   MRI_SURFACE  *mris ;
   GCSA         *gcsa ;
 
@@ -112,7 +112,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -343,7 +343,7 @@ main(int argc, char *argv[])
 
   MRISfree(&mris) ;
   GCSAfree(&gcsa) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

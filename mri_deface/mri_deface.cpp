@@ -218,7 +218,7 @@ main(int argc, char *argv[]) {
   GCA          *gca /*, *gca_tmp, *gca_reduced*/, *gca_face ;
   int          ac, nargs, i ;
   int          msec, minutes, seconds, scale, spacing ;
-  struct timeb start ;
+  Timer start ;
   float        old_log_p, log_p ;
 
   // disable license checking
@@ -308,7 +308,7 @@ main(int argc, char *argv[]) {
   Gdiag |= DIAG_WRITE ;
   printf("logging results to %s.log\n", parms.base_name) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
   printf("reading '%s'...\n", gca_fname) ;
   fflush(stdout) ;
   gca = GCAread(gca_fname) ;
@@ -596,7 +596,7 @@ main(int argc, char *argv[]) {
 #endif
   if (mri_in)
     MRIfree(&mri_in) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

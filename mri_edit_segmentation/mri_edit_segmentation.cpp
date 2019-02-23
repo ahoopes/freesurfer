@@ -81,7 +81,7 @@ main(int argc, char *argv[]) {
   MRI    *mri_in_labeled, *mri_T1, *mri_out_labeled = NULL ;
   char   *in_fname, *T1_fname, *out_fname ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
 
   /* rkt: check for and handle version tag */
   nargs = handle_version_option (argc, argv, "$Id: mri_edit_segmentation.c,v 1.11 2011/03/02 00:04:15 nicks Exp $", "$Name:  $");
@@ -119,7 +119,7 @@ main(int argc, char *argv[]) {
     ErrorExit(ERROR_NO_FILE, "%s: could not open T1 file %s",
               Progname, in_fname) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   if (unknown_only == 0 && border_only == 0) {
     mri_out_labeled = edit_hippocampus(mri_in_labeled, mri_T1, NULL);
@@ -137,7 +137,7 @@ main(int argc, char *argv[]) {
 
   printf("writing output volume to %s...\n", out_fname) ;
   MRIwrite(mri_out_labeled, out_fname) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

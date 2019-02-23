@@ -55,7 +55,7 @@ main(int argc, char *argv[]) {
   MRI_SURFACE *mris ;
   char        *subject_name, *out_fname ;
   int          msec, minutes, seconds ;
-  struct timeb start ;
+  Timer start ;
   VERTEX       *v ;
 
   counts=NULL;
@@ -74,7 +74,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   if (!strlen(sdir)) {
     cp = getenv("SUBJECTS_DIR") ;
@@ -156,7 +156,7 @@ main(int argc, char *argv[]) {
   printf("writing to %s...\n", out_fname) ;
   MRISwriteAnnotation(mris, out_fname) ;
   MRISfree(&mris) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

@@ -671,7 +671,7 @@ int weightinv=0, weightsqrt=0;
 
 int OneSamplePerm=0;
 int OneSampleGroupMean=0;
-struct timeb  mytimer;
+Timer mytimer;
 int ReallyUseAverage7 = 0;
 int logflag = 0; // natural log
 float prune_thr = FLT_MIN;
@@ -1601,7 +1601,7 @@ int main(int argc, char **argv) {
   // Don't do sim --------------------------------------------------------
   if (!DoSim) {
     // Now do the estimation and testing
-    TimerStart(&mytimer) ;
+    mytimer.reset() ;
 
     if (VarFWHM > 0) {
       printf("Starting fit\n");  fflush(stdout);
@@ -1614,7 +1614,7 @@ int main(int argc, char **argv) {
       printf("Starting fit and test\n");   fflush(stdout);
       MRIglmFitAndTest(mriglm);
     }
-    msecFitTime = TimerStop(&mytimer) ;
+    msecFitTime = mytimer.milliseconds();
     printf("Fit completed in %g minutes\n",msecFitTime/(1000*60.0));  fflush(stdout);
   }
 
@@ -1672,9 +1672,9 @@ int main(int argc, char **argv) {
     }
 
     printf("\n\nStarting simulation sim over %d trials\n",nsim);
-    TimerStart(&mytimer) ;
+    mytimer.reset() ;
     for (nthsim=0; nthsim < nsim; nthsim++) {
-      msecFitTime = TimerStop(&mytimer) ;
+      msecFitTime = mytimer.milliseconds();
       if(debug) printf("%d/%d t=%g ---------------------------------\n",
              nthsim+1,nsim,msecFitTime/(1000*60.0));
 
@@ -1727,7 +1727,7 @@ int main(int argc, char **argv) {
 	      tSimSign = SignList[nthSign];
 	    }
 	    if(debug) printf("%2d %d %5.1f  %d %2d %5.1f\n",nthsim,nthThresh,
-			     csd->thresh,nthSign,tSimSign,TimerStop(&mytimer)/1000.0);
+			     csd->thresh,nthSign,tSimSign,mytimer.seconds());
 
 	    // Change sign to abs for F-tests
 	    csd->threshsign = tSimSign;
@@ -1797,7 +1797,7 @@ int main(int argc, char **argv) {
 	      // surface clustering -------------
 	      MRIScopyMRI(surf, sig, 0, "val");
 	      if(debug || Gdiag_no > 0) printf("Clustering on surface %lf\n",
-					       TimerStop(&mytimer)/1000.0);
+					       mytimer.seconds());
 	      SurfClustList = sclustMapSurfClusters(surf,threshadj,-1,csd->threshsign,
 						    0,&nClusters,NULL);
 	      csize = sclustMaxClusterArea(SurfClustList, nClusters);
@@ -1872,7 +1872,7 @@ int main(int argc, char **argv) {
       fp = fopen(SimDoneFile,"w");
       fclose(fp);
     }
-    msecFitTime = TimerStop(&mytimer) ;
+    msecFitTime = mytimer.milliseconds();
     printf("mri_glmfit simulation done %g\n\n\n",msecFitTime/(1000*60.0));
     exit(0);
   }
@@ -3592,7 +3592,7 @@ static void dump_options(FILE *fp) {
 /*--------------------------------------------------------------------*/
 static int SmoothSurfOrVol(MRIS *surf, MRI *mri, MRI *mask, double SmthLevel) {
   extern int DoSim;
-  extern struct timeb  mytimer;
+  extern Timer mytimer;
   extern int UseMaskWithSmoothing;
   double gstd;
 
@@ -3600,24 +3600,24 @@ static int SmoothSurfOrVol(MRIS *surf, MRI *mri, MRI *mask, double SmthLevel) {
     gstd = SmthLevel/sqrt(log(256.0));
     if (!DoSim || debug || Gdiag_no > 0)
       printf("  Volume Smoothing by FWHM=%lf, Gstd=%lf, t=%lf\n",
-             SmthLevel,gstd,TimerStop(&mytimer)/1000.0);
+             SmthLevel,gstd,mytimer.seconds());
     if(UseMaskWithSmoothing)
       MRImaskedGaussianSmooth(mri, mask, gstd, mri);
     else
       MRImaskedGaussianSmooth(mri, NULL, gstd, mri);
     if (!DoSim || debug || Gdiag_no > 0)
-      printf("  Done Volume Smoothing t=%lf\n",TimerStop(&mytimer)/1000.0);
+      printf("  Done Volume Smoothing t=%lf\n",mytimer.seconds());
   }
   else {
     if (!DoSim || debug || Gdiag_no > 0)
       printf("  Surface Smoothing by %d iterations, t=%lf\n",
-             (int)SmthLevel,TimerStop(&mytimer)/1000.0);
+             (int)SmthLevel,mytimer.seconds());
     if(UseMaskWithSmoothing)
       MRISsmoothMRI(surf, mri, SmthLevel, mask, mri);
     else
       MRISsmoothMRI(surf, mri, SmthLevel, NULL, mri);
     if (!DoSim || debug || Gdiag_no > 0)
-      printf("  Done Surface Smoothing t=%lf\n",TimerStop(&mytimer)/1000.0);
+      printf("  Done Surface Smoothing t=%lf\n",mytimer.seconds());
   }
   return(0);
 }

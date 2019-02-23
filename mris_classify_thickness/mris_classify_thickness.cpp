@@ -186,7 +186,7 @@ main(int argc, char *argv[]) {
   int          ac, nargs, n, num_class1, num_class2, i, nvertices,correct, h;
   LABEL        *area ;
   FILE         *fp = NULL ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds, *training_class, classnum, nfeatures, offset ;
   RANDOM_FOREST *rf ;
   double       **training_data ;
@@ -212,7 +212,7 @@ main(int argc, char *argv[]) {
     argv += nargs ;
   }
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   /* subject_name surface curvature */
   if (argc < 6)
@@ -458,7 +458,7 @@ main(int argc, char *argv[]) {
     close(fd) ;
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;
@@ -487,7 +487,7 @@ main(int argc, char *argv[]) {
   LABEL        *area, **labels = NULL ;
   FILE         *fp = NULL ;
   double       snr, max_snr ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds ;
   double       **c1_label_thickness, **c2_label_thickness ;
   int          *sorted_indices = NULL, vno ;
@@ -515,7 +515,7 @@ main(int argc, char *argv[]) {
     argv += nargs ;
   }
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   /* subject_name hemi surface curvature */
   if (argc < 7)
@@ -1172,7 +1172,7 @@ main(int argc, char *argv[]) {
     }
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   free(total_mean);
   free(c1_mean) ;
   free(c2_mean) ;

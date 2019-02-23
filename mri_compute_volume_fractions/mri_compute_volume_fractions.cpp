@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
   int nargs,err,tt,nTT;
   MRI *aseg,*pvf,*mritmp,*csfmask;
   MRIS *lhw, *lhp, *rhw, *rhp;
-  struct timeb start ;
+  Timer start ;
 
   nargs = handle_version_option (argc, argv, vcid, "$Name:  $");
   if (nargs && argc - nargs == 1) exit (0);
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
   if (checkoptsonly) return(0);
   dump_options(stdout);
 
-  TimerStart(&start) ;
+  start.reset() ;
   nTT = ct->ctabTissueType->nentries-1; // -1 to exclude unknown
 
   printf("Reading in aseg and surfs from %s/%s\n",SUBJECTS_DIR,subject);
@@ -191,7 +191,7 @@ int main(int argc, char *argv[]) {
     MRIfree(&temp);
   }
 
-  printf("  t = %g\n",TimerStop(&start)/1000.0) ;
+  printf("  t = %g\n",start.seconds()) ;
   if(resmm == 0){
     if(aseg) resmm = aseg->xsize/(USF);
     else     resmm = 1.0/(USF);
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]) {
   pvf = MRIpartialVolumeFractionAS(aseg2vol,aseg,lhw,lhp,rhw,rhp,USF,resmm,ct,NULL);
   if(pvf == NULL) exit(1);
 
-  printf("  t = %g\n",TimerStop(&start)/1000.0) ;
+  printf("  t = %g\n",start.seconds()) ;
 
   if(csfmaskfile){
     printf("Masking CSF with %s\n",csfmaskfile);
@@ -210,7 +210,7 @@ int main(int argc, char *argv[]) {
     MRIbinarize(csfmask, csfmask, 0.5, 0, 1);
     MRImask(pvf, csfmask, pvf, 0, 0);
   }
-  printf("  t = %g\n",TimerStop(&start)/1000.0) ;
+  printf("  t = %g\n",start.seconds()) ;
 
   printf("Writing results nTT=%d\n",nTT);
 
@@ -242,7 +242,7 @@ int main(int argc, char *argv[]) {
     MRIfree(&gm);
   }
 
-  printf("#@# CVF-Run-Time-Sec %g\n",TimerStop(&start)/1000.0) ;
+  printf("#@# CVF-Run-Time-Sec %g\n",start.seconds()) ;
   printf("mri_compute_volume_fraction done\n");
   exit(0);
 }

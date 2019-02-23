@@ -82,7 +82,7 @@ main(int argc, char *argv[]) {
                *mri_laplacian[NSCALES], *mri_dtrans, *mri_dtrans_grad, *mri_2nd_deriv_s[NSCALES] ;
   char         **av, *norm_name, *input_aseg_name, *output_aseg_name, *svm_name ;
   int          ac, nargs, ninputs, i ;
-  struct timeb start ;
+  Timer start ;
   int          msec, minutes, seconds, x, y, z, nchanged ;
   VOXEL_LIST   *vl_border ;
   float        *svm_inputs = NULL, svm_out ;
@@ -105,7 +105,7 @@ main(int argc, char *argv[]) {
     argv += nargs ;
   }
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   // <aseg in> <norm> <svm> <aseg out>
   if (argc < 5)
@@ -180,7 +180,7 @@ main(int argc, char *argv[]) {
   
   VLSTfree(&vl_border) ; 
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

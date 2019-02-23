@@ -165,7 +165,7 @@ main(int argc, char *argv[])
   int         nargs, msec, y, z, xi, temp, i, j, k ;
   double      xc,yc,zc, xv, yv, zv;
   MATRIX      *mrot = NULL, *mtrans = NULL;
-  struct timeb  then ;
+  Timer then ;
   MRI         *mri_tal=NULL, *mri_talheader=NULL, *mri_header=NULL, *mri_cc;
   FILE        *fp=NULL;
   LTA         *lta2 = 0;
@@ -212,7 +212,7 @@ main(int argc, char *argv[])
     ErrorExit(ERROR_BADPARM,
               "", Progname);
   }
-  TimerStart(&then) ;
+  then.reset() ;
 
   if (!strlen(sdir))
   {
@@ -709,7 +709,7 @@ main(int argc, char *argv[])
   {
     MatrixFree(&mrot);
   }
-  msec = TimerStop(&then) ;
+  msec = then.milliseconds() ;
   printf("corpus callosum segmentation took %2.1f minutes\n",(float)msec/(1000.0f*60.0f));
   if (Gdiag & DIAG_WRITE && DIAG_VERBOSE_ON)
   {

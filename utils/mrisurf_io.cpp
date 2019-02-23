@@ -5833,7 +5833,7 @@ int MRISwriteTriangularSurface(MRI_SURFACE *mris, const char *fname)
   if (!user) {
     user = "UNKNOWN";
   }
-  time_str = current_date_time();
+  time_str = currentDateTime().c_str();
   if (Gdiag & DIAG_SHOW && DIAG_VERBOSE_ON)
     fprintf(stdout, "writing surface file %s, created by %s on %s.\n", fname, user, time_str);
   fp = fopen(fname, "w");

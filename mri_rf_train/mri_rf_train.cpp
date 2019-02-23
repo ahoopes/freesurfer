@@ -129,7 +129,7 @@ main(int argc, char *argv[])
   char         **av, fname[STRLEN], *out_fname, *subject_name, *cp ;
   int          ac, nargs, i, n, options ;
   int          msec, minutes, seconds, nsubjects, input, ordering[MAX_RFA_INPUTS], o ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri_seg, *mri_tmp, *mri_in = 0 ;
   TRANSFORM    *transform ;
   int          used[MAX_RFA_INPUTS];
@@ -143,7 +143,7 @@ main(int argc, char *argv[])
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   parms.width = parms.height = parms.depth = DEFAULT_VOLUME_SIZE ;
   parms.spacing = 2.0f ;
@@ -579,7 +579,7 @@ main(int argc, char *argv[])
 	(ERROR_BADFILE, "%s: could not write rfa to %s", Progname, out_fname) ;
   }
 
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;

@@ -84,7 +84,7 @@ main(int argc, char *argv[]) {
   int    ac, nargs ;
   char   *in_fname, *out_fname ;
   int          msec, minutes, seconds, n ;
-  struct timeb start ;
+  Timer start ;
   MRI          *mri, *mri_orig, *mri_scaled, *mri_pyramid[MAX_PYR_LEVELS] ;
   SAE          *sae ;
   double       mean ;
@@ -102,7 +102,7 @@ main(int argc, char *argv[]) {
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
-  TimerStart(&start) ;
+  start.reset() ;
 
   ac = argc ;
   av = argv ;
@@ -211,7 +211,7 @@ main(int argc, char *argv[]) {
   }
 
   SAEfree(&sae) ;
-  msec = TimerStop(&start) ;
+  msec = start.milliseconds() ;
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;
