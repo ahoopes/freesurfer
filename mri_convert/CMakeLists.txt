@@ -1,6 +1,6 @@
 project(mri_convert)
 
-include_directories(${FS_INCLUDE_DIRS})
+include_directories(${FS_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/packages/dicom)
 
 add_executable(mri_convert mri_convert.cpp)
 add_help(mri_convert mri_convert.help.xml)

@@ -42,10 +42,10 @@
 #include "macros.h"
 #include "version.h"
 #include "timer.h"
-#include "topology/topo_parms.h"
+#include "topo_parms.h"
 
 #include "mris_topology.h"
-#include "topology/patchdisk.h"
+#include "patchdisk.h"
 
 int main(int argc, char *argv[]) ;
 

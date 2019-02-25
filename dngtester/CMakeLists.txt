@@ -1,6 +1,6 @@
 project(dngtester)
 
-include_directories(${FS_INCLUDE_DIRS})
+include_directories(${FS_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/packages/dicom)
 
 # always debug
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")

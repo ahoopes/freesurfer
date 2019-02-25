@@ -24,7 +24,7 @@
  */
 
 
-#include "topology/vertex.h"
+#include "vertex.h"
 
 Vertex::Vertex(void) {
   fnum=maxfnum=0;

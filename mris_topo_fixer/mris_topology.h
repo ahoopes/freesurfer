@@ -47,7 +47,7 @@
 #include "mrisurf.h"
 #include "error.h"
 
-#include "topology/surface.h"
+#include "surface.h"
 
 
 MRIP *MRIPalloc(int nvertices, int nfaces);

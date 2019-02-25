@@ -28,16 +28,12 @@
 #ifndef GIFTI_LOCAL_H
 #define GIFTI_LOCAL_H
 
-#include "gifti_io.h"
 #include "mrisurf.h"
 
 MRIS* mrisReadGIFTIfile(const char *fname, MRIS *mris);
 MRIS* mrisReadGIFTIdanum(const char *fname, MRIS *mris, int daNum);
 MRI* MRISreadGiftiAsMRI(const char *fname, int read_volume);
-int MRISwriteGIFTI(MRIS* mris,
-                   int intent_code,
-                   const char *out_fname,
-                   const char *curv_fname);
+int MRISwriteGIFTI(MRIS* mris, int intent_code, const char *out_fname, const char *curv_fname);
 int mriWriteGifti(MRI* mri, const char *out_fname);
 
 #endif

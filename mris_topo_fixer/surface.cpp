@@ -26,10 +26,10 @@
 
 #include <fstream>
 
-#include "topology/globals.h"
-#include "topology/surface.h"
-#include "topology/patchdisk.h"
-#include "topology/fastloop.h"
+#include "globals.h"
+#include "surface.h"
+#include "patchdisk.h"
+#include "fastloop.h"
 
 Surface::Surface(void) {
   nvertices = maxvertices= 0;

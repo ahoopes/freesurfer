@@ -28,7 +28,7 @@
  */
 
 #include "mris_topology.h"
-#include "topology/patchdisk.h"
+#include "patchdisk.h"
 #include "utils.h"
 
 #include "compilerdefs.h"

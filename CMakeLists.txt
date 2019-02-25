@@ -321,6 +321,8 @@ add_subdirectories(
   packages/tiff
   packages/xml2
   packages/minc
+  packages/dicom
+  packages/cephes
   packages/netcdf
   packages/tetgen
   packages/nrrdio
@@ -344,9 +346,7 @@ set(FS_INCLUDE_DIRS
 
 # now build the freesurfer static libraries (order here matters!)
 add_subdirectories(
-  dicom
   utils
-  utilscpp
   svm-lib
   opencl_algorithms
 )

@@ -1,6 +1,6 @@
 #define COMPILING_MRISURF_TOPOLOGY_FRIEND_CHECKED
 /**
- * @file  gifti_local.c
+ * @file  gifti.c
  * @brief local utilities for GIFTI library
  *
  * This file has some some extra functions for use with the GIFTI
@@ -34,6 +34,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "gifti_io.h"
 #include "error.h"  // return codes
 #include "gifti.h"
 #include "nifti1.h"

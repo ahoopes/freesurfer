@@ -24,8 +24,8 @@
  */
 
 
-#include "topology/fastloop.h"
-#include "topology/segment.h"
+#include "fastloop.h"
+#include "segment.h"
 
 FastLoop::FastLoop(Surface &s):surface(&s) {
   defect_faces=0;

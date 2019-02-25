@@ -2,7 +2,6 @@ project(utils)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/include/dicom
   ${CMAKE_SOURCE_DIR}/packages/jpeg
   ${CMAKE_SOURCE_DIR}/packages/tiff
   ${CMAKE_SOURCE_DIR}/packages/xml2
@@ -10,6 +9,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/packages/netcdf
   ${CMAKE_SOURCE_DIR}/packages/nrrdio
   ${CMAKE_SOURCE_DIR}/packages/dicom
+  ${CMAKE_SOURCE_DIR}/packages/cephes
   ${CMAKE_SOURCE_DIR}/packages/nifti
   ${CMAKE_SOURCE_DIR}/packages/gifti
   ${X11_INCLUDE_DIR}
@@ -19,6 +19,7 @@ include_directories(
 set(SOURCES
   afni.cpp
   annotation.cpp
+  argparse.cpp
   autoencoder.cpp
   bfileio.cpp
   box.cpp
@@ -99,6 +100,8 @@ set(SOURCES
   joint_histo.cpp
   kernel.cpp
   label.cpp
+  log.cpp
+  lut.cpp
   machine.cpp
   MARS_DT_Boundary.cpp
   matfile.cpp
@@ -128,6 +131,7 @@ set(SOURCES
   mripolv.cpp
   mriprob.cpp
   mris_compVolFrac.cpp
+  mris_fastmarching.cpp 
   mrisegment.cpp
   mriset.cpp
   mrishash.cpp
@@ -135,8 +139,8 @@ set(SOURCES
   MRISrigidBodyAlignGlobal.cpp
   mrisurf.cpp
   mrisurf_base.cpp
-  mrisurf_deform.cpp
   mrisurf_defect.cpp
+  mrisurf_deform.cpp
   mrisurf_integrate.cpp
   mrisurf_io.cpp
   mrisurf_metricProperties.cpp
@@ -153,12 +157,12 @@ set(SOURCES
   path.cpp
   pdf.cpp
   pgmstubs.cpp
+  pointset.cpp
   prime.cpp
   Progname.cpp
   randomfields.cpp
   rbf.cpp
   rbm.cpp
-  rgb.cpp
   realm.cpp
   region.cpp
   registerio.cpp
@@ -167,6 +171,7 @@ set(SOURCES
   rfa.cpp
   rforest.cpp
   rfutils.cpp
+  rgb.cpp
   romp_support.cpp
   selxavgio.cpp
   sig.cpp
@@ -192,24 +197,6 @@ set(SOURCES
   xVoxel.cpp
 )
 
-# add cephes sources
-set(SOURCES ${SOURCES}
-  cephes/bdtr.c
-  cephes/chdtr.c
-  cephes/const.c
-  cephes/fdtr.c
-  cephes/gamma.c
-  cephes/igam.c
-  cephes/igami.c
-  cephes/incbet.c
-  cephes/incbi.c
-  cephes/mtherr.c
-  cephes/ndtr.c
-  cephes/ndtri.c
-  cephes/polevl.c
-  cephes/stdtr.c
-)
-
 add_library(utils STATIC ${SOURCES})
 
 target_link_libraries(utils
@@ -220,6 +207,7 @@ target_link_libraries(utils
   netcdf
   nrrdio
   dicom
+  cephes
   nifti
   gifti
   expat

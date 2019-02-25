@@ -23,7 +23,7 @@
  */
 
 #include <cstring> // memcpy
-#include "topology/loop.h"
+#include "loop.h"
 
 Loop::Loop(void) {
   npoints=0;

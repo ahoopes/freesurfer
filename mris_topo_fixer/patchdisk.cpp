@@ -24,7 +24,7 @@
  */
 
 
-#include "topology/patchdisk.h"
+#include "patchdisk.h"
 
 PatchDisk::PatchDisk(void) {
   vtrans=0;

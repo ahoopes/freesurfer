@@ -23,7 +23,7 @@
  */
 
 #include <cstring> // memcpy
-#include "topology/segment.h"
+#include "segment.h"
 
 Segment::Segment(void) {
   npoints=0;
