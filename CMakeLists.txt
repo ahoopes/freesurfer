@@ -12,6 +12,7 @@ option(MINIMAL "Only build core components" OFF)
 option(BUILD_GUIS "Build GUI tools" ON)
 option(INFANT_MODULE "Include infant recon-all" OFF)
 option(SUPPRESS_WARNINGS "Suppress some selected warnings" ON)
+option(BUILD_SHARED_LIBS "Build the utils library dynamically" OFF)
 
 if(NOT APPLE)
   # linux-only build options
@@ -171,10 +172,10 @@ find_package(VTK HINTS ${VTK_DIR})
 if(VTK_FOUND AND NOT APPLE)
   # install the shared libraries to the freesurfer lib directory
   file(GLOB VTK_LIBRARIES_TO_INSTALL "${VTK_LIBRARY_DIRS}/lib*.so*")
+  # add vtk library directory to rpath
+  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/vtk:${CMAKE_INSTALL_RPATH}")
   if(VTK_LIBRARIES_TO_INSTALL)
     install(PROGRAMS ${VTK_LIBRARIES_TO_INSTALL} DESTINATION lib/vtk)
-    # add vtk library directory to rpath
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/vtk:${CMAKE_INSTALL_RPATH}")
   endif()
 endif()
 
@@ -286,8 +287,17 @@ set(FS_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/packages/nifti
 )
 
-# build the freesurfer static libraries
+# build the freesurfer utils libraries
 add_subdirectories(utils)
+
+if(BUILD_SHARED_LIBS)
+  # link to dynamic utils library during install
+  if(APPLE)
+    set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+  else()
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:$ORIGIN/../lib")
+  endif()
+endif()
 
 # the following utility libraries are required for freeview
 add_subdirectories(vtkutils lineprof)

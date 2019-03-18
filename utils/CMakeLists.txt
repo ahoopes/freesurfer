@@ -18,7 +18,7 @@ include_directories(
   ${ITK_INCLUDE_DIRS}
 )
 
-add_library(utils STATIC
+add_library(utils
   afni.cpp
   annotation.cpp
   argparse.cpp
@@ -195,6 +195,8 @@ add_library(utils STATIC
   xTypes.cpp
   xVoxel.cpp
 )
+
+install(TARGETS utils DESTINATION lib)
 
 target_link_libraries(utils
   jpeg
