@@ -2319,7 +2319,7 @@ IMAGE *ImageAbs(IMAGE *inImage, IMAGE *outImage)
             break;
           case PFINT:
             iOut = IMAGEIpix(outImage, 0, 0) + pix_per_frame * frameno;
-            while (size--) *iOut++ = (UINT)abs(*cIn++);
+            while (size--) *iOut++ = (UINT)*cIn++;
             break;
           default:
             ErrorExit(ERROR_BADPARM, "ImageAbs: unsupported output image pixel format (%d)\n", outImage->pixel_format);

@@ -1315,7 +1315,7 @@ MATRIX *MatrixSignedSquareElts(MATRIX *mIn, MATRIX *mOut)
   for (row = 1; row <= rows; row++) {
     for (col = 1; col <= cols; col++) {
       val = mIn->rptr[row][col];
-      mOut->rptr[row][col] = val * val * (val < 0) ? -1 : 1;
+      mOut->rptr[row][col] = val * val * ((val < 0) ? -1 : 1);
     }
   }
   return (mOut);

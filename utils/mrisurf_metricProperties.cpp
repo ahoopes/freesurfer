@@ -9980,15 +9980,17 @@ int MRISaverageGradients(MRIS *mris, int num_avgs)
     // - only the old algorithm
     // - only the new algorithm
     // - both algorithms, and compare them
-    
-    static const int doNew = 1;
-    static const int doOld = 0;
-    
-    if (doOld && doNew && num_avgs > 10) {
+
+#define DO_NEW 1
+#define DO_OLD 0
+
+#if DO_OLD && DO_NEW
+    if (num_avgs > 10) {
         fprintf(stdout, "%s:%d reducing num_avgs:%d to 10\n", __FILE__, __LINE__, num_avgs);
         num_avgs = 10;
     }
-     
+#endif
+
     // This is the new algorithm
     int *vno_to_index = NULL;
     int *index_to_vno = NULL;
@@ -10005,313 +10007,310 @@ int MRISaverageGradients(MRIS *mris, int num_avgs)
     int  neighbors_size     = 0;
     int *neighbors          = NULL;
     
-    if (doNew) {
+#if DO_NEW
     
-      // Malloc the needed storage
-      vno_to_index = (int*)    malloc(sizeof(int)     * mris->nvertices) ;
-      index_to_vno = (int*)    malloc(sizeof(int)     * mris->nvertices) ;
-      datas_inp    = (Data*)   malloc(sizeof(Data)    * mris->nvertices) ;
-      datas_out    = (Data*)   malloc(sizeof(Data)    * mris->nvertices) ;
-      controls     = (Control*)malloc(sizeof(Control) * mris->nvertices) ;
-    
-      // Find all the vertices that will change
-      // Ripped ones, and those whose neighbors are all ripped,
-      // will not change and hence are not entered
-      for (vno = 0 ; vno < mris->nvertices ; vno++)
-      {
-        VERTEX_TOPOLOGY const * const vt = &mris->vertices_topology[vno];
-        VERTEX          const * const v  = &mris->vertices         [vno];
-        
-        int num = 0;
-        if (!v->ripflag) {
-          num = 1;
-          // At this stage the neighbors with higher vno's will not have 
-          // been entered into the vno_to_index table
-          int  vnum = vt->vnum;
-          int const *pnb  = vt->v;
-          int  vnb;
-          for (vnb = 0; vnb < vnum; vnb++) {
-            int neighborVno = *pnb++;
-            VERTEX* vn = &mris->vertices[neighborVno]; // neighboring vertex pointer
-            if (vn->ripflag) continue;
-            num++;
-          }
-        }
-        
-        if (num <= 1) {
-          vno_to_index[vno] = -1;
-        } else {
-          vno_to_index[vno] = index_to_vno_size;
-          index_to_vno[index_to_vno_size] = vno;
-          Data *d = datas_inp + index_to_vno_size;
-          d->dx = v->dx;
-          d->dy = v->dy;
-          d->dz = v->dz;
-          Control *c = controls + index_to_vno_size;
-          c->numNeighbors = num - 1;
-          index_to_vno_size++;
-        }
-      }
+    // Malloc the needed storage
+    vno_to_index = (int*)    malloc(sizeof(int)     * mris->nvertices) ;
+    index_to_vno = (int*)    malloc(sizeof(int)     * mris->nvertices) ;
+    datas_inp    = (Data*)   malloc(sizeof(Data)    * mris->nvertices) ;
+    datas_out    = (Data*)   malloc(sizeof(Data)    * mris->nvertices) ;
+    controls     = (Control*)malloc(sizeof(Control) * mris->nvertices) ;
+  
+    // Find all the vertices that will change
+    // Ripped ones, and those whose neighbors are all ripped,
+    // will not change and hence are not entered
+    for (vno = 0 ; vno < mris->nvertices ; vno++)
+    {
+      VERTEX_TOPOLOGY const * const vt = &mris->vertices_topology[vno];
+      VERTEX          const * const v  = &mris->vertices         [vno];
       
-      // For each vertex that will change, fill in the index of the vertices it must average with.
-      // There could be many of them, so this array vector grows as needed.
-      neighbors_capacity = 6 * index_to_vno_size;
-      neighbors_size     = 0;
-      neighbors          = (int*)malloc(sizeof(int) * neighbors_capacity);
-      
-      int index;
-      for (index = 0; index < index_to_vno_size; index++) {
-        const int vno = index_to_vno[index];
-        Control *const c = controls + index;
-        c->firstNeighbor = neighbors_size;
-        VERTEX_TOPOLOGY const * const vt = &mris->vertices_topology[vno];
-        int const vnum = vt->vnum;
-        int const *pnb = vt->v;
-        int vnb;
+      int num = 0;
+      if (!v->ripflag) {
+        num = 1;
+        // At this stage the neighbors with higher vno's will not have 
+        // been entered into the vno_to_index table
+        int  vnum = vt->vnum;
+        int const *pnb  = vt->v;
+        int  vnb;
         for (vnb = 0; vnb < vnum; vnb++) {
-          int const neighborVno = *pnb++;
-          int const neighborIndex = vno_to_index[neighborVno];
-          if (neighborIndex < 0) continue;  // ripflag must be set
-          if (neighbors_size == neighbors_capacity) {
-            int  const new_neighbors_capacity = neighbors_capacity + neighbors_capacity/2;
-            int* const new_neighbors = (int*)malloc(sizeof(int) * new_neighbors_capacity);
-            int i; 
-            for (i = 0; i < neighbors_size; i++) new_neighbors[i] = neighbors[i];
-            free(neighbors);
-            neighbors = new_neighbors ;
-            neighbors_capacity = new_neighbors_capacity ;
-          }
-          neighbors[neighbors_size++] = neighborIndex ;
-        }      
-      }
-      
-      // Print out for later investigation
-      //
-      if (0) {
-        static int once;
-	if (!once++) {
-          MRISaverageGradients_write("tesselation_averaging_data.txt",
-            num_avgs, neighbors_size, neighbors, index_to_vno_size, controls, datas_inp);
-	}
-      }
-
-      // Optimize enough iterations to payback the cost
-      //
-      freeAndNULL(MRISaverageGradients_new2old_indexMap);
-      freeAndNULL(MRISaverageGradients_old2new_indexMap);
-
-      if (num_avgs > 150) {
-
-        MRISaverageGradients_neighbors_size         = neighbors_size;
-        MRISaverageGradients_neighbors              = neighbors;
-        MRISaverageGradients_controls_and_data_size = index_to_vno_size;
-        MRISaverageGradients_controls               = controls;
-        MRISaverageGradients_datas_init             = datas_inp;
-
-        MRISaverageGradients_optimize();
-
-        neighbors_size    = MRISaverageGradients_neighbors_size;
-        neighbors         = MRISaverageGradients_neighbors;
-        index_to_vno_size = MRISaverageGradients_controls_and_data_size;
-        controls          = MRISaverageGradients_controls;
-        datas_inp         = MRISaverageGradients_datas_init;
-      }
-      
-      if (0) {
-        static int once;
-	if (!once++) {
-          MRISaverageGradients_write("tesselation_averaging_data.optimized.txt", 
-            num_avgs, neighbors_size, neighbors, index_to_vno_size, controls, datas_inp);
-	}
-      }
-
-      // Choose chunk size assuming should evenly distribute the number of neighbors to process
-      //
-      typedef struct Chunk { int indexLo; } Chunk;
-#define chunksCapacity 17  // 4 * omp_get_max_threads() + 1 // must be at least 3
-      Chunk chunks[chunksCapacity];
-      size_t chunksSize = 0;
-      { int const neighborsPerChunk = neighbors_size/(chunksCapacity-1);
-        int chunkSumNumNeighbors = 0;
-        chunks[chunksSize++].indexLo = 0;
-        int index;
-        for (index = 0; index < index_to_vno_size; index++ ) {
-          Control *c = controls  + index;
-          chunkSumNumNeighbors += c->numNeighbors;
-          if (chunkSumNumNeighbors < neighborsPerChunk) continue;
-          chunks[chunksSize++].indexLo = index;
-          chunkSumNumNeighbors = 0;
-          if (chunksSize == chunksCapacity-1) break;
+          int neighborVno = *pnb++;
+          VERTEX* vn = &mris->vertices[neighborVno]; // neighboring vertex pointer
+          if (vn->ripflag) continue;
+          num++;
         }
-        chunks[chunksSize++].indexLo = index_to_vno_size;
       }
+      
+      if (num <= 1) {
+        vno_to_index[vno] = -1;
+      } else {
+        vno_to_index[vno] = index_to_vno_size;
+        index_to_vno[index_to_vno_size] = vno;
+        Data *d = datas_inp + index_to_vno_size;
+        d->dx = v->dx;
+        d->dy = v->dy;
+        d->dz = v->dz;
+        Control *c = controls + index_to_vno_size;
+        c->numNeighbors = num - 1;
+        index_to_vno_size++;
+      }
+    }
+    
+    // For each vertex that will change, fill in the index of the vertices it must average with.
+    // There could be many of them, so this array vector grows as needed.
+    neighbors_capacity = 6 * index_to_vno_size;
+    neighbors_size     = 0;
+    neighbors          = (int*)malloc(sizeof(int) * neighbors_capacity);
+    
+    int index;
+    for (index = 0; index < index_to_vno_size; index++) {
+      const int vno = index_to_vno[index];
+      Control *const c = controls + index;
+      c->firstNeighbor = neighbors_size;
+      VERTEX_TOPOLOGY const * const vt = &mris->vertices_topology[vno];
+      int const vnum = vt->vnum;
+      int const *pnb = vt->v;
+      int vnb;
+      for (vnb = 0; vnb < vnum; vnb++) {
+        int const neighborVno = *pnb++;
+        int const neighborIndex = vno_to_index[neighborVno];
+        if (neighborIndex < 0) continue;  // ripflag must be set
+        if (neighbors_size == neighbors_capacity) {
+          int  const new_neighbors_capacity = neighbors_capacity + neighbors_capacity/2;
+          int* const new_neighbors = (int*)malloc(sizeof(int) * new_neighbors_capacity);
+          int i; 
+          for (i = 0; i < neighbors_size; i++) new_neighbors[i] = neighbors[i];
+          free(neighbors);
+          neighbors = new_neighbors ;
+          neighbors_capacity = new_neighbors_capacity ;
+        }
+        neighbors[neighbors_size++] = neighborIndex ;
+      }      
+    }
+    
+    // Print out for later investigation
+    //
+    if (0) {
+      static int once;
+      if (!once++) {
+              MRISaverageGradients_write("tesselation_averaging_data.txt",
+                num_avgs, neighbors_size, neighbors, index_to_vno_size, controls, datas_inp);
+      }
+    }
+
+    // Optimize enough iterations to payback the cost
+    //
+    freeAndNULL(MRISaverageGradients_new2old_indexMap);
+    freeAndNULL(MRISaverageGradients_old2new_indexMap);
+
+    if (num_avgs > 150) {
+
+      MRISaverageGradients_neighbors_size         = neighbors_size;
+      MRISaverageGradients_neighbors              = neighbors;
+      MRISaverageGradients_controls_and_data_size = index_to_vno_size;
+      MRISaverageGradients_controls               = controls;
+      MRISaverageGradients_datas_init             = datas_inp;
+
+      MRISaverageGradients_optimize();
+
+      neighbors_size    = MRISaverageGradients_neighbors_size;
+      neighbors         = MRISaverageGradients_neighbors;
+      index_to_vno_size = MRISaverageGradients_controls_and_data_size;
+      controls          = MRISaverageGradients_controls;
+      datas_inp         = MRISaverageGradients_datas_init;
+    }
+    
+    if (0) {
+      static int once;
+      if (!once++) {
+              MRISaverageGradients_write("tesselation_averaging_data.optimized.txt", 
+                num_avgs, neighbors_size, neighbors, index_to_vno_size, controls, datas_inp);
+      }
+    }
+
+    // Choose chunk size assuming should evenly distribute the number of neighbors to process
+    //
+    typedef struct Chunk { int indexLo; } Chunk;
+#define chunksCapacity 17  // 4 * omp_get_max_threads() + 1 // must be at least 3
+    Chunk chunks[chunksCapacity];
+    size_t chunksSize = 0;
+    { int const neighborsPerChunk = neighbors_size/(chunksCapacity-1);
+      int chunkSumNumNeighbors = 0;
+      chunks[chunksSize++].indexLo = 0;
+      int index;
+      for (index = 0; index < index_to_vno_size; index++ ) {
+        Control *c = controls  + index;
+        chunkSumNumNeighbors += c->numNeighbors;
+        if (chunkSumNumNeighbors < neighborsPerChunk) continue;
+        chunks[chunksSize++].indexLo = index;
+        chunkSumNumNeighbors = 0;
+        if (chunksSize == chunksCapacity-1) break;
+      }
+      chunks[chunksSize++].indexLo = index_to_vno_size;
+    }
 #undef chunksCapacity
 
-      // Do all the iterations
-      for (i = 0 ; i < num_avgs ; i++) {
-        
-        unsigned int chunksIndex;
-        ROMP_PF_begin
+    // Do all the iterations
+    for (i = 0 ; i < num_avgs ; i++) {
+      
+      unsigned int chunksIndex;
+      ROMP_PF_begin
 #ifdef HAVE_OPENMP
-        #pragma omp parallel for if_ROMP(assume_reproducible)
+      #pragma omp parallel for if_ROMP(assume_reproducible)
 #endif
-        for (chunksIndex = 0; chunksIndex < chunksSize-1 ; chunksIndex++ ) {
-          int
-            indexLo = chunks[chunksIndex  ].indexLo, 
-            indexHi = chunks[chunksIndex+1].indexLo;
-          int index;
-          for (index = indexLo; index < indexHi; index++ ) {
-	    ROMP_PFLB_begin
+      for (chunksIndex = 0; chunksIndex < chunksSize-1 ; chunksIndex++ ) {
+        int
+          indexLo = chunks[chunksIndex  ].indexLo, 
+          indexHi = chunks[chunksIndex+1].indexLo;
+        int index;
+        for (index = indexLo; index < indexHi; index++ ) {
+    ROMP_PFLB_begin
 
-            Data *d = datas_inp + index;
-            Control *c = controls  + index;
-            float dx = d->dx, dy = d->dy, dz = d->dz;
-            
-            int *nearby = neighbors + c->firstNeighbor;
-            int n;
-            for (n = 0; n < c->numNeighbors; n++) {
-              int neighborIndex = nearby[n];
-              Data *neighborData = datas_inp + neighborIndex;
-              dx += neighborData->dx; dy += neighborData->dy; dz += neighborData->dz;
-            }
-
-            d = datas_out + index;
-            float inv_num = 1.0f/(c->numNeighbors + 1);
-            
-            d->dx = dx*inv_num ; d->dy = dy*inv_num ; d->dz = dz*inv_num; 
-          }	  
-	  ROMP_PFLB_end
-        }
-	ROMP_PF_end
-  
-        // swap the output and the input going into the next round
-        Data* tmp = datas_inp ; datas_inp = datas_out ; datas_out = tmp;
-      }
-    }
-    
-    // Only perform the old algorithm when needed
-    if (doOld) {
-    
-      // This is the old algorithm
-      for (i = 0 ; i < num_avgs ; i++) {
-  
-        ROMP_PF_begin
-#ifdef HAVE_OPENMP
-        #pragma omp parallel for if_ROMP(experimental)
-#endif
-  
-        for (vno = 0; vno < mris->nvertices; vno++) {
-	  ROMP_PFLB_begin
-	  
-          float dx, dy, dz, num;
-          int vnb, vnum;
-  
-          VERTEX_TOPOLOGY const * const vt = &mris->vertices_topology[vno];
-          VERTEX                * const v  = &mris->vertices         [vno];
-          if (v->ripflag) ROMP_PF_continue;
-  
-          dx  = v->dx;
-          dy  = v->dy;
-          dz  = v->dz;
-          int const * pnb = vt->v;
-          // vnum = vt->v2num ? vt->v2num : vt->vnum;
-          vnum = vt->vnum;
-          for (num = 0.0f, vnb = 0; vnb < vnum; vnb++) {
-            VERTEX const * const vn = &mris->vertices[*pnb++]; // neighboring vertex pointer
-            if (vn->ripflag) continue;
-  
-            num++;
-            dx += vn->dx;
-            dy += vn->dy;
-            dz += vn->dz;
-          }
-          num++;
-          v->tdx = dx / num;
-          v->tdy = dy / num;
-          v->tdz = dz / num;
-	  ROMP_PFLB_end
-        }
-	ROMP_PF_end
-	
-	ROMP_PF_begin
-#ifdef HAVE_OPENMP
-	#pragma omp parallel for if_ROMP(experimental) schedule(static, 1)
-#endif
-        for (vno = 0; vno < mris->nvertices; vno++) {
-	  ROMP_PFLB_begin
-	  
-          VERTEX * const v = &mris->vertices[vno];
-          if (v->ripflag) ROMP_PF_continue;
-  
-          v->dx = v->tdx;
-          v->dy = v->tdy;
-          v->dz = v->tdz;
-	  
-	  ROMP_PFLB_end
-        }
-	ROMP_PF_end
-	
-      }  // end of one of the num_avgs iterations
-
-    }  // if (doOld) 
-    
-    if (doOld && doNew) {
-      fprintf(stdout, "%s:%d comparing old and new algorithms\n", __FILE__, __LINE__);
-      int errors = 0;
-      for (vno = 0 ; vno < mris->nvertices ; vno++) {
-        VERTEX *v = &mris->vertices[vno];
-        int old_index = vno_to_index[vno];
-        if (old_index == -1) {
-          // check has not changed - but this is not currently possible
-          // but could be enabled by making all these nodes go into the high end of the initial datas_inp vector
-        } else {
-          int new_index = MRISaverageGradients_old2new_indexMap ? MRISaverageGradients_old2new_indexMap[old_index] : old_index;
-          Data *d = datas_inp + new_index;
-          if (!closeEnough(d->dx,v->dx) || !closeEnough(d->dy,v->dy) || !closeEnough(d->dz,v->dz)) {
-            errors++;
-            if (errors < 10) {
-              fprintf(stdout,"%s:%d vno:%d d->dx:%g v->dx:%g d->dy:%g v->dy:%g d->dz:%g v->dz:%g - datas_inp\n",__FILE__,__LINE__,
-                      vno, d->dx, v->dx, d->dy, v->dy, d->dz, v->dz);
-            }
-          }
+          Data *d = datas_inp + index;
+          Control *c = controls  + index;
+          float dx = d->dx, dy = d->dy, dz = d->dz;
           
-        }
+          int *nearby = neighbors + c->firstNeighbor;
+          int n;
+          for (n = 0; n < c->numNeighbors; n++) {
+            int neighborIndex = nearby[n];
+            Data *neighborData = datas_inp + neighborIndex;
+            dx += neighborData->dx; dy += neighborData->dy; dz += neighborData->dz;
+          }
+
+          d = datas_out + index;
+          float inv_num = 1.0f/(c->numNeighbors + 1);
+          
+          d->dx = dx*inv_num ; d->dy = dy*inv_num ; d->dz = dz*inv_num; 
+        }	  
+  ROMP_PFLB_end
       }
-      fprintf(stderr,"%s:%d errors:%d\n",__FILE__,__LINE__,errors);
-      if (errors > 0) exit (103);
+ROMP_PF_end
+
+      // swap the output and the input going into the next round
+      Data* tmp = datas_inp ; datas_inp = datas_out ; datas_out = tmp;
     }
 
+#endif  // DO_NEW
+
+#if DO_OLD  // Only perform the old algorithm when needed
+    for (i = 0 ; i < num_avgs ; i++) {
+
+      ROMP_PF_begin
+#ifdef HAVE_OPENMP
+      #pragma omp parallel for if_ROMP(experimental)
+#endif
+
+      for (vno = 0; vno < mris->nvertices; vno++) {
+  ROMP_PFLB_begin
+  
+        float dx, dy, dz, num;
+        int vnb, vnum;
+
+        VERTEX_TOPOLOGY const * const vt = &mris->vertices_topology[vno];
+        VERTEX                * const v  = &mris->vertices         [vno];
+        if (v->ripflag) ROMP_PF_continue;
+
+        dx  = v->dx;
+        dy  = v->dy;
+        dz  = v->dz;
+        int const * pnb = vt->v;
+        // vnum = vt->v2num ? vt->v2num : vt->vnum;
+        vnum = vt->vnum;
+        for (num = 0.0f, vnb = 0; vnb < vnum; vnb++) {
+          VERTEX const * const vn = &mris->vertices[*pnb++]; // neighboring vertex pointer
+          if (vn->ripflag) continue;
+
+          num++;
+          dx += vn->dx;
+          dy += vn->dy;
+          dz += vn->dz;
+        }
+        num++;
+        v->tdx = dx / num;
+        v->tdy = dy / num;
+        v->tdz = dz / num;
+  ROMP_PFLB_end
+      }
+ROMP_PF_end
+
+ROMP_PF_begin
+#ifdef HAVE_OPENMP
+#pragma omp parallel for if_ROMP(experimental) schedule(static, 1)
+#endif
+      for (vno = 0; vno < mris->nvertices; vno++) {
+  ROMP_PFLB_begin
+  
+        VERTEX * const v = &mris->vertices[vno];
+        if (v->ripflag) ROMP_PF_continue;
+
+        v->dx = v->tdx;
+        v->dy = v->tdy;
+        v->dz = v->tdz;
+  
+  ROMP_PFLB_end
+      }
+ROMP_PF_end
+
+    }  // end of one of the num_avgs iterations
+#endif  // DO_OLD
+
+#if DO_OLD && DO_NEW
+    fprintf(stdout, "%s:%d comparing old and new algorithms\n", __FILE__, __LINE__);
+    int errors = 0;
+    for (vno = 0 ; vno < mris->nvertices ; vno++) {
+      VERTEX *v = &mris->vertices[vno];
+      int old_index = vno_to_index[vno];
+      if (old_index == -1) {
+        // check has not changed - but this is not currently possible
+        // but could be enabled by making all these nodes go into the high end of the initial datas_inp vector
+      } else {
+        int new_index = MRISaverageGradients_old2new_indexMap ? MRISaverageGradients_old2new_indexMap[old_index] : old_index;
+        Data *d = datas_inp + new_index;
+        if (!closeEnough(d->dx,v->dx) || !closeEnough(d->dy,v->dy) || !closeEnough(d->dz,v->dz)) {
+          errors++;
+          if (errors < 10) {
+            fprintf(stdout,"%s:%d vno:%d d->dx:%g v->dx:%g d->dy:%g v->dy:%g d->dz:%g v->dz:%g - datas_inp\n",__FILE__,__LINE__,
+                    vno, d->dx, v->dx, d->dy, v->dy, d->dz, v->dz);
+          }
+        }
+        
+      }
+    }
+    fprintf(stderr,"%s:%d errors:%d\n",__FILE__,__LINE__,errors);
+    if (errors > 0) exit (103);
+#endif
+
+#if DO_NEW
     // Put the results where they belong
     // Note: this code does not set tdx, etc. - I believe they are temporaries   
-    if (doNew) {
-      int errors = 0;
-      int new_index;
-      for (new_index = 0 ; new_index < index_to_vno_size; new_index++) {
+    int errors = 0;
+    int new_index;
+    for (new_index = 0 ; new_index < index_to_vno_size; new_index++) {
 
-        int old_index = MRISaverageGradients_new2old_indexMap ? MRISaverageGradients_new2old_indexMap[new_index] : new_index;
+      int old_index = MRISaverageGradients_new2old_indexMap ? MRISaverageGradients_new2old_indexMap[new_index] : new_index;
 
-        int vno   = index_to_vno[old_index];
-        VERTEX *v = &mris->vertices[vno];
-        Data   *d = datas_inp + new_index;
-        
-        v->dx = d->dx;
-        v->dy = d->dy;
-        v->dz = d->dz;
-      }
-
-      if (errors > 0) {
-        fprintf(stderr,"%s:%d errors:%d\n",__FILE__,__LINE__,errors);
-        exit (104);
-      }
+      int vno   = index_to_vno[old_index];
+      VERTEX *v = &mris->vertices[vno];
+      Data   *d = datas_inp + new_index;
       
-      free(datas_out); 
-      free(datas_inp);
-      free(neighbors); 
-      free(controls);
-      
-      free(index_to_vno);
-      free(vno_to_index);
+      v->dx = d->dx;
+      v->dy = d->dy;
+      v->dz = d->dz;
     }
+
+    if (errors > 0) {
+      fprintf(stderr,"%s:%d errors:%d\n",__FILE__,__LINE__,errors);
+      exit (104);
+    }
+    
+    free(datas_out); 
+    free(datas_inp);
+    free(neighbors); 
+    free(controls);
+    
+    free(index_to_vno);
+    free(vno_to_index);
+#endif
   }
 
   if (Gdiag_no >= 0) {
