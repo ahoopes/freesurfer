@@ -7158,7 +7158,7 @@ static int mrisOrigNormalFace(MRIS *mris, int fac, int n, float norm[])
   int n0, n1;
   FACE *f;
   float v0[3], v1[3];
-  register VERTEX *v, *vn0, *vn1;
+  VERTEX *v, *vn0, *vn1;
 
   n0 = (n == 0) ? VERTICES_PER_FACE - 1 : n - 1;
   n1 = (n == VERTICES_PER_FACE - 1) ? 0 : n + 1;
@@ -7197,7 +7197,7 @@ static int mrisWhiteNormalFace(MRIS *mris, int fac, int n, float norm[])
   int n0, n1;
   FACE *f;
   float v0[3], v1[3];
-  register VERTEX *v, *vn0, *vn1;
+  VERTEX *v, *vn0, *vn1;
 
   n0 = (n == 0) ? VERTICES_PER_FACE - 1 : n - 1;
   n1 = (n == VERTICES_PER_FACE - 1) ? 0 : n + 1;
@@ -7236,7 +7236,7 @@ static int mrisPialNormalFace(MRIS *mris, int fac, int n, float norm[])
   int n0, n1;
   FACE *f;
   float v0[3], v1[3];
-  register VERTEX *v, *vn0, *vn1;
+  VERTEX *v, *vn0, *vn1;
 
   n0 = (n == 0) ? VERTICES_PER_FACE - 1 : n - 1;
   n1 = (n == VERTICES_PER_FACE - 1) ? 0 : n + 1;

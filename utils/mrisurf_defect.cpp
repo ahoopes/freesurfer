@@ -12426,7 +12426,7 @@ static int mrisTessellateDefect(MRI_SURFACE *mris,
 
 static int compare_edge_length(const void *pe0, const void *pe1)
 {
-  register EDGE *e0, *e1;
+  EDGE *e0, *e1;
 
   e0 = (EDGE *)pe0;
   e1 = (EDGE *)pe1;

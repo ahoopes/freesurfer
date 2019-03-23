@@ -298,7 +298,7 @@ char *fgetl(char *s, int n, FILE *fp)
  */
 int IntSqrt(int n)
 {
-  register int approx, prev;
+  int approx, prev;
 
   if (n == 0) return 0;
 

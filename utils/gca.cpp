@@ -5114,7 +5114,7 @@ static int compare_gca_samples(const void *pc1, const void *pc2);
 
 static int compare_gca_samples(const void *pgcas1, const void *pgcas2)
 {
-  register GCA_SAMPLE *gcas1, *gcas2;
+  GCA_SAMPLE *gcas1, *gcas2;
 
   gcas1 = (GCA_SAMPLE *)pgcas1;
   gcas2 = (GCA_SAMPLE *)pgcas2;
