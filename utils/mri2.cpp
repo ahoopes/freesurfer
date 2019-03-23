@@ -1596,10 +1596,7 @@ MRI *MRIsqrt(MRI *invol, MRI *outvol)
 */
 MRI *MRImax(MRI *mri1, MRI *mri2, MRI *out)
 {
-  int c, r, s, f, n, ncols, nrows, nslices, nframes;
-  void *pmri1 = NULL, *pmri2 = NULL, *pout = NULL;
-  double v1 = 0, v2 = 0, v;
-  int sz1, sz2, szout;
+  int ncols, nrows, nslices, nframes;
 
   ncols = mri1->width;
   nrows = mri1->height;
@@ -1619,36 +1616,17 @@ MRI *MRImax(MRI *mri1, MRI *mri2, MRI *out)
     return (NULL);
   }
 
-  // Number of bytes in the mri data types
-  sz1 = MRIsizeof(mri1->type);
-  sz2 = MRIsizeof(mri2->type);
-  szout = MRIsizeof(out->type);
-
-  n = 0;
-  for (f = 0; f < nframes; f++) {
-    for (s = 0; s < nslices; s++) {
-      for (r = 0; r < nrows; r++) {
-        // Pointers to the start of the column
-        pmri1 = (void *)mri1->slices[n][r];
-        pmri2 = (void *)mri2->slices[n][r];
-        pout = (void *)out->slices[n][r];
-        for (c = 0; c < ncols; c++) {
-          v1 = MRIptr2dbl(pmri1, mri1->type);
-          v2 = MRIptr2dbl(pmri2, mri2->type);
-          if (v1 > v2)
-            v = v1;
-          else
-            v = v2;
-          MRIdbl2ptr(v, pout, out->type);
-
-          pmri1 += sz1;
-          pmri2 += sz2;
-          pout += szout;
-        }  // cols
-      }    // rows
-      n++;
-    }  // slices
-  }    // frames
+  for (unsigned int f = 0; f < nframes; f++) {
+    for (unsigned int c = 0; c < ncols; c++) {
+      for (unsigned int r = 0; r < nrows; r++) {
+        for (unsigned int s = 0; s < nslices; s++) {
+          double v1 = MRIgetVoxVal(mri1, c, r, s, f);
+          double v2 = MRIgetVoxVal(mri2, c, r, s, f);
+          MRIsetVoxVal(out, c, r, s, f, std::max(v1, v2));
+        }
+      }
+    }
+  }
 
   return (out);
 }
