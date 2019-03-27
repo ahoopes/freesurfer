@@ -69,6 +69,7 @@ int slice_crop_flag = FALSE;
 int slice_crop_start, slice_crop_stop;
 int SplitFrames=0;
 
+
 /*-------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
@@ -213,21 +214,12 @@ int main(int argc, char *argv[])
   int UpsampleFlag=0, UpsampleFactor=0;
 
   FSinit() ;
+  printAllInfo();
   ErrorInit(NULL, NULL, NULL) ;
   DiagInit(NULL, NULL, NULL) ;
 
   make_cmd_version_string
-  (argc, argv,
-   "$Id: mri_convert.c,v 1.227 2017/02/16 19:15:42 greve Exp $",
-   "$Name:  $",
-   cmdline);
-
-  for(i=0; i<argc; i++)
-  {
-    printf("%s ",argv[i]);
-  }
-  printf("\n");
-  fflush(stdout);
+  (argc, argv, "$Id: mri_convert.c,v 1.227 2017/02/16 19:15:42 greve Exp $", "$Name:  $", cmdline);
 
   crop_size[0] = crop_size[1] = crop_size[2] = 256 ;
   crop_center[0] = crop_center[1] = crop_center[2] = 128 ;
@@ -1736,7 +1728,6 @@ int main(int argc, char *argv[])
             "= --zero_ge_z_offset option ignored.\n");
   }
 
-  printf("$Id: mri_convert.c,v 1.227 2017/02/16 19:15:42 greve Exp $\n");
   printf("reading from %s...\n", in_name_only);
 
   if (in_volume_type == MGH_MORPH)
@@ -3025,7 +3016,8 @@ int main(int argc, char *argv[])
 	  MRIfree(&mri) ; MRIfree(&mri_template) ; 
 	  mri = mri_tmp ;
 	  useVolGeomToMRI(&gcam->image, mri_template) ;
-	  mri_template = mri_template ;
+    // ATH I'm guessing below is a bug and it's supposed to be "mri_transformed = mri_template" ?
+	  // mri_template = mri_template ;
 	}
         printf("morphing from atlas with resample type %d\n", resample_type_val) ;
         mri_transformed = GCAMmorphFromAtlas(mri,                  

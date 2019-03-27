@@ -221,9 +221,7 @@ apply_transform(MRI *mri, GCA *gca, MATRIX *m_L)
 }
 
 char *rusage_file=NULL;
-#ifdef HAVE_OPENMP
-  int          n_omp_threads;
-#endif
+int n_omp_threads = 1;
 
 int
 main(int argc, char *argv[])
@@ -472,7 +470,7 @@ main(int argc, char *argv[])
     }
     if (T2_mask_fname)
     {
-      MRI *mri_T2, *mri_aparc_aseg ;
+      MRI *mri_T2, *mri_aparc_aseg = nullptr;
 
       mri_T2 = MRIread(T2_mask_fname) ;
       if (!mri_T2)
@@ -772,9 +770,9 @@ main(int argc, char *argv[])
        scale < nscales ;
        scale++, spacing /= 2)
   {
-    if (skull && 0)
-      parms.gcas = GCAfindExteriorSamples(gca, &nsamples,spacing,
-                                          min_prior,unknown_nbr_spacing, 0) ;
+    if (0) {  // if (skull) {
+      parms.gcas = GCAfindExteriorSamples(gca, &nsamples,spacing, min_prior,unknown_nbr_spacing, 0) ;
+    }
     else if (use_contrast) // -contrast option
     {
       parms.gcas = GCAfindContrastSamples(gca,&nsamples, spacing,min_prior);
@@ -811,12 +809,11 @@ main(int argc, char *argv[])
   }
 
   // change nsamples to all samples
-  if (skull && 0)
-    parms.gcas = GCAfindExteriorSamples(gca, &nsamples,spacing/2,
-                                        min_prior,unknown_nbr_spacing, 0) ;
-  else
-    parms.gcas = GCAfindAllSamples(gca, &nsamples,
-                                   exclude_list, unknown_nbr_spacing);//HACK, bigvent) ;
+  if (0) {  // if (skull) {
+    parms.gcas = GCAfindExteriorSamples(gca, &nsamples,spacing/2, min_prior,unknown_nbr_spacing, 0) ;
+  } else {
+    parms.gcas = GCAfindAllSamples(gca, &nsamples, exclude_list, unknown_nbr_spacing);//HACK, bigvent) ;
+  }
   mark_gcas_classes(parms.gcas, nsamples) ;
   parms.nsamples = nsamples ;
   parms.tol = 1e-7 ;

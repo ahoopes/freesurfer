@@ -504,16 +504,13 @@ main(int argc, char *argv[])
       {
         if (ct0->entries[cno])
         {
-          if (ct0->entries[cno]->name)
+          if (0==strcmp(label_name,ct0->entries[cno]->name))
           {
-            if (0==strcmp(label_name,ct0->entries[cno]->name))
-            {
-              // we found this label! so update local colortable with info
-              memcpy(miniColorTable.entries[1],
-                     ct0->entries[cno],
-                     sizeof(COLOR_TABLE_ENTRY));
-              break;
-            }
+            // we found this label! so update local colortable with info
+            memcpy(miniColorTable.entries[1],
+                   ct0->entries[cno],
+                   sizeof(COLOR_TABLE_ENTRY));
+            break;
           }
         }
       }

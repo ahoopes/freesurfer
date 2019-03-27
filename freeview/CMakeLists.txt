@@ -7,6 +7,7 @@ if(BUILD_GUIS AND VTK_FOUND AND PETSC_FOUND AND TARGET vtkutils)
     ${FS_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/vtkutils
     ${CMAKE_SOURCE_DIR}/lineprof
+    SYSTEM
     ${ITK_INCLUDE_DIRS}
     ${VTK_INCLUDE_DIRS}
   )
@@ -195,7 +196,7 @@ if(BUILD_GUIS AND VTK_FOUND AND PETSC_FOUND AND TARGET vtkutils)
   endif()
 
   if(SUPPRESS_WARNINGS)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-reorder -Wno-uninitialized -Wno-unused-variable -Wno-sign-compare")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-reorder -Wno-uninitialized -Wno-unused-variable -Wno-sign-compare -Wno-overloaded-virtual -Wno-inconsistent-missing-override")
   endif()
 
   set(QT_LIBRARIES Qt5::Core Qt5::Widgets)
@@ -207,7 +208,7 @@ if(BUILD_GUIS AND VTK_FOUND AND PETSC_FOUND AND TARGET vtkutils)
   endif()
 
   add_executable(freeview ${SOURCES})
-  target_link_libraries(freeview 
+  target_link_libraries(freeview
     vtkutils
     lineprof
     ${VTK_LIBRARIES}
@@ -219,7 +220,6 @@ if(BUILD_GUIS AND VTK_FOUND AND PETSC_FOUND AND TARGET vtkutils)
     ${LAPACK_LIBRARIES}
     ${BLAS_LIBRARIES}
     ${GFORTRAN_LIBRARIES}
-    -static-libgcc
   )
 
   if(NOT APPLE)

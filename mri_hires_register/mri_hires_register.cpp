@@ -513,7 +513,8 @@ main(int argc, char *argv[]) {
     mp.diag_morph_from_atlas = 1 ;
     mp.diag_volume = GCAM_LABEL ;
     mp.diag_mode_filter = 1 ;
-    if (regrid && 0) {
+    // if (regrid) {
+    if (0) {
       double pct_change ;
       int  niter = 0, nlevels = mp.levels,
                                 level, npasses, navgs = mp.navgs,

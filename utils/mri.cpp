@@ -5471,10 +5471,10 @@ MRI *MRIallocChunk(int width, int height, int depth, int type, int nframes)
   mri->vox_per_slice = mri->vox_per_row * mri->height;
   mri->vox_per_vol = mri->vox_per_slice * mri->depth;
 
-  unsigned long bytes_total = MRIsizeof(mri->type) * mri->width * mri->height * mri->depth * mri->nframes;
-  mri->chunk = calloc(bytes_total, 1);
+  mri->bytes_total = mri->bytes_per_vox * mri->width * mri->height * mri->depth * mri->nframes;
+  mri->chunk = calloc(mri->bytes_total, 1);
   if (mri->chunk == NULL) {
-    printf("ERROR: MRIallocChunk(): could not alloc %lu\n", bytes_total);
+    printf("ERROR: MRIallocChunk(): could not alloc %zu\n", mri->bytes_total);
     return (NULL);
   }
   // printf("Allocing MRI with Chunk\n");
@@ -5739,6 +5739,7 @@ MRI *MRIallocHeader(int width, int height, int depth, int type, int nframes)
   // Chunking memory management
   mri->ischunked = 0;
   mri->chunk = NULL;
+  mri->bytes_per_vox = MRIsizeof(type);
 
   // These things are explicitly set to 0 here because we
   // do not yet know the true number of frames, and they
@@ -6119,6 +6120,9 @@ MRI *MRIcopyHeader(const MRI *mri_src, MRI *mri_dst)
   mri_dst->c_a = mri_src->c_a;
   mri_dst->c_s = mri_src->c_s;
   mri_dst->ras_good_flag = mri_src->ras_good_flag;
+
+  mri_dst->bytes_per_vox = MRIsizeof(mri_dst->type);
+  mri_dst->bytes_total = mri_dst->bytes_per_vox * mri_dst->width * mri_dst->height * mri_dst->depth * mri_dst->nframes;
 
   mri_dst->vox_per_row = mri_dst->width;
   mri_dst->vox_per_slice = mri_dst->vox_per_row * mri_dst->height;

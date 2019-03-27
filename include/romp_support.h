@@ -37,10 +37,10 @@
 //
 #ifdef HAVE_OPENMP
 #include <omp.h>
+#define omp_get_thread_num romp_omp_get_thread_num
 #endif
 
 int romp_omp_get_thread_num();
-#define omp_get_thread_num romp_omp_get_thread_num
 
 
 

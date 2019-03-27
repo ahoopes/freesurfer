@@ -42,7 +42,8 @@
 #include <vtkAssemblyPath.h>
 #include <vtkAssemblyNode.h>
 #include <vtkCellPicker.h>
-#include "vtkGenericOpenGLRenderWindow.h"
+#include <vtkGenericOpenGLRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
 #include <QApplication>
 #include <QClipboard>
 #include <QImage>

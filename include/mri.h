@@ -257,6 +257,8 @@ typedef struct
   /* volume is allocated one big buffer. */   \
   ELTT( int, ischunked ) SEP          /* 1 means alloc is one big chunk */    \
   ELTP( void, chunk ) SEP              /* pointer to the one big chunk of buffer */    \
+  ELTT( size_t, bytes_per_vox ) SEP      /* # bytes per voxels */    \
+  ELTT( size_t, bytes_total ) SEP        /* # total number of pixel bytes in the struct */    \
   ELTT( size_t, vox_per_row ) SEP \
   ELTT( size_t, vox_per_slice ) SEP \
   ELTT( size_t, vox_per_vol ) SEP \

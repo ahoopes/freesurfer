@@ -400,8 +400,8 @@ main(int argc, char *argv[]) {
     MRIfree(&mri_label1_dist) ; mri_label1_dist = mri_smooth ;
     mri_dist_grad = MRIsobel(mri_label1_dist, NULL, NULL) ;
     MRInormalizeSequence(mri_dist_grad, 1.0) ;
-    if (write_diags && 0)
-    {
+    // if (write_diags) {
+    if (0) {
       sprintf(fname, "dist.%d.mgz", labels[label]) ;
       MRIwrite(mri_label1_dist, fname) ;
       sprintf(fname, "grad.%d.mgz", labels[label]) ;

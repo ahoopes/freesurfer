@@ -653,7 +653,7 @@ static void check_options(void) {
     ctab2 = CTABalloc(ctab->nentries);
     nlabels = 0;
     for (n=0; n<ctab->nentries; n++) {
-      if(ctab->entries[n]->name == NULL) continue;
+      // if(ctab->entries[n]->name == NULL) continue;  // ATH ...this is always false
       sprintf(tmpstr,"%s/%s.%s.label",labeldir,hemi,ctab->entries[n]->name);
       if(!fio_FileExistsReadable(tmpstr)) continue;
       printf("%2d %s\n",n,tmpstr);
