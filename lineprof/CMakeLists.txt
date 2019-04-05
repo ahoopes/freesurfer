@@ -3,6 +3,7 @@ project(lineprof)
 if(ITK_FOUND AND VTK_FOUND AND PETSC_FOUND)
 
   include_directories(
+    SYSTEM
     ${ITK_INCLUDE_DIRS}
     ${VTK_INCLUDE_DIRS}
     ${PETSC_INCLUDE_DIR}
