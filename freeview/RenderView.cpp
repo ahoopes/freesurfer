@@ -46,7 +46,7 @@
 #include "vtkScalarBarActor.h"
 #include "vtkLookupTable.h"
 #include "vtkRGBAColorTransferFunction.h"
-#include <vtkRenderWindowInteractor.h>
+#include "vtkRenderWindowInteractor.h"
 #include <QPainter>
 #include <QAction>
 #include <vtkCellPicker.h>
