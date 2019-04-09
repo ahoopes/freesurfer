@@ -4239,7 +4239,7 @@ MRI *MRInxcorrWindow(MRI *mri_ref, MRI *mri_in, MRI *mri_dst, int window_size)
               in = *pin;
               ref = *pref;
 
-              norm += (float)(in * ref);
+              norm += std::abs((float)in * (float)ref);
               dst += (float)in * (float)ref;
             }
           }

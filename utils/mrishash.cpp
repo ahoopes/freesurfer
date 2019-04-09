@@ -961,10 +961,10 @@ static int mhtRemoveFaceOrVertexAtVoxIx(MRIS_HASH_TABLE *mht, int xv, int yv, in
   int i;
 
   if (xv < 0) xv = 0;
-  if (xv >= TABLE_SIZE) xv = TABLE_SIZE - 1;
   if (yv < 0) yv = 0;
-  if (yv >= TABLE_SIZE) yv = TABLE_SIZE - 1;
   if (zv < 0) zv = 0;
+  if (xv >= TABLE_SIZE) xv = TABLE_SIZE - 1;
+  if (yv >= TABLE_SIZE) yv = TABLE_SIZE - 1;
   if (zv >= TABLE_SIZE) zv = TABLE_SIZE - 1;
 
   if (!existsBuckets2(mht,xv,yv)) return (NO_ERROR);  // no bucket at such coordinates
