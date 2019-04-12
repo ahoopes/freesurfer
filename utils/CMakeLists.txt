@@ -1,7 +1,5 @@
 project(utils)
 
-add_compile_options(-Wno-pointer-arith)
-
 include_directories(
   ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/packages/jpeg
