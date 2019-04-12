@@ -26,8 +26,7 @@
  *
  */
 
-#include <iostream>
-#include <string>
+#include "version.h"
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,41 +39,6 @@
 #include "const.h"
 #include "error.h"
 #include "utils.h"
-#include "version.h"
-
-// -----------------------------------------
-// ath
-
-static std::string username() {
-  struct passwd *pw = getpwuid(geteuid());
-  if (pw) {
-    return std::string(pw->pw_name);
-  }
-  return "unknown";
-}
-
-static std::string hostname() {
-  char hostname[255];
-  gethostname(hostname, 255);
-  return std::string(hostname);
-}
-
-static std::string sysname() {
-  struct utsname uts;
-  uname(&uts);
-  return uts.sysname;
-}
-
-
-void printAllInfo() {
-  std::cout << "program: " << "mri_convert" << " v" << "6.0" << std::endl;
-  std::cout << "user: " << username() << " on " << hostname() << " (" << sysname() <<  ")" << std::endl;
-  std::cout << "build: " << " " << " Darwin 2.2" << " (" << "23232323 23 32 " <<  ")" << std::endl;
-  std::cout << "compiler: " << "???" << " " << "GNU 6.4" << std::endl;
-}
-
-
-// -----------------------------------------
 
 /* Set our compiler name */
 #if defined(__INTEL_COMPILER)
@@ -440,7 +404,6 @@ int handle_version_option(int argc, char **argv, const char *id_string, const ch
   /* Return the number of arguments processed. */
   return num_processed_args;
 }
-
 
 /*------------------------------------------------------------------------
   argv2cmdline() - converts argv into a single string.

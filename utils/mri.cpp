@@ -1194,22 +1194,25 @@ float MRIgetVoxVal(const MRI *mri, int c, int r, int s, int f)
   if (s < 0) return mri->outside_val;
 
   if (mri->ischunked) {
+    void *p;
+    p = mri->chunk + c * mri->bytes_per_vox + r * mri->bytes_per_row + s * mri->bytes_per_slice +
+        f * mri->bytes_per_vol;
     switch (mri->type) {
     case MRI_UCHAR:
-      return (float)* ((unsigned char *)mri->chunk + c + r * mri->vox_per_row + s * mri->vox_per_slice + f * mri->vox_per_vol);
+      return ((float)*(unsigned char *)p);
       break;
     case MRI_SHORT:
-      return (float)* ((short *)mri->chunk + c + r * mri->vox_per_row + s * mri->vox_per_slice + f * mri->vox_per_vol);
+      return ((float)*(short *)p);
       break;
     case MRI_RGB:
     case MRI_INT:
-      return (float)* ((int *)mri->chunk + c + r * mri->vox_per_row + s * mri->vox_per_slice + f * mri->vox_per_vol);
+      return ((float)*(int *)p);
       break;
     case MRI_LONG:
-      return (float)* ((long *)mri->chunk + c + r * mri->vox_per_row + s * mri->vox_per_slice + f * mri->vox_per_vol);
+      return ((float)*(long *)p);
       break;
     case MRI_FLOAT:
-      return (float)* ((float *)mri->chunk + c + r * mri->vox_per_row + s * mri->vox_per_slice + f * mri->vox_per_vol);
+      return ((float)*(float *)p);
       break;
     }
   }
@@ -1269,22 +1272,25 @@ int MRIsetVoxVal(MRI *mri, int c, int r, int s, int f, float voxval)
   }
 
   if (mri->ischunked) {
+    void *p;
+    p = mri->chunk + c * mri->bytes_per_vox + r * mri->bytes_per_row + s * mri->bytes_per_slice +
+        f * mri->bytes_per_vol;
     switch (mri->type) {
     case MRI_UCHAR:
-      *((unsigned char *)mri->chunk + c + r * mri->vox_per_row + s * mri->vox_per_slice + f * mri->vox_per_vol) = nint(voxval);
+      *((unsigned char *)p) = nint(voxval);
       break;
     case MRI_SHORT:
-      *((short *)mri->chunk + c + r * mri->vox_per_row + s * mri->vox_per_slice + f * mri->vox_per_vol) = nint(voxval);
+      *((short *)p) = nint(voxval);
       break;
     case MRI_RGB:
     case MRI_INT:
-      *((int *)mri->chunk + c + r * mri->vox_per_row + s * mri->vox_per_slice + f * mri->vox_per_vol) = nint(voxval);
+      *((int *)p) = nint(voxval);
       break;
     case MRI_LONG:
-      *((long *)mri->chunk + c + r * mri->vox_per_row + s * mri->vox_per_slice + f * mri->vox_per_vol) = nint(voxval);
+      *((long *)p) = nint(voxval);
       break;
     case MRI_FLOAT:
-      *((float *)mri->chunk + c + r * mri->vox_per_row + s * mri->vox_per_slice + f * mri->vox_per_vol) = voxval;
+      *((float *)p) = voxval;
       break;
     }
   }
@@ -5456,6 +5462,10 @@ MRI *MRIallocChunk(int width, int height, int depth, int type, int nframes)
   int slice, row;
   void *p;
 
+  if (sizeof(mri->bytes_total) != sizeof(size_t)) {
+    fprintf(stderr, "%s: WARNING\nbytes_total is not a size_t\n", __FUNCTION__);
+  }
+
   mris_alloced++;
 
   if ((width <= 0) || (height <= 0) || (depth <= 0))
@@ -5466,15 +5476,13 @@ MRI *MRIallocChunk(int width, int height, int depth, int type, int nframes)
 
   // Allocate a big chunk of memory
   mri->ischunked = 1;
-
-  mri->vox_per_row = mri->width;
-  mri->vox_per_slice = mri->vox_per_row * mri->height;
-  mri->vox_per_vol = mri->vox_per_slice * mri->depth;
-
-  mri->bytes_total = mri->bytes_per_vox * mri->width * mri->height * mri->depth * mri->nframes;
+  mri->bytes_per_row = mri->bytes_per_vox * mri->width;
+  mri->bytes_per_slice = mri->bytes_per_row * mri->height;
+  mri->bytes_per_vol = mri->bytes_per_slice * mri->depth;
+  mri->bytes_total = mri->bytes_per_vol * mri->nframes;
   mri->chunk = calloc(mri->bytes_total, 1);
   if (mri->chunk == NULL) {
-    printf("ERROR: MRIallocChunk(): could not alloc %zu\n", mri->bytes_total);
+    printf("ERROR: MRIallocChunk(): could not alloc %lu\n", (unsigned long)mri->bytes_total);
     return (NULL);
   }
   // printf("Allocing MRI with Chunk\n");
@@ -5501,24 +5509,7 @@ MRI *MRIallocChunk(int width, int height, int depth, int type, int nframes)
        correct location in the chunk. */
     for (row = 0; row < mri->height; row++) {
       mri->slices[slice][row] = (unsigned char *)p;
-      switch (mri->type) {
-      case MRI_UCHAR:
-        p = (void *)((unsigned char *)p + mri->vox_per_row);
-        break;
-      case MRI_SHORT:
-        p = (void *)((short *)p + mri->vox_per_row);
-        break;
-      case MRI_RGB:
-      case MRI_INT:
-        p = (void *)((int *)p + mri->vox_per_row);
-        break;
-      case MRI_LONG:
-        p = (void *)((long *)p + mri->vox_per_row);
-        break;
-      case MRI_FLOAT:
-        p = (void *)((float *)p + mri->vox_per_row);
-        break;
-      }
+      p += mri->bytes_per_row;
     }
   }
   return (mri);
@@ -5744,9 +5735,10 @@ MRI *MRIallocHeader(int width, int height, int depth, int type, int nframes)
   // These things are explicitly set to 0 here because we
   // do not yet know the true number of frames, and they
   // are set in MRIallocChunk().
-  mri->vox_per_row = 0;
-  mri->vox_per_slice = 0;
-  mri->vox_per_vol = 0;
+  mri->bytes_per_row = 0;
+  mri->bytes_per_slice = 0;
+  mri->bytes_per_vol = 0;
+  mri->bytes_total = 0;
 
   mri->bvals = NULL;  // For DWI
   mri->bvecs = NULL;
@@ -6122,11 +6114,10 @@ MRI *MRIcopyHeader(const MRI *mri_src, MRI *mri_dst)
   mri_dst->ras_good_flag = mri_src->ras_good_flag;
 
   mri_dst->bytes_per_vox = MRIsizeof(mri_dst->type);
-  mri_dst->bytes_total = mri_dst->bytes_per_vox * mri_dst->width * mri_dst->height * mri_dst->depth * mri_dst->nframes;
-
-  mri_dst->vox_per_row = mri_dst->width;
-  mri_dst->vox_per_slice = mri_dst->vox_per_row * mri_dst->height;
-  mri_dst->vox_per_vol = mri_dst->vox_per_slice * mri_dst->depth;
+  mri_dst->bytes_per_row = mri_dst->bytes_per_vox * mri_dst->width;
+  mri_dst->bytes_per_slice = mri_dst->bytes_per_row * mri_dst->height;
+  mri_dst->bytes_per_vol = mri_dst->bytes_per_slice * mri_dst->depth;
+  mri_dst->bytes_total = mri_dst->bytes_per_vol * mri_dst->nframes;
 
   mri_dst->brightness = mri_src->brightness;
   if (mri_src->register_mat != NULL)
@@ -13472,7 +13463,9 @@ MRI *MRIlog(MRI *in, MRI *mask, double a, double b, MRI *out)
   int c, r, s, f, n, ncols, nrows, nslices, nframes;
   float m;
   float *pout = NULL;
+  void *pin = NULL;
   double v, aa, bb;
+  int sz;
 
   if (a == 0)
     aa = 1;
@@ -13506,13 +13499,32 @@ MRI *MRIlog(MRI *in, MRI *mask, double a, double b, MRI *out)
     return (NULL);
   }
 
+  // Number of bytes in the input data type
+  sz = 0;
+  switch (in->type) {
+  case MRI_UCHAR:
+    sz = sizeof(char);
+    break;
+  case MRI_SHORT:
+    sz = sizeof(short);
+    break;
+  case MRI_INT:
+    sz = sizeof(int);
+    break;
+  case MRI_LONG:
+    sz = sizeof(long);
+    break;
+  case MRI_FLOAT:
+    sz = sizeof(float);
+    break;
+  }
+
   n = 0;
   for (f = 0; f < nframes; f++) {
     for (s = 0; s < nslices; s++) {
       for (r = 0; r < nrows; r++) {
         // Pointers to the start of the column
-        void *pin = (void *)in->slices[n][r];
-        int nvox = 0;
+        pin = (void *)in->slices[n][r];
         pout = (float *)out->slices[n][r];
         for (c = 0; c < ncols; c++) {
           if (mask) {
@@ -13520,26 +13532,26 @@ MRI *MRIlog(MRI *in, MRI *mask, double a, double b, MRI *out)
             if (m < 0.5) {
               // must increment pointers
               *pout++ = 0.0;
-              nvox++;
+              pin += sz;
               continue;
             }
           }
           // Get input value
           switch (in->type) {
           case MRI_UCHAR:
-            v = (double) *((unsigned char *)pin + nvox);
+            v = (double)(*((char *)pin));
             break;
           case MRI_SHORT:
-            v = (double) *((short *)pin + nvox);
+            v = (double)(*((short *)pin));
             break;
           case MRI_INT:
-            v = (double) *((int *)pin + nvox);
+            v = (double)(*((int *)pin));
             break;
           case MRI_LONG:
-            v = (double) *((long *)pin + nvox);
+            v = (double)(*((long *)pin));
             break;
           case MRI_FLOAT:
-            v = (double) *((float *)pin + nvox);
+            v = (double)(*((float *)pin));
             break;
           }
           if (v == 0) v = EPSILON;
@@ -13547,7 +13559,7 @@ MRI *MRIlog(MRI *in, MRI *mask, double a, double b, MRI *out)
           *pout = aa * log(fabs(bb * v));
           // Increment
           pout++;
-          nvox++;
+          pin += sz;
         }  // cols
       }    // rows
       n++;
@@ -16858,7 +16870,8 @@ int MRIcomputeLabelMeansandCovariances(
   means_final = VectorAlloc(mri_inputs->nframes, MATRIX_REAL);
   cov_final = MatrixAlloc(mri_inputs->nframes, mri_inputs->nframes, MATRIX_REAL);
 
-  for (l = 0; l < length; l++) {
+  // how does this work? looks like an inf loop; should it be for(l = 0; l < length; l++) ?
+  for (l = 0; length; l++) {
     for (x = 0; x < mri_labeled->width; x++) {
       for (y = 0; y < mri_labeled->height; y++) {
         for (z = 0; z < mri_labeled->depth; z++) {
@@ -17701,7 +17714,6 @@ void mri_hash_add(MRI_HASH* hash, MRI const * mri)
   // nyi ct
   // nyi frames
   //
-  unsigned long bytes_per_row= MRIsizeof(mri->type) * mri->width;
   if (mri->slices) {
     int slice, row;
     for (slice = 0; slice < mri->depth; slice++) {
@@ -17710,7 +17722,9 @@ void mri_hash_add(MRI_HASH* hash, MRI const * mri)
         const unsigned char* ptr = (const unsigned char*)(mri->slices[slice][row]);
         if (!ptr) continue;
         hash->hash =
-            fnv_add(hash->hash, ptr, bytes_per_row);
+            fnv_add(hash->hash,
+                    ptr,
+                    mri->bytes_per_row);
       }
     }
   }

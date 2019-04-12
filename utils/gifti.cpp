@@ -1409,76 +1409,78 @@ int MRISwriteGIFTI(MRIS *mris, int intent_code, const char *out_fname, const cha
     }
 
     /* standard meta data for surfaces */
-    const char *primary = NULL, *secondary = NULL, *geotype = NULL;
-    char *name = mris->fname;
-    if (strstr(name, "lh.")) {
-      primary = "CortexLeft";
-    }
-    if (strstr(name, "rh.")) {
-      primary = "CortexRight";
-    }
-    if (strstr(name, ".orig")) {
-      secondary = "GrayWhite";
-    }
-    if (strstr(name, ".smoothwm")) {
-      secondary = "GrayWhite";
-    }
-    if (strstr(name, ".white")) {
-      secondary = "GrayWhite";
-    }
-    if (strstr(name, ".graymid")) {
-      secondary = "MidThickness";
-    }
-    if (strstr(name, ".gray")) {
-      secondary = "Pial";
-    }
-    if (strstr(name, ".pial")) {
-      secondary = "Pial";
-    }
-    if (strstr(name, ".orig")) {
-      geotype = "Reconstruction";
-    }
-    if (strstr(name, ".smoothwm")) {
-      geotype = "Anatomical";
-    }
-    if (strstr(name, ".white")) {
-      geotype = "Anatomical";
-    }
-    if (strstr(name, ".gray")) {
-      geotype = "Anatomical";
-    }
-    if (strstr(name, ".graymid")) {
-      geotype = "Anatomical";
-    }
-    if (strstr(name, ".pial")) {
-      geotype = "Anatomical";
-    }
-    if (strstr(name, ".inflated")) {
-      geotype = "Inflated";
-    }
-    if (strstr(name, ".sphere")) {
-      geotype = "Sphere";
-    }
-    if (strstr(name, ".qsphere")) {
-      geotype = "Sphere";
-    }
-    if (strstr(name, "pial-outer")) {
-      geotype = "Hull";
-    }
-    const char *topotype;
-    if (mris->patch) {
-      geotype = "Flat";
-      topotype = "Cut";
-    } else {
-      topotype = "Closed";
-    }
+    if (strlen(mris->fname) != 0) {
+      const char *primary = NULL, *secondary = NULL, *geotype = NULL;
+      char *name = mris->fname;
+      if (strstr(name, "lh.")) {
+        primary = "CortexLeft";
+      }
+      if (strstr(name, "rh.")) {
+        primary = "CortexRight";
+      }
+      if (strstr(name, ".orig")) {
+        secondary = "GrayWhite";
+      }
+      if (strstr(name, ".smoothwm")) {
+        secondary = "GrayWhite";
+      }
+      if (strstr(name, ".white")) {
+        secondary = "GrayWhite";
+      }
+      if (strstr(name, ".graymid")) {
+        secondary = "MidThickness";
+      }
+      if (strstr(name, ".gray")) {
+        secondary = "Pial";
+      }
+      if (strstr(name, ".pial")) {
+        secondary = "Pial";
+      }
+      if (strstr(name, ".orig")) {
+        geotype = "Reconstruction";
+      }
+      if (strstr(name, ".smoothwm")) {
+        geotype = "Anatomical";
+      }
+      if (strstr(name, ".white")) {
+        geotype = "Anatomical";
+      }
+      if (strstr(name, ".gray")) {
+        geotype = "Anatomical";
+      }
+      if (strstr(name, ".graymid")) {
+        geotype = "Anatomical";
+      }
+      if (strstr(name, ".pial")) {
+        geotype = "Anatomical";
+      }
+      if (strstr(name, ".inflated")) {
+        geotype = "Inflated";
+      }
+      if (strstr(name, ".sphere")) {
+        geotype = "Sphere";
+      }
+      if (strstr(name, ".qsphere")) {
+        geotype = "Sphere";
+      }
+      if (strstr(name, "pial-outer")) {
+        geotype = "Hull";
+      }
+      const char *topotype;
+      if (mris->patch) {
+        geotype = "Flat";
+        topotype = "Cut";
+      } else {
+        topotype = "Closed";
+      }
 
-    if (primary) gifti_add_to_meta(&coords->meta, "AnatomicalStructurePrimary", primary, 1);
-    if (secondary) gifti_add_to_meta(&coords->meta, "AnatomicalStructureSecondary", secondary, 1);
-    if (geotype) gifti_add_to_meta(&coords->meta, "GeometricType", geotype, 1);
-    gifti_add_to_meta(&faces->meta, "TopologicalType", topotype, 1);
-    gifti_add_to_meta(&coords->meta, "Name", name, 1);
-    gifti_add_to_meta(&faces->meta, "Name", name, 1);
+      if (primary) gifti_add_to_meta(&coords->meta, "AnatomicalStructurePrimary", primary, 1);
+      if (secondary) gifti_add_to_meta(&coords->meta, "AnatomicalStructureSecondary", secondary, 1);
+      if (geotype) gifti_add_to_meta(&coords->meta, "GeometricType", geotype, 1);
+      gifti_add_to_meta(&faces->meta, "TopologicalType", topotype, 1);
+      gifti_add_to_meta(&coords->meta, "Name", name, 1);
+      gifti_add_to_meta(&faces->meta, "Name", name, 1);
+    }
 
     // add volume geometry info if valid, and surface center-coords
     if (mris->vg.valid) {
@@ -1658,10 +1660,20 @@ int MRISwriteGIFTI(MRIS *mris, int intent_code, const char *out_fname, const cha
       //                                       mris->ct->entries[idx]->bi);
       // printf("%8.8X\n",labeltable.key[idx]);
 
-      labeltable.label[idx] = strcpyalloc(mris->ct->entries[idx]->name);
+      if (strlen(mris->ct->entries[idx]->name) != 0) {
+        // printf("idx=%d, name=%s\n",idx,mris->ct->entries[idx]->name);
+        labeltable.label[idx] = strcpyalloc(mris->ct->entries[idx]->name);
+      }
+      else {
+        char tmpname[30];
+        sprintf(tmpname, "unknown_%d", idx);
+        printf("idx=%d, name=NULL, assigned as %s (is the colortable correct?)\n", idx, tmpname);
+        labeltable.label[idx] = strcpyalloc(tmpname);
+      }
 
-      if ((0 == strcmp(labeltable.label[idx], "unknown")) ||
-          (0 == strcmp(labeltable.label[idx], "Unknown"))) {
+      if ((strlen(mris->ct->entries[idx]->name) == 0) ||
+          (strcmp(labeltable.label[idx], "unknown") == 0) ||
+          (strcmp(labeltable.label[idx], "Unknown") == 0)) {
         // make certain unknown region is completely empty, invisible
         rgba[0] = rgba[1] = rgba[2] = rgba[3] = 0.0f;
       }

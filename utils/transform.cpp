@@ -4720,16 +4720,24 @@ double *SegRegCost(MRI *regseg, MRI *f, double *costs)
 {
   double wmsum, wmsum2, wmmean, wmstd;
   double ctxsum, ctxsum2, ctxmean, ctxstd;
-  double t, cost;
-  int nwmhits, nctxhits;
+  double vseg = 0, vf, t, cost;
+  int r, c, s, nwmhits, nctxhits;
+  float *pf;
+  void *pseg;
+  int psegincr = 0;
 
-  if ((regseg->type != MRI_INT) && (regseg->type != MRI_UCHAR) && (regseg->type != MRI_FLOAT)) {
+  if (regseg->type == MRI_INT)
+    psegincr = sizeof(int);
+  else if (regseg->type == MRI_UCHAR)
+    psegincr = sizeof(unsigned char);
+  else if (regseg->type == MRI_FLOAT)
+    psegincr = sizeof(float);
+  else {
     printf("ERROR: SegRegCost(): regseg type must be int, uchar, or float\n");
     return (NULL);
   }
-
   if (f->type != MRI_FLOAT) {
-    printf("ERROR: SegRegCost(): f type must be float\n");
+    printf("ERROR: SegRegCost(): f type must be int, uchar, or float\n");
     return (NULL);
   }
 
@@ -4743,15 +4751,23 @@ double *SegRegCost(MRI *regseg, MRI *f, double *costs)
   wmsum2 = 0;
   ctxsum = 0;
   ctxsum2 = 0;
-
-  for (unsigned int c = 0; c < f->width; c++) {
-    for (unsigned int r = 0; r < f->height; r++) {
-      for (unsigned int s = 0; s < f->depth; s++) {
-        double vf = MRIgetVoxVal(f, c, r, s, 0);
+  for (s = 0; s < f->depth; s++) {
+    for (r = 0; r < f->height; r++) {
+      pf = (float *)f->slices[s][r];
+      pseg = regseg->slices[s][r];
+      // Start loop over column
+      for (c = 0; c < f->width; c++) {
+        vf = (*pf);
+        // If the f vol is zero, then skip this vox
         if (vf == 0) {
+          pf++;
+          pseg += psegincr;
           continue;
         }
-        double vseg = MRIgetVoxVal(regseg, c, r, s, 0);
+        // Determine tissue class
+        if (regseg->type == MRI_UCHAR) vseg = (*(unsigned char *)pseg);
+        if (regseg->type == MRI_INT) vseg = (*(int *)pseg);
+        if (regseg->type == MRI_FLOAT) vseg = (*(float *)pseg);
         if (vseg == 2 || vseg == 41) {
           // white matter
           wmsum += vf;
@@ -4764,6 +4780,8 @@ double *SegRegCost(MRI *regseg, MRI *f, double *costs)
           ctxsum2 += (vf * vf);
           nctxhits++;
         }
+        pf++;
+        pseg += psegincr;
       }
     }
   }

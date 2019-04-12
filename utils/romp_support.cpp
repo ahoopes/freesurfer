@@ -37,7 +37,7 @@ static void __attribute__((constructor)) before_main()
 {
     int n = omp_get_max_threads();
     if (n <= _MAX_FS_THREADS) return;
-    // omp_set_num_threads(_MAX_FS_THREADS);
+    omp_set_num_threads(_MAX_FS_THREADS);
 }
 
 int romp_omp_get_thread_num()  { 

@@ -1663,11 +1663,13 @@ VolumeMorph::serialize()
 
   while ( it != m_transforms.end() )
   {
-    pt = (*it)->initial();
-    if (pt) {
+    if ( (pt = (*it)->initial()) )
+    {
       (*it)->setInitial( TransformPointer() );
       it = m_transforms.insert(it, pt);
-    } else {
+    }
+    else
+    {
       ++it;
     }
   }

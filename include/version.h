@@ -30,8 +30,6 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#include <string>
-
 /* This function looks for the --version, or -version tag in the
    argv and if found, prints out version information. This can be used
    in any binary. It will return the number of options processed and
@@ -73,8 +71,5 @@ char *argv2cmdline(int argc, char *argv[]);
 char *VERuser(void);
 char *VERfileTimeStamp(char *fname);
 char *VERcurTimeStamp(void);
-
-// std::string build_time_stamp = __TIME__;
-void printAllInfo();
 
 #endif

@@ -25347,8 +25347,7 @@ MRI *GCAreclassifyUnlikelyVoxels(GCA *gca,
               MRIsetVoxVal(mri_changed, x, y, z, 0, 0);  // will change to 1 if changed
               if (max_gc) {
                 // d_new = sqrt(GCAmahDist(max_gc, vals, gca->ninputs));
-                GCAmahDist(max_gc, vals, gca->ninputs);
-                //                if (d_new < mah_dist_thresh/2)
+                // if (d_new < mah_dist_thresh/2)
                 {
                   if (max_label != label) {
                     nchanged++;

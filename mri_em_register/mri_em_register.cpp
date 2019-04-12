@@ -298,8 +298,7 @@ main(int argc, char *argv[])
 
 #ifdef HAVE_OPENMP
   n_omp_threads = omp_get_max_threads(); 
-  printf("\n== Number of threads available to %s for OpenMP = %d == \n",
-         Progname, n_omp_threads);
+  printf("\n== Number of threads available to %s for OpenMP = %d == \n", Progname, n_omp_threads);
 #endif
 
   ninputs = argc-3 ;
@@ -770,9 +769,9 @@ main(int argc, char *argv[])
        scale < nscales ;
        scale++, spacing /= 2)
   {
-    if (0) {  // if (skull) {
-      parms.gcas = GCAfindExteriorSamples(gca, &nsamples,spacing, min_prior,unknown_nbr_spacing, 0) ;
-    }
+    if (0 && skull)
+      parms.gcas = GCAfindExteriorSamples(gca, &nsamples,spacing,
+                                          min_prior,unknown_nbr_spacing, 0) ;
     else if (use_contrast) // -contrast option
     {
       parms.gcas = GCAfindContrastSamples(gca,&nsamples, spacing,min_prior);
@@ -809,11 +808,12 @@ main(int argc, char *argv[])
   }
 
   // change nsamples to all samples
-  if (0) {  // if (skull) {
-    parms.gcas = GCAfindExteriorSamples(gca, &nsamples,spacing/2, min_prior,unknown_nbr_spacing, 0) ;
-  } else {
-    parms.gcas = GCAfindAllSamples(gca, &nsamples, exclude_list, unknown_nbr_spacing);//HACK, bigvent) ;
-  }
+  if (0 && skull)
+    parms.gcas = GCAfindExteriorSamples(gca, &nsamples,spacing/2,
+                                        min_prior,unknown_nbr_spacing, 0) ;
+  else
+    parms.gcas = GCAfindAllSamples(gca, &nsamples,
+                                   exclude_list, unknown_nbr_spacing);//HACK, bigvent) ;
   mark_gcas_classes(parms.gcas, nsamples) ;
   parms.nsamples = nsamples ;
   parms.tol = 1e-7 ;
@@ -1170,7 +1170,7 @@ main(int argc, char *argv[])
 
   ///////////////////////////////////////////////////////////////
   msec = start.milliseconds() ;
-  printf("FSRUNTIME@ mri_ca_register %7.4f hours %d threads\n",msec/(1000.0*60.0*60.0),n_omp_threads);
+  printf("FSRUNTIME@ mri_ca_register %7.4f hours %d threads\n", msec/(1000.0*60.0*60.0), n_omp_threads);
   seconds = nint((float)msec/1000.0f) ;
   minutes = seconds / 60 ;
   seconds = seconds % 60 ;
@@ -1804,11 +1804,13 @@ get_option(int argc, char *argv[])
   }
   else if (!stricmp(option, "THREADS"))
   {
-    sscanf(argv[2],"%d",&n_omp_threads);
-    #ifdef _OPENMP
+#ifdef HAVE_OPENMP
+    sscanf(argv[2], "%d", &n_omp_threads);
     omp_set_num_threads(n_omp_threads);
-    #endif
-    printf("threads %d\n",n_omp_threads);
+    printf("threads %d\n", n_omp_threads);
+#else
+    printf("multithreading is not available\n");
+#endif
     nargs = 1 ;
   }
   else if (!strcmp(option, "MASK"))
