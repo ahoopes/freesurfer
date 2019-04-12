@@ -3,20 +3,28 @@
 
 #include <math.h>
 #include <vector>
-
+#include <QObject>
 #include <QMutex>
 
-class GeodesicMatting
+class GeodesicMatting : public QObject
 {
+  Q_OBJECT
 public:
-  GeodesicMatting();
+  GeodesicMatting(QObject* parent = NULL );
 
   bool Compute(int* dim, double* mri_in, double* mri_range_in,
                unsigned char* seeds_in, std::vector<unsigned char>& label_list, unsigned char* seeds_out);
-  bool ComputeWithSorting(int* dim, double* mri_in, double* mri_range_in,
+  bool ComputeWithBinning(int* dim, double* mri_in, double* mri_range_in,
                           unsigned char* seeds_in, std::vector<unsigned char>& label_list, unsigned char* seeds_out);
-
   void Abort();
+
+  QString GetErrorMessage()
+  {
+    return m_strErrorMessage;
+  }
+
+signals:
+  void Progress(double percentage);
 
 private:
   double Interpolate(const std::vector<double>& v, const std::vector<double>& hf, double val);
@@ -26,6 +34,7 @@ private:
   int GetMinValIndexInSorted(const std::vector<double>& vals, const std::vector<std::size_t>& sorted_idx);
 
   bool m_bAbort;
+  QString m_strErrorMessage;
   QMutex  m_mutex;
 };
 

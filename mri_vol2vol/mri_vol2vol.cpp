@@ -1441,6 +1441,33 @@ static int parse_commandline(int argc, char **argv) {
       SegRegCostFile = pargv[0];
       nargsused = 1;
     } 
+    else if (istringnmatch(option, "--spm-vbm",0)) {
+      LTA *srclta;
+      if(nargc < 5){
+	printf("  --spm-vbm mov movlta warp interp out\n");
+	argnerr(option,5);
+      }
+      mov = MRIread(pargv[0]);
+      if(mov == NULL) exit(1);
+      if(strcmp(pargv[1],"0")!=0){
+	printf("Loading source LTA %s\n",pargv[1]);
+	srclta = LTAread(pargv[1]);
+	if(srclta == NULL) exit(1);
+      } else srclta = NULL;
+      MRI *warp = MRIread(pargv[2]);
+      if(warp == NULL) exit(1);
+      sscanf(pargv[3],"%d",&interpcode);
+      printf("Running MRIapplySpmVbmWarp() inerp = %d\n",interpcode);
+      out = MRIapplySpmVbmWarp(mov, srclta, warp, interpcode, NULL);
+      if(out == NULL) exit(1);
+      printf("Writing to %s\n",pargv[4]);
+      err = MRIwrite(out,pargv[4]);
+      if(err) exit(1);
+      MRIfree(&warp);
+      printf("mri_vol2vol spm-vbm done\n");
+      printf("#VMPC# mri_vol2vol VmPeak %d\n",GetVmPeak());
+      exit(0);
+    }
     else if (istringnmatch(option, "--gcam",0)) {
       LTA *srclta, *dstlta;
       if(nargc < 7){
@@ -1542,6 +1569,12 @@ printf("  --gcam mov srclta gcam dstlta vsm interp out\n");
 printf("     srclta, gcam, or vsm can be set to 0 to indicate identity\n");
 printf("     direction is automatically determined from srclta and dstlta\n");
 printf("     interp %d=nearest, %d=trilin, %d=cubicbspline\n",SAMPLE_NEAREST,SAMPLE_TRILINEAR,SAMPLE_CUBIC_BSPLINE);
+printf("  --spm-vbm mov movlta warp interp output\n");
+printf("     mov is the input to be mapped \n");
+printf("     movlta maps mov to the vbm input space (use 0 to ignore)\n");
+printf("       if movlta=0, then input is anything that shares a RAS space with the VBM input\n");
+printf("     warp is typically y_rinput.nii\n");
+printf("     interp %d=nearest, %d=trilin\n",SAMPLE_NEAREST,SAMPLE_TRILINEAR);
 printf("\n");
 printf("  --no-resample : do not resample, just change vox2ras matrix\n");
 printf("\n");
