@@ -40,8 +40,10 @@
 #include <fenv.h>
 #include <QFile>
 #include <QSurfaceFormat>
-#include <QVTKOpenGLWidget.h>
 
+#if VTK_MAJOR_VERSION > 5
+#include <QVTKOpenGLWidget.h>
+#endif
 
 #include "fsinit.h"
 #include "chklc.h"
@@ -280,7 +282,9 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+#if VTK_MAJOR_VERSION > 5
   QSurfaceFormat::setDefaultFormat(QVTKOpenGLWidget::defaultFormat());
+#endif
 
 #ifdef Q_OS_LINUX
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
