@@ -4,7 +4,7 @@ if(ITK_FOUND AND VTK_FOUND)
 
   include(${ITK_USE_FILE})
 
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wno-overloaded-virtual -Wno-inconsistent-missing-override -Wno-unused-variable -Wno-unused-local-typedefs")
+  add_compile_options(-Wno-deprecated -Wno-overloaded-virtual -Wno-inconsistent-missing-override -Wno-unused-variable -Wno-unused-local-typedefs)
 
   include_directories(
     ${FS_INCLUDE_DIRS}
