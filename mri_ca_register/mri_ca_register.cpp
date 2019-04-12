@@ -1531,8 +1531,7 @@ main(int argc, char *argv[])
     }
   }
 
-  // if (handle_expanded_ventricles) {  // one more less-restrictive morph
-  if (0) {
+  if (0 && handle_expanded_ventricles) {  // one more less-restrictive morph
     GCA_MORPH_PARMS old_parms ;
     int               start_t ;
 

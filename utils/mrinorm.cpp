@@ -4243,7 +4243,7 @@ static float find_tissue_intensities(MRI *mri_src, MRI *mri_ctrl, float *pwm, fl
   if (Gdiag & DIAG_WRITE && DIAG_VERBOSE_ON) {
     HISTOplot(h, "h0.plt");
   }
-  if (1) {  // if (mriConformed(mri_src)) {
+  if (1 || mriConformed(mri_src)) {
     HISTOclearBins(h, h, 0, 5);
     hsmooth = HISTOsmooth(h, NULL, 2);
   }

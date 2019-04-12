@@ -158,7 +158,7 @@ HISTOGRAM *MRIhistogramRegion(MRI *mri, int nbins, HISTOGRAM *histo, MRI_REGION 
   overlap = ((mri == mri_prev) && ((region->x - region->dx) > reg_prev.x) && (region->y == reg_prev.y) &&
              (region->z == reg_prev.z));
 
-  if (0) {  // if (overlap) {  // take advantage of overlapping regions
+  if (0 && overlap) {  // take advantage of overlapping regions
     MRI_REGION reg_left, reg_right;
     HISTOGRAM *histo_left, *histo_right;
 
