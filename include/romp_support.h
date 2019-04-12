@@ -41,8 +41,8 @@
   #define omp_get_thread_num romp_omp_get_thread_num
 #else
   // Make it easier to write code which is insensitive to OpenMP being present
-  int omp_get_max_threads() { return 1; }
-  int omp_get_thread_num()  { return 0; }
+  static inline int omp_get_max_threads() { return 1; }
+  static inline int omp_get_thread_num() { return 0; }
   #define omp_set_num_threads(n)
 #endif
 
