@@ -6483,6 +6483,7 @@ static void defectSmooth(MRI_SURFACE *mris, DP *dp, int niter, double alpha, int
           nz = v->nz;
 
           sx = sy = sz = sd = 0;
+          n = 0;
           for (n = 0; n < vt->vnum; n++) {
             VERTEX const * const vn = &mris->vertices[vt->v[n]];
 
@@ -6490,6 +6491,7 @@ static void defectSmooth(MRI_SURFACE *mris, DP *dp, int niter, double alpha, int
             sy += dy = vn->origy - y;
             sz += dz = vn->origz - z;
             sd += sqrt(dx * dx + dy * dy + dz * dz);
+            n++;  // ATH is this supposed to be incremented again?
           }
           // mean distance to the neighbors
           sx = sx / (float)n;
@@ -6633,6 +6635,7 @@ static void defectSmooth(MRI_SURFACE *mris, DP *dp, int niter, double alpha, int
         nz = v->nz;
 
         sx = sy = sz = sd = 0;
+        n = 0;
         for (n = 0; n < vt->vnum; n++) {
           VERTEX const * const vn = &mris->vertices[vt->v[n]];
 
@@ -6640,6 +6643,7 @@ static void defectSmooth(MRI_SURFACE *mris, DP *dp, int niter, double alpha, int
           sy += dy = vn->origy - y;
           sz += dz = vn->origz - z;
           sd += sqrt(dx * dx + dy * dy + dz * dz);
+          n++;  // ATH is this supposed to be incremented again?
         }
         // mean distance to the neighbors
         sx = sx / (float)n;
