@@ -2465,15 +2465,13 @@ int MRISreadVertexPositions(MRI_SURFACE *mris, const char *name)
   ------------------------------------------------------*/
 int MRISreadOriginalProperties(MRI_SURFACE *mris, const char *sname)
 {
-  int old_status;
-
   if (!sname) {
     sname = "smoothwm";
   }
 
   MRISsaveVertexPositions(mris, TMP_VERTICES);
 
-  old_status = mris->status;
+  auto const old_status = mris->status;
   mris->status = MRIS_PATCH; /* so no orientating will be done */
   if (MRISreadVertexPositions(mris, sname) != NO_ERROR)
     ErrorReturn(ERROR_BADFILE, (ERROR_BADFILE, "MRISreadOriginalProperties: could not read surface file %s", sname));
@@ -6026,7 +6024,15 @@ static MRI_SURFACE *mrisReadTriangleFile(const char *fname, double nVFMultiplier
   fscanf(fp, "\n");
   /*  fscanf(fp, "\ncreated by %s on %s\n", user, time_str) ;*/
   nvertices = freadInt(fp);
-  nfaces = freadInt(fp);
+  nfaces    = freadInt(fp);
+  
+  if (nvertices < 0 || nfaces < 0) {
+    fflush(stdout);
+    fflush(stderr);
+    fprintf(stderr, "%s:%d %s freadInt returned nvertices:%d \n", __FILE__,__LINE__,fname,nvertices);
+    fprintf(stderr, "%s:%d %s freadInt returned nfaces:%d \n", __FILE__,__LINE__,fname,nfaces);
+    exit(1);
+  }
 
   if (Gdiag & DIAG_SHOW && DIAG_VERBOSE_ON)
     fprintf(stdout, "surface %s: %d vertices and %d faces.\n", fname, nvertices, nfaces);

@@ -4344,6 +4344,7 @@ COLOR_TABLE *CTABpruneCTab(const COLOR_TABLE *ct0, MRI *seg)
     free(ct->entries[n]);
     ct->entries[n] = NULL;
   }
+  strcpy(ct->TissueTypeSchema,ct0->TissueTypeSchema);
 
   for (n = 0; n < nsegs; n++) {
     segid = segidlist[n];
@@ -4355,7 +4356,8 @@ COLOR_TABLE *CTABpruneCTab(const COLOR_TABLE *ct0, MRI *seg)
     memcpy(ct->entries[segid], ct0->entries[segid], sizeof(CTE));
   }
 
-  if (ct0->ctabTissueType) ct->ctabTissueType = CTABdeepCopy(ct0->ctabTissueType);
+  if(ct0->ctabTissueType) 
+    ct->ctabTissueType = CTABdeepCopy(ct0->ctabTissueType);
 
   free(segidlist);
   return (ct);

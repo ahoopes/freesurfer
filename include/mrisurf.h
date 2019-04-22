@@ -27,54 +27,11 @@
 
 
 
-#include "minc.h"
-#include "const.h"
-#include "matrix.h"
-#include "dmatrix.h"
+#include "mrisurf_aaa.h"
 
-#define MAX_SURFACES 20
-#define TALAIRACH_COORDS     0
-#define SPHERICAL_COORDS     1
-#define ELLIPSOID_COORDS     2
-
-#define VERTICES_PER_FACE    3
-#define ANGLES_PER_TRIANGLE  3
-
-#define INFLATED_NAME        "inflated"
-#define SMOOTH_NAME          "smoothwm"
-#define SPHERE_NAME          "sphere"
-#define ORIG_NAME            "orig"
-#define WHITE_MATTER_NAME    "white"
-#define GRAY_MATTER_NAME     "gray"
-#define LAYERIV_NAME         "graymid"
-#define GRAYMID_NAME         LAYERIV_NAME
-#define MAX_CMDS 1000
-
-#define NEW_VERSION_MAGIC_NUMBER  16777215 // was in mrisurf.c
-
-#define WHICH_FACE_SPLIT(vno0, vno1) (1*nint(sqrt(1.9*vno0) + sqrt(3.5*vno1)))
-    //
-    // This is used in a repeatable arbitrary true false selector based on the resulting int being EVEN or ODD
-
-//  UnitizeNormalFace is a global variable used in mrisNormalFace() to allow the
-//  output norm to be unitized or not. That function computed the norm
-//  using a cross product but then did not normalize the result (cross
-//  product is not unit length even if inputs are unit). UnitizeNormalFace
-//  allows unitization to be turned on and off for testing. Note: skull
-//  stripping uses this function, so may want to UnitizeNormalFace=0 when
-//  testing effects on surface placement so that the stream is the same up
-//  until surface placement.
-extern int UnitizeNormalFace;
-
-//  This variable can be used to turn on the hires options
-//  in MRIScomputeBorderValues_new()
-extern int BorderValsHiRes;
-
-//  This is used to record the actual value and difference
-//  into v->valbak and v->val2bak when running mrisRmsValError()
-//  for debugging or evaluation purposes.
-extern int RmsValErrorRecord;
-
+#include "minc_volume_io.h"
+#include "label.h"
+#include "mrishash.h"
 
 typedef struct _area_label
 {
@@ -85,8 +42,6 @@ typedef struct _area_label
   int      label ;            /* an identifier (used as an index) */
 }
 MRIS_AREA_LABEL ;
-
-struct MRIS;
 
 typedef struct FaceNormCacheEntry {
     // inputs
@@ -100,13 +55,6 @@ typedef struct FaceNormCacheEntry {
 typedef struct FaceNormDeferredEntry {
     char deferred;
 } FaceNormDeferredEntry;
-
-/*
-  the vertices in the face structure are arranged in
-  counter-clockwise fashion when viewed from the outside.
-*/
-typedef int   vertices_per_face_t[VERTICES_PER_FACE];
-typedef float angles_per_triangle_t[ANGLES_PER_TRIANGLE];
 
 // the face norm elements have moved into the FaceNormalCacheEntry
 /*  ELTT(float,nx) SEP    \
@@ -143,11 +91,11 @@ typedef struct edge_type_
     //
     // Used to find and control where various fields are written
     
-typedef struct face_topology_type_ {    // not used much yet
+struct face_topology_type_ {    // not used much yet
   vertices_per_face_t v;
-} FACE_TOPOLOGY;
+};
 
-typedef struct face_type_
+struct face_type_ 
 {
 #define LIST_OF_FACE_ELTS_1    \
   ELTT(CONST_EXCEPT_MRISURF_TOPOLOGY vertices_per_face_t,v) SEP               /* vertex numbers of this face */    \
@@ -189,12 +137,7 @@ LIST_OF_FACE_ELTS
 #undef ELTT
 #undef ELTP
 
-}
-face_type, FACE ;
-
-#ifndef uchar
-#define uchar  unsigned char
-#endif
+};
 
 #include "colortab.h" // 'COLOR_TABLE'
 
@@ -232,7 +175,7 @@ face_type, FACE ;
 
 #else
 
-typedef struct VERTEX_TOPOLOGY {
+struct VERTEX_TOPOLOGY {
     // The topology of the vertex describes its neighbors
     // but not its position nor any properties derived from its position.
     //
@@ -248,19 +191,14 @@ typedef struct VERTEX_TOPOLOGY {
 #undef ELTT
 #undef ELTX
 #undef SEP
-} VERTEX_TOPOLOGY;
+};
 
 #define LIST_OF_VERTEX_TOPOLOGY_ELTS_IN_VERTEX
 
 #endif
 
 
-typedef struct MRIS_XYZ {
-  float x,y,z;
-} MRIS_XYZ;
-
-
-typedef struct vertex_type_
+struct vertex_type_
 {
 // The LIST_OF_VERTEX_ELTS macro used here enables the the mris_hash
 // and other algorithms to process all the elements without having to explicitly name them there and here
@@ -287,7 +225,7 @@ typedef struct vertex_type_
   ELTT(/*CONST_EXCEPT_MRISURF_METRIC_PROPERTIES*/ float,y)          SEP             /* use MRISsetXYZ() to set */                   \
   ELTT(/*CONST_EXCEPT_MRISURF_METRIC_PROPERTIES*/ float,z)          SEP                                                             \
   \
-  ELTT(const float,origx)                                       SEP             /* original coordinates */                          \
+  ELTT(const float,origx)                                       SEP             /* original coordinates, see also MRIS::origxyz_status */   \
   ELTT(const float,origy)                                       SEP             /* use MRISsetOriginalXYZ() */                      \
   ELTT(const float,origz)                                       SEP             /* or MRISsetOriginalXYZfromXYZ to set */           \
   \
@@ -497,8 +435,7 @@ typedef struct vertex_type_
 
   vertex_type_() : dist(nullptr), dist_orig(nullptr), x(0), y(0), z(0), origx(0), origy(0), origz(0) {}
 
-}
-vertex_type, VERTEX ;
+};
 
 
 #ifndef SEPARATE_VERTEX_TOPOLOGY
@@ -538,7 +475,42 @@ typedef char   *MRIS_cmdlines_t[MAX_CMDS] ;
 typedef char    MRIS_subject_name_t[STRLEN] ;
 typedef char    MRIS_fname_t[STRLEN] ;
 
-typedef struct MRIS
+
+enum MRIS_Status_DistanceFormula {
+  MRIS_Status_DistanceFormula_0,    // see utils/mrisComputeVertexDistancesWkr_extracted.h
+  MRIS_Status_DistanceFormula_1
+};
+
+enum MRIS_Status {
+#define MRIS_Status_ELTS \
+  ELT(MRIS_SURFACE              ,0) SEP \
+  ELT(MRIS_PATCH                ,0) SEP \
+  ELT(MRIS_PLANE                ,0) SEP \
+  ELT(MRIS_ELLIPSOID            ,0) SEP \
+  ELT(MRIS_SPHERE               ,1) SEP \
+  ELT(MRIS_PARAMETERIZED_SPHERE ,1) SEP \
+  ELT(MRIS_RIGID_BODY           ,0) SEP \
+  ELT(MRIS_SPHERICAL_PATCH      ,0) SEP \
+  ELT(MRIS_UNORIENTED_SPHERE    ,0) SEP \
+  ELT(MRIS_PIAL_SURFACE         ,0)     \
+  // end of macro
+#define SEP ,
+#define ELT(E,D) E
+  MRIS_Status_ELTS,
+  MRIS_Status__end, 
+  MRIS_CUT = MRIS_PATCH
+#undef ELT
+#undef SEP
+};
+
+const char* MRIS_Status_text(MRIS_Status s1);
+MRIS_Status_DistanceFormula MRIS_Status_distanceFormula(MRIS_Status s1);
+bool areCompatible(MRIS_Status s1, MRIS_Status s2);
+void checkOrigXYZCompatibleWkr(MRIS_Status s1, MRIS_Status s2, const char* file, int line);
+#define checkOrigXYZCompatible(S1,S2) checkOrigXYZCompatibleWkr((S1),(S2),__FILE__,__LINE__);
+
+
+struct MRIS
 {
 // The LIST_OF_MRIS_ELTS macro used here enables the the mris_hash
 // and other algorithms to process all the elements without having to explicitly name them there and here
@@ -620,7 +592,8 @@ typedef struct MRIS
   ELTT(float,Kmin) SEP              /* min Gaussian curvature */    \
   ELTT(float,Kmax) SEP              /* max Gaussian curvature */    \
   ELTT(double,Ktotal) SEP           /* total Gaussian curvature */    \
-  ELTT(int,status) SEP              /* type of surface (e.g. sphere, plane) */    \
+  ELTT(MRIS_Status,status) SEP          /* type of surface (e.g. sphere, plane) */    \
+  ELTT(MRIS_Status,origxyz_status) SEP  /* type of surface (e.g. sphere, plane) that this origxyz were obtained from */    \
   ELTT(int,patch) SEP               /* if a patch of the surface */    \
   ELTT(int,nlabels) SEP    \
   ELTP(MRIS_AREA_LABEL,labels) SEP  /* nlabels of these (may be null) */    \
@@ -683,8 +656,7 @@ LIST_OF_MRIS_ELTS ;
 #undef ELTP
 #undef SEP
 
-}
-MRI_SURFACE, MRIS ;
+};
 
 typedef const MRIS MRIS_const;
     // Ideally the MRIS and all the things it points to would be unchangeable via this object but C can't express this concept easily.
@@ -779,10 +751,6 @@ void setFaceNorm(MRIS const * const mris, int fno, float nx, float ny, float nz)
 
 // Support for writing traces that can be compared across test runs to help find where differences got introduced  
 //
-typedef struct {
-    unsigned long hash;
-} MRIS_HASH;
-
 void mrisVertexHash(MRIS_HASH* hash, MRIS const * mris, int vno);
 
 void mris_hash_init (MRIS_HASH* hash, MRIS const * mris);
@@ -851,18 +819,6 @@ positive areas */
 #define INTEGRATE_MOMENTUM         1
 #define INTEGRATE_ADAPTIVE         2
 #define INTEGRATE_LM_SEARCH        3  /* binary search for minimum */
-
-#define MRIS_SURFACE               0
-#define MRIS_PATCH                 1
-#define MRIS_CUT                   MRIS_PATCH
-#define MRIS_PLANE                 2
-#define MRIS_ELLIPSOID             3
-#define MRIS_SPHERE                4
-#define MRIS_PARAMETERIZED_SPHERE  5
-#define MRIS_RIGID_BODY            6
-#define MRIS_SPHERICAL_PATCH       7
-#define MRIS_UNORIENTED_SPHERE     8
-#define MRIS_PIAL_SURFACE          9
 
 // different Hausdorff distance modes
 #define HDIST_MODE_SYMMETRIC_MEAN 0
@@ -1443,7 +1399,10 @@ MRI_SURFACE  *MRISremoveNegativeVertices(MRI_SURFACE *mris,
     int min_neg, float min_neg_pct) ;
 int          MRIScomputeFaceAreas(MRI_SURFACE *mris) ;
 int          MRISupdateEllipsoidSurface(MRI_SURFACE *mris) ;
-MRI_SURFACE  *MRISrotate(MRI_SURFACE *mris_src, MRI_SURFACE *mris_dst,
+
+MRIS* MRIStranslate_along_vertex_dxdydz(MRIS* mris_src, MRIS* mris_dst, double dt);
+
+MRIS* MRISrotate(MRIS* mris_src, MRIS* mris_dst,
                          float alpha, float beta, float gamma) ;
 
 MRI          *MRISwriteIntoVolume(MRI_SURFACE *mris, MRI *mri, int which) ;
@@ -1741,7 +1700,6 @@ int   MRISmeasureCorticalThickness(MRI_SURFACE *mris, int nbhd_size,
                                    float max_thickness) ;
 #endif
 
-#include "mrishash.h"
 int  MRISmeasureThicknessFromCorrespondence(MRI_SURFACE *mris, MHT *mht, float max_thick) ;
 int MRISfindClosestOrigVertices(MRI_SURFACE *mris, int nbhd_size) ;
 int MRISfindClosestPialVerticesCanonicalCoords(MRI_SURFACE *mris, int nbhd_size) ;
@@ -2017,6 +1975,8 @@ int MRISsetRegistrationSigmas(float *sigmas, int nsigmas) ;
 
 int MRISextractVertexCoords(MRI_SURFACE *mris, float *locations[3], int which_vertices) ;
 int MRISimporttVertexCoords(MRI_SURFACE *mris, float *locations[3], int which_vertices) ;
+
+float* MRISexportCurv(MRIS* mris);
 int MRISextractCurvatureVector(MRI_SURFACE *mris, float *curvs) ;
 int MRISextractCurvatureDoubleVector(MRI_SURFACE *mris, double *curvs) ;
 int MRISextractCurvatureVectorDouble(MRI_SURFACE *mris, double *curvs, int offset) ;
@@ -2352,7 +2312,6 @@ int MRISvertexNormalInVoxelCoords(MRI_SURFACE *mris,
    default: break; \
  }
 
-#include "label.h" // LABEL
 int MRISlogOdds(MRI_SURFACE *mris, LABEL *area, double slope)  ;
 MRI_SP  *MRISPorLabel(MRI_SP *mrisp, MRI_SURFACE *mris, LABEL *area) ;
 MRI_SP  *MRISPandLabel(MRI_SP *mrisp, MRI_SURFACE *mris, LABEL *area) ;
@@ -2610,12 +2569,17 @@ int MRISmeasureDistanceBetweenSurfaces(MRI_SURFACE *mris,
 int MRISwriteCoordsToIco(MRI_SURFACE *mris,
                          MRI_SURFACE *mris_ico,
                          int which_vertices);
-int MRISvertexCoord2XYZ_float (VERTEX * v,
+                         
+int MRISvertexCoord2XYZ_float (VERTEX const * v,
                                int which,
                                float  *x, float  *y, float  *z);
-int MRISvertexCoord2XYZ_double (VERTEX * v,
+int MRISvertexCoord2XYZ_double (VERTEX const * v,
                                int which,
                                double  *x, double  *y, double  *z);
+int face_barycentric_coords(MRIS const * mris, int fno, int which_vertices,
+                            double cx, double cy, double cz, double *pl1, double *pl2, double *pl3) ;
+
+                               
 int MRISsampleFaceNormal(MRI_SURFACE *mris, int fno, double x, double y, double z, 
                          float *px, float *py, float *pz) ;
 int
@@ -2651,9 +2615,7 @@ int MRISrepositionSurfaceToCoordinate(MRI_SURFACE *mris, MRI *mri, int target_vn
                                       float ty, 
                                       float tz, 
                                       int nsize, double sigma, int flags)  ;
-int face_barycentric_coords(MRI_SURFACE const *mris, int fno, int which_vertices,
-                            double cx, double cy, double cz, double *pl1, double *pl2, double *pl3) ;
-
+                                      
 MRI *MRIScomputeFlattenedVolume(MRI_SURFACE *mris,
                                 MRI *mri,
                                 double res,
@@ -2929,10 +2891,15 @@ static bool mrisVerticesAreNeighbors(MRIS const * const mris, int const vno1, in
 
 // Vals
 //
-void MRISsetOriginalXYZwkr(MRIS *mris, int vno, float x, float y, float z, const char* file, int line, bool* laterTime);
 void MRISsetOriginalXYZfromXYZ(MRIS *mris);
+    //
+    // This includes copying the MRIS::status to the MRIS::origxyz_status
+    
+void MRISsetOriginalXYZwkr(MRIS *mris, int vno, float x, float y, float z, const char* file, int line, bool* laterTime);
 #define MRISsetOriginalXYZ(_MRIS,_VNO,_X,_Y,_Z) \
     { static bool laterTime; MRISsetOriginalXYZwkr((_MRIS),(_VNO),(_X),(_Y),(_Z),__FILE__,__LINE__, &laterTime); }
+    //
+    // The values being set need to match the MRIS::origxyz_status
 
 int mrisComputeOriginalVertexDistances(MRIS *mris);
 void mrisComputeOriginalVertexDistancesIfNecessaryWkr(MRIS *mris, bool* laterTime, const char* file, int line);
@@ -2943,3 +2910,11 @@ void mrisComputeOriginalVertexDistancesIfNecessaryWkr(MRIS *mris, bool* laterTim
 
 void MRIScheckForNans(MRIS *mris);
 void MRIScheckIsPolyhedron(MRIS *mris, const char* file, int line);
+int StuffVertexCoords(MRIS *surf, int vertexno, double p[3]);
+int StuffFaceCoords(MRIS *surf, int faceno, int cornerno, double p[3]);
+double MinDistToTriangleBF(double p1[3], double p2[3], double p3[3], double ptest[3], double dL);
+int MRISdistanceBetweenSurfacesExact(MRIS *surf1, MRIS *surf2);
+int MRISnorm2Pointset(MRIS *mris, int vno, double dstart, double dend, double dstep, FILE *fp);
+MRI *MRISextractNormalMask(MRIS *surf, int vno, double dstart, double dend, double dstep, double UpsampleFactor);
+MRI *MRISsampleMRINorm(MRIS *mris, MRI *mri, double dstart, double dend, double dstep, double sigma, MRI *nsamp);
+  
