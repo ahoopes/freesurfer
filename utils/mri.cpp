@@ -100,7 +100,6 @@ extern int errno;
 MRI::MRI(std::vector<int> shape, int dtype, bool alloc)
 {
   initHeader(shape, dtype);
-  printf("constructing MRI\n");
   if (!alloc) return;  // return early if we're not allocating the image buffer
 
   initIndices();
@@ -156,13 +155,11 @@ MRI::MRI(std::vector<int> shape, int dtype, bool alloc)
       }
     }
   }
-  printf("constructed MRI - full alloc\n");
 }
 
 
-MRI::MRI(const std::string filename)
+MRI::MRI(const std::string& filename)
 {
-  printf("reading from file\n");
   *this = *MRIread(filename.c_str());
 }
 
@@ -281,7 +278,6 @@ void MRI::initIndices()
 
 MRI::~MRI()
 {
-  printf("destructing MRI\n");
   if (!ischunked) {
     if (slices) {
       for (int slice = 0; slice < depth * nframes; slice++) {
@@ -375,15 +371,17 @@ MRI *MRIallocHeader(int width, int height, int depth, int type, int nframes)
   Computes a hash of the MRI buffer data.
 */
 FnvHash MRI::hash() {
-  if (!slices) return;
   FnvHash mrihash;
-  size_t rowsize = MRIsizeof(type) * width;
-  for (int slice = 0; slice < depth; slice++) {
-    if (!slices[slice]) continue;
-    for (int row = 0; row < height; row++) {
-      mrihash->add((const unsigned char*)slices[slice][row], rowsize);
+  if (slices) {
+    size_t rowsize = MRIsizeof(type) * width;
+    for (int slice = 0; slice < depth; slice++) {
+      if (!slices[slice]) continue;
+      for (int row = 0; row < height; row++) {
+        mrihash.add((const unsigned char*)slices[slice][row], rowsize);
+      }
     }
   }
+  return mrihash;
 }
 
 
@@ -17356,66 +17354,3 @@ MRIcomputeLaplaceStreamline(MRI *mri_laplace, int max_steps, float x0, float y0,
   MRIfree(&mri_mask) ;
   return (vl);
 }
-
-
-// Support for writing traces that can be compared across test runs to help find where differences got introduced  
-//
-void mri_hash_init(MRI_HASH* hash, MRI const * mri)
-{
-  hash->hash = fnv_init();
-  if (mri) mri_hash_add(hash, mri);
-}
-
-static void matrix_hash_add(MRI_HASH* hash, MATRIX const * m)
-{
-  if (!m) return;
-#define ELT(MBR) hash->hash = fnv_add(hash->hash, (const unsigned char*)(&m->MBR), sizeof(m->MBR));
-  ELT(type)
-  ELT(rows)
-  ELT(cols)
-#undef ELT
-  for (int r = 0; r < m->rows; r++) {
-    const unsigned char* rptr = (const unsigned char*)(m->rptr[r]);
-    if (!rptr) {
-      static int count;
-      if (!count++) fprintf(stderr, "%s:%d !rptr r:%d m->rows:%d m->cols:%d\n", __FILE__,__LINE__, r, m->rows, m->cols);
-      continue;
-    }
-    hash->hash = fnv_add(hash->hash, rptr, m->cols * ((m->type == MATRIX_REAL) ? sizeof(float) : sizeof(COMPLEX_FLOAT)));
-  }
-}
-
-void mri_hash_add(MRI_HASH* hash, MRI const * mri)
-{
-  if (!mri) return;
-  matrix_hash_add(hash, mri->register_mat);
-  matrix_hash_add(hash, mri->r_to_i__);
-  matrix_hash_add(hash, mri->AutoAlign);
-  matrix_hash_add(hash, mri->bvals);
-  matrix_hash_add(hash, mri->bvecs);
-  size_t bytes_per_row = MRIsizeof(mri->type) * mri->width;
-  if (mri->slices) {
-    for (int slice = 0; slice < mri->depth; slice++) {
-      if (!mri->slices[slice]) continue;
-      for (int row = 0; row < mri->height; row++) {
-        const unsigned char* ptr = (const unsigned char*)(mri->slices[slice][row]);
-        if (!ptr) continue;
-        hash->hash = fnv_add(hash->hash, ptr, bytes_per_row);
-      }
-    }
-  }
-}
-
-void mri_hash_print(MRI_HASH const* hash, FILE* file)
-{
-  fprintf(file, "%ld", hash->hash);
-}
-
-void mri_print_hash(FILE* file, MRI const * mri, const char* prefix, const char* suffix) {
-  MRI_HASH hash;
-  mri_hash_init(&hash, mri);
-  fprintf(file, "%sMRI_HASH{",prefix);
-  mri_hash_print(&hash, file);
-  fprintf(file, "}%s",suffix);
-}
-

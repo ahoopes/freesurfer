@@ -38,6 +38,7 @@
 #include "machine.h"
 #include "colortab.h"
 #include "affine.h"
+#include "fnvhash.h"
 
 #define BUFTYPE  unsigned char
 
@@ -158,11 +159,13 @@ MRI_REGION ;
 typedef struct MRI
 {
   MRI(std::vector<int> shape, int dtype, bool alloc = true);
-  MRI(const std::string filename);
+  MRI(const std::string& filename);
   ~MRI();
 
   void initHeader(std::vector<int> shape, int dtype);
   void initIndices();
+
+  FnvHash hash();
 
   // ---- image geometry ----
   int width;        // number of columns
