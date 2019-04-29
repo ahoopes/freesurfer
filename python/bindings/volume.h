@@ -10,24 +10,12 @@
 void bindVolume(py::module &m);
 py::array makeArray(MRI *mri, bool copybuffer = true);
 
-
-class CoreVolume {
+class PyVolume : MRI {
 public:
-  CoreVolume(MRI *mri);
-  CoreVolume(const std::string &filename);
-  CoreVolume(py::array array);
-  ~CoreVolume();
-
-  // mri pointer getter/setter
-  void setMRI(MRI *mri);
-  MRI* getMRI() { return m_mri; };
-
-  // filesystem IO
-  void read(const std::string &filename);
-  void write(const std::string &filename);
+  PyVolume(py::array array);
 
   // image array getter/setter
-  py::array getImage() { return imagebuffer; };
+  py::array getImage();
   void setImage(py::array_t<float, py::array::f_style | py::array::forcecast> array);
 
   template<class T>
@@ -42,7 +30,6 @@ public:
 
 private:
   py::array imagebuffer;
-  MRI *m_mri = nullptr;
 };
 
 #endif

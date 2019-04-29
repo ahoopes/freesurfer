@@ -7,13 +7,12 @@
   Volume-specific pybind module configuration.
 */
 void bindVolume(py::module &m) {
-  // CoreVolume class
-  py::class_<CoreVolume>(m, "CoreVolume")
+  // PyVolume class
+  py::class_<PyVolume>(m, "Volume")
     .def(py::init<const std::string &>())
     .def(py::init<py::array>())
-    .def("read", &CoreVolume::read)
-    .def("write", &CoreVolume::write)
-    .def_property("image", &CoreVolume::getImage, &CoreVolume::setImage)
+    .def("write", &PyVolume::write)
+    .def_property("image", &PyVolume::getImage, &PyVolume::setImage)
   ;
 }
 
@@ -25,7 +24,7 @@ void bindVolume(py::module &m) {
 */
 py::array makeArray(MRI *mri, bool copybuffer) {
   // make sure mri buffer is chunked
-  if (MRIchunk(&mri) != 0) throw py::value_error("could not chunk buffer data");
+  if (!ischunked) throw py::value_error("could not chunk buffer data");
 
   // determine the appropriate numpy dtype from the mri type
   py::dtype dtype;
@@ -61,28 +60,10 @@ py::array makeArray(MRI *mri, bool copybuffer) {
 
 
 /*
-  Constructs a volume from an already allocated MRI structure. This does not copy
-  the MRI instance, it only applies ownership of the pointer. Therefore, be careful
-  not to free the MRI separately.
-*/
-CoreVolume::CoreVolume(MRI *mri) {
-  setMRI(mri);
-}
-
-
-/*
-  Constructs a volume from a volume file.
-*/
-CoreVolume::CoreVolume(const std::string &filename) {
-  read(filename);
-}
-
-
-/*
   Constructs a volume from a 3D or 4D numpy array. The array dtype is used to
   determine the type of the underlying MRI structure.
 */
-CoreVolume::CoreVolume(py::array array) {
+PyVolume::PyVolume(py::array array) {
   // determine input shape
   py::buffer_info info = array.request();
   int nframes = 1;
@@ -119,43 +100,9 @@ CoreVolume::CoreVolume(py::array array) {
 }
 
 
-/*
-  Frees the underlying MRI before destructing.
-*/
-CoreVolume::~CoreVolume() {
-  if (m_mri) MRIfree(&m_mri);
-}
-
-
-/*
-  Sets the underlying MRI instance.
-*/
-void CoreVolume::setMRI(MRI *mri) {
-  // make sure mri is chunked so we can access contiguous buffer data
-  if (MRIchunk(&mri) != 0) throw py::value_error("could not chunk buffer data");
-  // update the underlying mri pointer
-  if (m_mri) MRIfree(&m_mri);
-  m_mri = mri;
-  // update the numpy array buffer
-  imagebuffer = makeArray(m_mri, false);
-}
-
-
-/*
-  Loads the underlying MRI structure from a volume file.
-*/
-void CoreVolume::read(const std::string &filename) {
-  MRI *mri = MRIread(filename.c_str());
-  if (!mri) throw py::value_error("could not load volume " + filename);
-  setMRI(mri);
-}
-
-
-/*
-  Writes the underlying MRI structure to a file.
-*/
-void CoreVolume::write(const std::string &filename) {
-  MRIwrite(m_mri, filename.c_str());
+py::array PyVolume::getImage() {
+  if (!ischunked) throw py::value_error("could not chunk buffer data");
+  return imagebuffer;
 }
 
 
@@ -163,7 +110,7 @@ void CoreVolume::write(const std::string &filename) {
   Sets the MRI image buffer from a numpy array. The input array must match the shape of the
   underlying MRI, but if the MRI has only 1 frame, then a 3D input is also allowed.
 */
-void CoreVolume::setImage(py::array_t<float, py::array::f_style | py::array::forcecast> array) {
+void PyVolume::setImage(py::array_t<float, py::array::f_style | py::array::forcecast> array) {
   // get buffer info
   py::buffer_info info = array.request();
   
