@@ -1,3 +1,6 @@
+#ifndef FNVHASH_H
+#define FNVHASH_H
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -27,14 +30,13 @@ public:
 
   unsigned long value = 2166136261u;
 
-  friend std::ostream& operator << (std::ostream& os, const FnvHash& hash);
+  friend std::ostream& operator << (std::ostream& os, const FnvHash& hash) {
+    os << hash.value;
+    return os;
+  }
 
 private:
   static const size_t prime = 16777619u;
 };
 
-
-std::ostream& operator << (std::ostream& os, const FnvHash& hash) {
-  os << hash.value;
-  return os;
-}
+#endif

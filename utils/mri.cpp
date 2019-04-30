@@ -97,18 +97,84 @@ extern int errno;
 #define MRIxfmCRS2XYZPrecision double
 
 
-MRI::MRI(std::vector<int> shape, int dtype, bool alloc)
+MRI::Shape::Shape(const std::vector<int>& shape) {
+  // validate dimensions
+  int dims = shape.size();
+  if ((dims != 3) && (dims != 4)) logFatal(1) << "volume must be 3D or 4D (provided shape has " << dims << " dimensions)";
+
+  // validate size
+  for (auto const & len : shape) {
+    if (len <= 0) logFatal(1) << "volume size must be greater than 0 in every dimension";
+  }
+
+  width = shape[0];
+  height = shape[1];
+  depth = shape[2];
+  nframes = (dims == 4) ? shape[3] : 1;
+  size = width * height * depth * nframes;
+}
+
+
+MRI::MRI(const std::string& filename)
 {
-  initHeader(shape, dtype);
+  *this = *MRIread(filename.c_str());
+}
+
+
+MRI::MRI(Shape volshape, int dtype, bool alloc) : shape(volshape), type(dtype)
+{
+  // set geometry
+  width = shape.width;
+  height = shape.height;
+  depth = shape.depth;
+  nframes = shape.nframes;
+  xend = width / 2.0;
+  yend = height / 2.0;
+  zend = depth / 2.0;
+  xstart = -xend;
+  ystart = -yend;
+  zstart = -zend;
+  imnr0 = 1;
+  imnr1 = depth;
+  fov = width;
+  roi.dx = width;
+  roi.dy = height;
+  roi.dz = depth;
+
+  // set data type
+  bytes_per_vox = MRIsizeof(type);
+  if (bytes_per_vox < 1) logFatal(1) << "unsupported MRI data type: " << type;
+  vox_per_row = width;
+  vox_per_slice = vox_per_row * height;
+  vox_per_vol = vox_per_slice * depth;
+  vox_total = vox_per_vol * nframes;
+  bytes_total = bytes_per_vox * vox_total;
+  
+  // allocate frames
+  frames = (MRI_FRAME *)calloc(nframes, sizeof(MRI_FRAME));
+  if (!frames) ErrorExit(ERROR_NO_MEMORY, "MRIalloc: could not allocate %d frame\n", nframes);
+  for (int i = 0; i < nframes; i++) frames[i].m_ras2vox = MatrixAlloc(4, 4, MATRIX_REAL);
+  
+  // allocate matrices
+  MATRIX *tmp = extract_i_to_r(this);
+  AffineMatrixAlloc(&(i_to_r__));
+  SetAffineMatrix(i_to_r__, tmp);
+  MatrixFree(&tmp);
+  r_to_i__ = extract_r_to_i(this);
+
+  // file metadata
+  subject_name[0] = '\0';
+  path_to_t1[0] = '\0';
+  fname_format[0] = '\0';
+  gdf_image_stem[0] = '\0';
+  transform_fname[0] = '\0';
+
   if (!alloc) return;  // return early if we're not allocating the image buffer
 
   initIndices();
 
   // should this be defaulted in the header instead?
   ras_good_flag = 1;
-
-  // this should maybe be moved to initHeader()
-  if (bytes_per_vox < 1) logFatal(1) << "unsupported MRI data type: " << type;
 
   // attempt to chunk - if that fails, try allocating non-contiguous slices
   chunk = calloc(bytes_total, 1);
@@ -155,75 +221,6 @@ MRI::MRI(std::vector<int> shape, int dtype, bool alloc)
       }
     }
   }
-}
-
-
-MRI::MRI(const std::string& filename)
-{
-  *this = *MRIread(filename.c_str());
-}
-
-
-/**
-  Initializes the volume geometry and properties with a given shape and data type. This function should
-  only be called once when initializing a volume.
-*/
-void MRI::initHeader(std::vector<int> shape, int dtype)
-{
-  // validate image shape
-  int dims = shape.size();
-  if ((dims != 3) && (dims != 4)) {
-    logFatal(1) << "volume must be 3D or 4D (provided shape has " << dims << " dims)";
-  }
-  for (auto const & dim : shape) {
-    if (dim <= 0) logFatal(1) << "volume size must be greater than 0 in every dimension";
-  }
-
-  // set geometry
-  width = shape[0];
-  height = shape[1];
-  depth = shape[2];
-  nframes = (dims == 4) ? shape[3] : 1;
-  xend = width / 2.0;
-  yend = height / 2.0;
-  zend = depth / 2.0;
-  xstart = -xend;
-  ystart = -yend;
-  zstart = -zend;
-  imnr0 = 1;
-  imnr1 = depth;
-  fov = width;
-  roi.dx = width;
-  roi.dy = height;
-  roi.dz = depth;
-
-  // set data type
-  type = dtype;
-  bytes_per_vox = MRIsizeof(type);
-  vox_per_row = width;
-  vox_per_slice = vox_per_row * height;
-  vox_per_vol = vox_per_slice * depth;
-  vox_total = vox_per_vol * nframes;
-  bytes_total = bytes_per_vox * vox_total;
-  
-  // allocate frames
-  frames = (MRI_FRAME *)calloc(nframes, sizeof(MRI_FRAME));
-  if (!frames) ErrorExit(ERROR_NO_MEMORY, "MRIalloc: could not allocate %d frame\n", nframes);
-  for (int i = 0; i < nframes; i++) frames[i].m_ras2vox = MatrixAlloc(4, 4, MATRIX_REAL);
-  
-  // allocate matrices
-  MATRIX *tmp = extract_i_to_r(this);
-  AffineMatrixAlloc(&(i_to_r__));
-  SetAffineMatrix(i_to_r__, tmp);
-  MatrixFree(&tmp);
-  r_to_i__ = extract_r_to_i(this);
-
-  // file metadata
-  subject_name[0] = '\0';
-  path_to_t1[0] = '\0';
-  fname_format[0] = '\0';
-  gdf_image_stem[0] = '\0';
-  transform_fname[0] = '\0';
 }
 
 
@@ -320,6 +317,12 @@ MRI::~MRI()
   }
 
   if (pedir) free(pedir);
+}
+
+
+void MRI::write(const std::string& filename)
+{
+  MRIwrite(this, filename.c_str());
 }
 
 

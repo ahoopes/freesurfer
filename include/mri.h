@@ -27,6 +27,7 @@
 #define MRI_H
 
 #include <vector>
+#include <array>
 #include <string>
 
 #include "faster_variants.h"
@@ -158,12 +159,29 @@ MRI_REGION ;
 
 typedef struct MRI
 {
-  MRI(std::vector<int> shape, int dtype, bool alloc = true);
+
+  class Shape
+  {
+  public:
+    Shape() {};
+    Shape(const std::vector<int>& shape);
+    Shape(const std::vector<ssize_t>& shape) : Shape(std::vector<int>(shape.begin(), shape.end())) {};
+    Shape(const std::initializer_list<int>& shape) : Shape(std::vector<int>(shape)) {}
+    ssize_t width, height, depth, nframes, size;
+
+    operator std::vector<ssize_t>() const { return {width, height, depth, nframes}; }
+
+    friend bool operator == (const Shape &l, const Shape &r) { return (std::vector<ssize_t>(l) == std::vector<ssize_t>(r)); }
+    friend bool operator != (const Shape &l, const Shape &r) { return !(l == r); }
+  };
+
+  MRI(const Shape volshape, int dtype, bool alloc = true);
   MRI(const std::string& filename);
   ~MRI();
 
-  void initHeader(std::vector<int> shape, int dtype);
   void initIndices();
+
+  void write(const std::string& filename);
 
   FnvHash hash();
 
@@ -172,6 +190,7 @@ typedef struct MRI
   int height;       // number of rows
   int depth;        // number of slices
   int nframes;      // number of frames
+  Shape shape;      // volume shape
   int imnr0;        // starting image number
   int imnr1;        // ending image number
   float xstart;     // starting x (in xsize units)
