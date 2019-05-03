@@ -181,9 +181,7 @@ public:
   ~MRI();
 
   void initIndices();
-
   void write(const std::string& filename);
-
   FnvHash hash();
 
   // ---- image geometry ----
@@ -242,13 +240,13 @@ public:
   MRI_REGION roi;
 
   // ---- scan parameters ----
-  float tr;                     // time to recovery
-  float te;                     // time to echo
-  float ti;                     // time to inversion
-  float FieldStrength;          // field strength
-  double flip_angle;            // flip angle in radians
+  float tr = 0;                 // time to recovery
+  float te = 0;                 // time to echo
+  float ti = 0;                 // time to inversion
+  double flip_angle = 0;        // flip angle in radians
+  float FieldStrength = 0;      // field strength
   char *pedir = nullptr;        // phase enc direction: ROW, COL, etc
-  float location;               // NOT USED
+  float location = 0;           // NOT USED
 
   // ---- DTI ----
   int bvec_space = 0;           // 0: unknown, 1: scanner, 2: voxel
@@ -276,8 +274,8 @@ public:
   size_t vox_per_vol = 0;       // number of voxels per volume frame
   size_t vox_total = 0;         // total number of voxels in the volume
   int ischunked;                // indicates whether the buffer is chunked (contiguous)
-  BUFTYPE ***slices = nullptr;  // fallback non-contiguous storage for 3D-indexed image buffer
-  void *chunk = nullptr;        // default contiguous storage for image buffer
+  BUFTYPE ***slices = nullptr;  // fallback non-contiguous storage for 3D-indexed image data
+  void *chunk = nullptr;        // default contiguous storage for image data
 };
 
 

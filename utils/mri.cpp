@@ -97,6 +97,9 @@ extern int errno;
 #define MRIxfmCRS2XYZPrecision double
 
 
+/**
+  Constructs a MRI Shape descriptor from an int vector of length 3 or 4.
+*/
 MRI::Shape::Shape(const std::vector<int>& shape) {
   // validate dimensions
   int dims = shape.size();
@@ -115,12 +118,20 @@ MRI::Shape::Shape(const std::vector<int>& shape) {
 }
 
 
+/**
+  Constructs an MRI from a volume file.
+*/
 MRI::MRI(const std::string& filename)
 {
   *this = *MRIread(filename.c_str());
 }
 
 
+/**
+  Constructs an MRI with a given shape and data type. If the `alloc` parameter (defaults
+  to true) is false, the underlying image buffer is not allocated and only the header is
+  initialized.
+*/
 MRI::MRI(Shape volshape, int dtype, bool alloc) : shape(volshape), type(dtype)
 {
   // set geometry
@@ -227,7 +238,7 @@ MRI::MRI(Shape volshape, int dtype, bool alloc) : shape(volshape), type(dtype)
 
 /**
   Allocates the xi, yi, and zi index arrays to handle boundary conditions. This function should
-  only be called once for a single volume.
+  only be called once for a single volume and is separated from the MRI constructor for readability.
 */
 void MRI::initIndices()
 {
@@ -274,6 +285,10 @@ void MRI::initIndices()
 }
 
 
+/**
+  \todo A lot of this can be cleaned up by simply using smart pointers and
+  vectors for many of the MRI parameters.
+*/
 MRI::~MRI()
 {
   if (!ischunked) {
@@ -321,6 +336,9 @@ MRI::~MRI()
 }
 
 
+/**
+  Writes the MRI to a volume file.
+*/
 void MRI::write(const std::string& filename)
 {
   MRIwrite(this, filename.c_str());
@@ -346,8 +364,7 @@ FnvHash MRI::hash() {
 
 
 /**
-  Frees and nulls an MRI pointer. This function is deprecated, and the c++ `delete` operator
-  should be used instead.
+  Frees and nulls an MRI pointer.
 */
 int MRIfree(MRI **pmri)
 {
@@ -360,8 +377,8 @@ int MRIfree(MRI **pmri)
 
 
 /**
-  Allocates an MRI volume with a given shape and type. This function is deprecated, and the
-  c++ `new` operator should be used instead: `MRI *mri = new MRI({width, height, depth}, type)`
+  Allocates an MRI volume with a given shape and type. This function is deprecated; moving foward, the
+  c++ `new` operator should be used instead: `MRI *mri = new MRI({width, height, depth}, type);`
 */
 MRI *MRIalloc(int width, int height, int depth, int type)
 {
@@ -370,8 +387,8 @@ MRI *MRIalloc(int width, int height, int depth, int type)
 
 
 /**
-  Allocates an MRI volume with a given shape and type. This function is deprecated, and the c++ `new`
-  operator should be used instead: `MRI *mri = new MRI({width, height, depth, nframes}, type)`
+  Allocates an MRI volume with a given shape and type. This function is deprecated; moving foward, the
+  c++ `new` operator should be used instead: `MRI *mri = new MRI({width, height, depth, nframes}, type);`
 */
 MRI *MRIallocSequence(int width, int height, int depth, int type, int nframes)
 {
@@ -380,18 +397,14 @@ MRI *MRIallocSequence(int width, int height, int depth, int type, int nframes)
 
 
 /**
-  Initializes an MRI struct without allocating the image buffer. This function is deprecated, and the c++ `new`
-  operator should be used instead: `MRI *mri = new MRI({width, height, depth, nframes}, type, false)`
+  Initializes an MRI struct without allocating the image buffer. This function is deprecated; moving foward,
+  the c++ `new` operator should be used instead: `MRI *mri = new MRI({width, height, depth, nframes}, type, false);`
 */
 MRI *MRIallocHeader(int width, int height, int depth, int type, int nframes)
 {
   return new MRI({width, height, depth, nframes}, type, false);
 }
 
-
-/*-----------------------------------------------------
-  GLOBAL FUNCTIONS
-  -------------------------------------------------------*/
 
 /*----------------------------------------------------------
   MRIxfmCRS2XYZ() - computes the matrix needed to compute the
