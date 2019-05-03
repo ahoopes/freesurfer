@@ -64,7 +64,7 @@ static py::dtype pytype(const MRI* mri)
 /**
   Constructs an MRI instance from a 3D or 4D numpy array.
 */
-PyVolume::PyVolume(py::array& array) : MRI(array.request().shape, getArrayType(array))
+PyVolume::PyVolume(py::array& array) : MRI(array.request().shape, voltype(array))
 {
   setArray(array);
 }
@@ -83,7 +83,7 @@ PyVolume::~PyVolume()
 */
 py::array PyVolume::copyArray(MRI *mri)
 {
-  if (!mri->ischunked) throw py::value_error("image is too large to fit into contiguous memory and cannot be supported by the python bindings");
+  if (!mri->ischunked) logFatal(1) << "image is too large to fit into contiguous memory and cannot be supported by the python bindings";
   return py::array(pytype(mri), std::vector<ssize_t>(mri->shape), fstrides(mri->shape, mri->bytes_per_vox), mri->chunk);
 }
 
@@ -95,7 +95,7 @@ py::array PyVolume::getArray()
 {
   // create the python buffer array if it hasn't been initialized already
   if (buffer_array.size() == 0) {
-    if (!ischunked) throw py::value_error("image is too large to fit into contiguous memory and cannot be supported by the python bindings");
+    if (!ischunked) logFatal(1) << "image is too large to fit into contiguous memory and cannot be supported by the python bindings";
     // python will now manage the buffer memory deletion
     py::capsule capsule(chunk, [](void *d) { if (d) free(d); } );
     buffer_array = py::array(pytype(this), std::vector<ssize_t>(shape), fstrides(shape, bytes_per_vox), chunk, capsule);

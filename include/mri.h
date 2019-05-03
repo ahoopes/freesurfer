@@ -157,8 +157,9 @@ typedef struct
 MRI_REGION ;
 
 
-typedef struct MRI
+class MRI
 {
+public:
 
   class Shape
   {
@@ -277,8 +278,7 @@ typedef struct MRI
   int ischunked;                // indicates whether the buffer is chunked (contiguous)
   BUFTYPE ***slices = nullptr;  // fallback non-contiguous storage for 3D-indexed image buffer
   void *chunk = nullptr;        // default contiguous storage for image buffer
-
-} MRI_IMAGE, MRI;
+};
 
 
 typedef struct

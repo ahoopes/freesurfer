@@ -37,7 +37,8 @@ public:
 
   template <class T>
   void setBufferData(py::array_t<T, py::array::f_style | py::array::forcecast> array) {
-    if (MRI::Shape(array.request().shape) != shape) py::value_error("array does not match MRI shape " + shapeString(shape));
+    MRI::Shape inshape = MRI::Shape(array.request().shape);
+    if (inshape != shape) logFatal(1) << "array " << shapeString(inshape) << " does not match volume shape " << shapeString(shape);
     T *dst = (T *)chunk;
     const T *src = array.data(0);
     for (unsigned int i = 0; i < vox_total ; i++, dst++, src++) *dst = *src;

@@ -169,7 +169,8 @@ MRI::MRI(Shape volshape, int dtype, bool alloc) : shape(volshape), type(dtype)
   gdf_image_stem[0] = '\0';
   transform_fname[0] = '\0';
 
-  if (!alloc) return;  // return early if we're not allocating the image buffer
+  // return early if we're not allocating the image buffer
+  if (!alloc) return;
 
   initIndices();
 
@@ -190,7 +191,7 @@ MRI::MRI(Shape volshape, int dtype, bool alloc) : shape(volshape), type(dtype)
   for (int slice = 0; slice < nslices; slice++) {
     // allocate an array of row pointers
     slices[slice] = (BUFTYPE **)calloc(height, sizeof(BUFTYPE *));
-    if (!slices[slice]) logFatal(1) << "could not allocate memory for slice " << slice << " out of " << nslices;
+    if (!slices[slice]) logFatal(1) << "could not allocate memory for slice " << slice + 1 << " out of " << nslices;
 
     if (ischunked) {
       // point the rows to the appropriate locations in the chunked buffer
@@ -213,7 +214,7 @@ MRI::MRI(Shape volshape, int dtype, bool alloc) : shape(volshape), type(dtype)
     } else {
       // allocate the actual slice buffer
       BUFTYPE *buffer = (BUFTYPE *)calloc(width * height * bytes_per_vox, 1);
-      if (!buffer) logFatal(1) << "could not allocate memory for slice " << slice << " out of " << nslices;
+      if (!buffer) logFatal(1) << "could not allocate memory for slice " << slice + 1 << " out of " << nslices;
 
       // point the rows to the appropriate locations in the slice buffer
       for (int row = 0; row < height; row++) {
@@ -226,7 +227,7 @@ MRI::MRI(Shape volshape, int dtype, bool alloc) : shape(volshape), type(dtype)
 
 /**
   Allocates the xi, yi, and zi index arrays to handle boundary conditions. This function should
-  only be called once when initializing a volume.
+  only be called once for a single volume.
 */
 void MRI::initIndices()
 {
@@ -327,6 +328,24 @@ void MRI::write(const std::string& filename)
 
 
 /**
+  Computes a hash of the MRI buffer data.
+*/
+FnvHash MRI::hash() {
+  FnvHash mrihash;
+  if (slices) {
+    size_t rowsize = MRIsizeof(type) * width;
+    for (int slice = 0; slice < depth; slice++) {
+      if (!slices[slice]) continue;
+      for (int row = 0; row < height; row++) {
+        mrihash.add((const unsigned char*)slices[slice][row], rowsize);
+      }
+    }
+  }
+  return mrihash;
+}
+
+
+/**
   Frees and nulls an MRI pointer. This function is deprecated, and the c++ `delete` operator
   should be used instead.
 */
@@ -367,24 +386,6 @@ MRI *MRIallocSequence(int width, int height, int depth, int type, int nframes)
 MRI *MRIallocHeader(int width, int height, int depth, int type, int nframes)
 {
   return new MRI({width, height, depth, nframes}, type, false);
-}
-
-
-/**
-  Computes a hash of the MRI buffer data.
-*/
-FnvHash MRI::hash() {
-  FnvHash mrihash;
-  if (slices) {
-    size_t rowsize = MRIsizeof(type) * width;
-    for (int slice = 0; slice < depth; slice++) {
-      if (!slices[slice]) continue;
-      for (int row = 0; row < height; row++) {
-        mrihash.add((const unsigned char*)slices[slice][row], rowsize);
-      }
-    }
-  }
-  return mrihash;
 }
 
 
