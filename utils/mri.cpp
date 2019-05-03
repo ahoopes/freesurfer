@@ -1325,18 +1325,13 @@ int MRIhfs2Sphinx(MRI *mri)
 size_t MRIsizeof(int mritype)
 {
   switch (mritype) {
-  case MRI_UCHAR:
-    return sizeof(char);
-  case MRI_INT:
-  case MRI_RGB:
-    return sizeof(int);
-  case MRI_LONG:
-    return sizeof(long);
-  case MRI_FLOAT:
-  case MRI_TENSOR:
-    return sizeof(float);
-  case MRI_SHORT:
-    return sizeof(short);
+    case MRI_UCHAR:  return sizeof(char);
+    case MRI_INT:    return sizeof(int);
+    case MRI_RGB:    return sizeof(int);
+    case MRI_LONG:   return sizeof(long);
+    case MRI_FLOAT:  return sizeof(float);
+    case MRI_TENSOR: return sizeof(float);
+    case MRI_SHORT:  return sizeof(short);
   }
   return (-1);  // should never get here
 }
