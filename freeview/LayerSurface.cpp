@@ -119,7 +119,7 @@ LayerSurface::LayerSurface( LayerMRI* ref, QObject* parent ) : LayerEditable( pa
   m_mainActor->GetProperty()->SetEdgeColor( 0.75, 0.75, 0.75 );
 
   double ratio = 1;
-#if VTK_MAJOR_VERSION > 5
+#if VTK_MAJOR_VERSION > 7
   ratio = MainWindow::GetMainWindow()->devicePixelRatio();
 #endif
   m_vectorActor = vtkSmartPointer<vtkActor>::New();
@@ -767,7 +767,7 @@ void LayerSurface::InitializeActors()
 
     double line_w = GetProperty()->GetEdgeThickness();
     double ratio = 1;
-#if VTK_MAJOR_VERSION > 5
+#if VTK_MAJOR_VERSION > 7
     ratio = MainWindow::GetMainWindow()->devicePixelRatio();
 #endif
     m_sliceActor2D[i]->SetMapper( mapper );
@@ -819,7 +819,7 @@ void LayerSurface::UpdateOpacity()
 void LayerSurface::UpdateEdgeThickness()
 {
   double line_w = GetProperty()->GetEdgeThickness();
-#if VTK_MAJOR_VERSION > 5
+#if VTK_MAJOR_VERSION > 7
   line_w *= MainWindow::GetMainWindow()->devicePixelRatio();
 #endif
   for ( int i = 0; i < 3; i++ )
@@ -853,7 +853,7 @@ void LayerSurface::UpdateEdgeThickness()
 void LayerSurface::UpdateVectorPointSize()
 {
   double ratio = 1;
-#if VTK_MAJOR_VERSION > 5
+#if VTK_MAJOR_VERSION > 7
   ratio = MainWindow::GetMainWindow()->devicePixelRatio();
 #endif
   for ( int i = 0; i < 3; i++ )
@@ -1685,7 +1685,7 @@ void LayerSurface::UpdateRenderMode()
   //  m_mainActor->GetProperty()->EdgeVisibilityOff();
   //  m_mainActor->GetProperty()->BackfaceCullingOn();
   double line_w = 1;
-#if VTK_MAJOR_VERSION > 5
+#if VTK_MAJOR_VERSION > 7
   line_w = MainWindow::GetMainWindow()->devicePixelRatio();
 #endif
   switch ( GetProperty()->GetSurfaceRenderMode() )
@@ -1797,7 +1797,7 @@ SurfaceAnnotation* LayerSurface::GetAnnotation( int n )
 void LayerSurface::UpdateVertexRender()
 {
   double ratio = 1;
-#if VTK_MAJOR_VERSION > 5
+#if VTK_MAJOR_VERSION > 7
   ratio = MainWindow::GetMainWindow()->devicePixelRatio();
 #endif
   m_vertexActor->SetVisibility( GetProperty()->GetShowVertices()? 1: 0 );
