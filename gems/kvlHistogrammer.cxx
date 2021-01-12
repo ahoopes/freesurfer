@@ -217,6 +217,12 @@ Histogrammer
   m_ThreadSpecificHistograms.clear();
   m_ThreadSpecificMinLogLikelihoods.clear();
 
+  HistogramThreadAccumType  emptyThreadHistogram;
+  for ( int classNumber = 0; classNumber < numberOfClasses; ++classNumber )
+    {
+    emptyThreadHistogram.push_back( std::vector< ThreadAccumDataType >( m_NumberOfBins, 0.0 ) );  
+    }
+
   // For each thread, create an empty histogram and cost so that
   // different threads never interfere with one another
   for ( int threadNumber = 0; threadNumber < this->GetNumberOfThreads(); threadNumber++ )
@@ -225,31 +231,40 @@ Histogrammer
     m_ThreadSpecificMinLogLikelihoods.push_back( 0.0 );  
       
     // Initialize to zero-filled histogram
-    m_ThreadSpecificHistograms.push_back( emptyHistogram );
+    m_ThreadSpecificHistograms.push_back( emptyThreadHistogram );
     } // End loop over threads
     
   // Now rasterize
   Superclass::Rasterize( mesh );
 
   // Collect the results of all the threads
-  for ( std::vector< double >::const_iterator  it = m_ThreadSpecificMinLogLikelihoods.begin();
-        it != m_ThreadSpecificMinLogLikelihoods.end(); ++it )
+  for ( int i = 1 ; i < m_ThreadSpecificMinLogLikelihoods.size() ; i++ )
     {
-    m_MinLogLikelihood += *it;
-    }  
+    m_ThreadSpecificMinLogLikelihoods[0] += m_ThreadSpecificMinLogLikelihoods[i];
+    }
+  m_MinLogLikelihood = m_ThreadSpecificMinLogLikelihoods[0];
 
-  for ( std::vector< HistogramType >::const_iterator  it = m_ThreadSpecificHistograms.begin();
-        it != m_ThreadSpecificHistograms.end(); ++it )
+
+  std::vector< HistogramThreadAccumType >::const_iterator tIt = m_ThreadSpecificHistograms.begin();
+  ++tIt;
+  for ( ; tIt != m_ThreadSpecificHistograms.end(); ++tIt )
     {
     for ( int classNumber = 0; classNumber < numberOfClasses; classNumber++ )
       {
       for ( int binNumber = 0; binNumber < m_NumberOfBins; binNumber++ )
         {
-        m_Histogram[ classNumber ][ binNumber ] += ( *it )[ classNumber ][ binNumber ]; 
+        m_ThreadSpecificHistograms[ 0 ][ classNumber ][ binNumber ] += ( *tIt )[ classNumber ][ binNumber ]; 
         }  
       }
     } // End loop over all threads  
-    
+
+  for ( int classNumber = 0; classNumber < numberOfClasses; classNumber++ )
+    {
+    for ( int binNumber = 0; binNumber < m_NumberOfBins; binNumber++ )
+      {
+      m_Histogram[ classNumber ][ binNumber ] = m_ThreadSpecificHistograms[ 0 ][ classNumber ][ binNumber ]; 
+      }  
+    }
     
 }    
   

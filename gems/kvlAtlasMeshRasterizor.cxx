@@ -76,7 +76,7 @@ AtlasMeshRasterizor
   // round-off errors (by adding many floating-point contributions) every single time we
   // repeat the same computation on the same computer with the same number of threads.
   const int  numberOfTetrahedra = str->m_TetrahedronIds.size();
-#if 0  
+#if 1
   const int  numberOfTetrahedraPerThread = 
           itk::Math::Ceil< int >( static_cast< double >( numberOfTetrahedra ) / numberOfThreads );
   const int  thisThreadStartNumber =  threadNumber * numberOfTetrahedraPerThread;
